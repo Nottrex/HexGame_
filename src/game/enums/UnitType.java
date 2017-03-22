@@ -3,7 +3,7 @@ package game.enums;
 import game.TextureHandler;
 
 public enum UnitType {
-	TANK("tank", "Tank", 0.75, 3, 1, 2);
+	TANK("tank", "Tank", 0.75, 5, 1, 2);
 	
 	private int movementDistance;
 	private int minAttackDistance, maxAttackDistance;

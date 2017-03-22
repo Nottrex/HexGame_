@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class Game {
 
-	private Map map;
+	private GameMap map;
 	private int playerAmount;
 	private PlayerColor[] player;
 	private List<Unit> units;
@@ -19,7 +19,7 @@ public class Game {
 	private int playerTurn;
 
 	public Game() {
-		map = new Map(25, 25);
+		map = new GameMap(25, 25);
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 15, 15));
@@ -75,7 +75,7 @@ public class Game {
 				.collect(Collectors.toList());
 	}
 
-	public Map getMap() {
+	public GameMap getMap() {
 		return map;
 	}
 

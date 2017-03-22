@@ -2,11 +2,11 @@ package game;
 
 import game.enums.Field;
 
-public class Map {
+public class GameMap {
 	private Field[][] map;
 	private int width, height;
 
-	public Map(int width, int height) {
+	public GameMap(int width, int height) {
 		map = new Field[width][height];
 		this.width = width;
 		this.height = height;
@@ -46,7 +46,7 @@ public class Map {
 		return null;
 	}
 	
-	public Map(String data) {
+	public GameMap(String data) {
 		
 	}
 }

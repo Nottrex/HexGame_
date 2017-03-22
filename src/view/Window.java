@@ -4,6 +4,8 @@ import game.*;
 import game.enums.Field;
 import game.enums.PlayerColor;
 import game.enums.UnitType;
+import game.util.ActionUtil;
+import game.util.PossibleActions;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -36,6 +38,7 @@ public class Window extends JFrame implements Runnable {
 	private Game game;
 	private List<PlayerColor> localPlayers;
 	private Location selecetedField = null;
+	private PossibleActions pa = null;
 
 	public Window() {
 		super("HexGame");
@@ -216,6 +219,12 @@ public class Window extends JFrame implements Runnable {
 				}
 			}
 		}
+
+		if (selecetedField != null) {
+			Optional<Unit> u = game.getUnitAt(selecetedField);
+			pa = ActionUtil.getPossibleActions(game, u.get());
+		}
+
 		redrawInfoBar();
 	}
 
@@ -249,7 +258,7 @@ public class Window extends JFrame implements Runnable {
 		g.fillRect(0, 0, center.getWidth(), center.getHeight());
 
 		g.setColor(Color.BLUE);
-		Map m = game.getMap();
+		GameMap m = game.getMap();
 
 		g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
 
@@ -259,10 +268,7 @@ public class Window extends JFrame implements Runnable {
 			for (int y = 0; y < m.getHeight(); y++) {
 				if (m.getFieldAt(x, y).getTextureName() == null) continue;
 
-				double py = (y - m.getHeight()/2)*(Constants.HEX_TILE_YY_RATIO)*wy;
-				double px = (x - m.getWidth()/2)*wx - (y - m.getHeight()/2)*wy/(2*Constants.HEX_TILE_XY_RATIO);
-
-				g.drawImage(TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), (int) px, (int) py, (int) wx +2, (int) wy +2, null);
+				drawHexField(x - m.getWidth()/2, y - m.getHeight()/2, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), wx, wy);
 			}
 		}
 
@@ -278,19 +284,34 @@ public class Window extends JFrame implements Runnable {
 		}
 
 		Location mloc = getHexFieldPosition(mouseX, mouseY);
-		double py = (mloc.y - m.getHeight()/2)*(Constants.HEX_TILE_YY_RATIO)*wy;
-		double px = (mloc.x - m.getWidth()/2)*wx - (mloc.y - m.getHeight()/2)*wy/(2*Constants.HEX_TILE_XY_RATIO);
-		g.drawImage(TextureHandler.getImagePng("fieldmarker_select"), (int) px, (int) py, (int) wx +2, (int) wy +2, null);
+		drawHexField(mloc.x - m.getWidth()/2, mloc.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
 		if (selecetedField != null) {
-			py = (selecetedField.y - m.getHeight()/2)*(Constants.HEX_TILE_YY_RATIO)*wy;
-			px = (selecetedField.x - m.getWidth()/2)*wx - (selecetedField.y - m.getHeight()/2)*wy/(2*Constants.HEX_TILE_XY_RATIO);
-			g.drawImage(TextureHandler.getImagePng("fieldmarker_select2"), (int) px, (int) py, (int) wx +2, (int) wy +2, null);
+			drawHexField(selecetedField.x - m.getWidth()/2, selecetedField.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+
+			Optional<Unit> u = game.getUnitAt(selecetedField);
+
+			if (u.isPresent()) {
+
+				if (pa == null) {
+					pa = ActionUtil.getPossibleActions(game, u.get());
+				}
+
+				for (Location target: pa.canMoveTo()) {
+					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+				}
+			}
 		}
 
 		g.translate((int) (cam.x/cam.zoom), (int) (cam.y/cam.zoom));
 		center.getGraphics().drawImage(buffer, 0, 0, null);
 		drawing = false;
+	}
+
+	private void drawHexField(int x, int y, Graphics g, BufferedImage img, double wx, double wy) {
+		double py = (y)*(Constants.HEX_TILE_YY_RATIO)*wy;
+		double px = (x)*wx - (y)*wy/(2*Constants.HEX_TILE_XY_RATIO);
+		g.drawImage(img, (int) px, (int) py, (int) wx +2, (int) wy +2, null);
 	}
 
 	private boolean drawing2 = false;
@@ -299,7 +320,7 @@ public class Window extends JFrame implements Runnable {
 		drawing2 = true;
 
 		BufferedImage buffer2 = new BufferedImage(bottom.getWidth(), bottom.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		Map m = game.getMap();
+		GameMap m = game.getMap();
 
 		Graphics g = buffer2.getGraphics();
 		g.setColor(Constants.COLOR_INFOBAR_BACKGROUND);
@@ -363,7 +384,7 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void centerCamera() {
-		Map m = game.getMap();
+		GameMap m = game.getMap();
 
 		cam.tzoom = (m.getHeight()*Constants.HEX_TILE_XY_RATIO*Constants.HEX_TILE_XY_RATIO) / center.getHeight();
 
@@ -373,7 +394,7 @@ public class Window extends JFrame implements Runnable {
 
 	private Location getHexFieldPosition(int px, int py) {
 
-		Map m = game.getMap();
+		GameMap m = game.getMap();
 
 		double dy = (py + cam.y/cam.zoom) / ((Constants.HEX_TILE_YY_RATIO)*Constants.HEX_TILE_XY_RATIO/cam.zoom) + m.getHeight()/2;
 		int y = (int) Math.floor(dy);
