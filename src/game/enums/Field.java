@@ -7,30 +7,20 @@ import game.TextureHandler;
  * 
  */
 public enum Field {
-	FOREST("forest", "Forest", true, true, true), GRASS("grass", "Grass", true, true, false), GRASS_ROCK("grass_rock", "Grass-rock", false, true, true), DIRT("dirt", "Dirt", true, true, true), DIRT_ROCK("dirt_rock", "Dirt-rock", false, true, true), SAND("sand", "Sand", true, true, true), MARS("mars", "Mars", true, true, false), STONE("stone", "Stone", true, true, false), VOID(null, "Void", false, false, true);
+	FOREST("forest", "Forest", 2), GRASS("grass", "Grass", 1), GRASS_ROCK("grass_rock", "Grass-rock", 3), DIRT("dirt", "Dirt", 1), DIRT_ROCK("dirt_rock", "Dirt-rock", 3), SAND("sand", "Sand", 2), MARS("mars", "Mars", 1), STONE("stone", "Stone", 1), VOID(null, "Void", 999999999);
 
-	
-	private boolean accessNormal, accessFlight, movementReduction;
+
 	private String textureName, displayName;
+	private int movementCost;
 
-	Field(String textureName, String displayName, boolean accessNormal, boolean accessFlight, boolean movementReduction) {
+	Field(String textureName, String displayName, int movementCost) {
 		this.textureName = textureName;
-		this.accessNormal = accessNormal;
-		this.accessFlight = accessFlight;
-		this.movementReduction = movementReduction;
 		this.displayName = displayName;
+		this.movementCost = movementCost;
 	}
-	
-	public boolean isAccessibleNormal() {
-		return accessNormal;
-	}
-	
-	public boolean isAccessibleFlight() {
-		return accessFlight;
-	}
-	
-	public boolean isMovementReduced() {
-		return movementReduction;
+
+	public int getMovementCost() {
+		return movementCost;
 	}
 
 	public String getTextureName() {

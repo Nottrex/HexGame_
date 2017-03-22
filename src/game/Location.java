@@ -8,4 +8,22 @@ public class Location {
 		this.x = x;
 		this.y = y;
 	}
+
+	@Override
+	public int hashCode() {
+		int hash = 17;
+		hash = hash*31 + x;
+		hash = hash*31 + y;
+
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Location) {
+			Location b = (Location) obj;
+			return x == b.x && y == b.y;
+		}
+		return false;
+	}
 }

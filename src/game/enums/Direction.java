@@ -1,5 +1,7 @@
 package game.enums;
 
+import game.Location;
+
 /**
  * A Direction on the Hexagon field
  */
@@ -12,7 +14,11 @@ public enum Direction {
 		this.mx = mx;
 		this.my = my;
 	}
-	
+
+	public Location applyMovement(Location loc) {
+		return new Location(loc.x + mx, loc.y + my);
+	}
+
 	public int getXMovement() {
 		return mx;
 	}
