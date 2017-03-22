@@ -222,7 +222,7 @@ public class Window extends JFrame implements Runnable {
 
 		if (selecetedField != null) {
 			Optional<Unit> u = game.getUnitAt(selecetedField);
-			pa = ActionUtil.getPossibleActions(game, u.get());
+			if (u.isPresent()) pa = ActionUtil.getPossibleActions(game, u.get());
 		}
 
 		redrawInfoBar();

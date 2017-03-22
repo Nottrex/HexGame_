@@ -55,7 +55,7 @@ public class ActionUtil {
 		List<Location> found = new ArrayList<>();
 		for (Location loc: directions.keySet()) {
 			Optional<Unit> u = game.getUnitAt(loc);
-			System.out.println(1);
+
 			if (!loc.equals(start) && (!u.isPresent())) {
 				found.add(loc);
 			}
