@@ -34,6 +34,7 @@ public class Window extends JFrame implements Runnable {
 	private int mouseX = 0, mouseY = 0;
 
 	private boolean stop = false;
+
 	//Gamestuff
 	private Game game;
 	private List<PlayerColor> localPlayers;
@@ -210,12 +211,20 @@ public class Window extends JFrame implements Runnable {
 				Optional<Unit> u = game.getUnitAt(selecetedField);
 				Optional<Unit> u2 = game.getUnitAt(l);
 
-				if (u.isPresent() && !u2.isPresent()) {
-					game.moveUnitTo(u.get(), l.x, l.y);
+				if (u.isPresent() && !u2.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
+					pa = ActionUtil.getPossibleActions(game, u.get());
+
+					if(pa.canMoveTo().contains(l)) {
+						game.moveUnitTo(u.get(), l.x, l.y);
+					}
 
 					selecetedField = null;
-				} else {
-					selecetedField = l;
+				} else if(u.isPresent() && u2.isPresent()) {
+					pa = ActionUtil.getPossibleActions(game, u.get());
+					if (pa.canAttack().contains(l)) {
+						//TODO: ATTACK
+						System.out.println("HE CAN ATTACK " + l);
+					} else selecetedField = l;
 				}
 			}
 		}
