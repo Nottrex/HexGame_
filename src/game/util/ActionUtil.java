@@ -35,7 +35,7 @@ public class ActionUtil {
 				Optional<Unit> u = game.getUnitAt(loc2);
 
 				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance()) continue;
-				if((u.isPresent() && u.get().getPlayer() != unit.getPlayer())) {
+				if((u.isPresent() && u.get().getPlayer() != unit.getPlayer())) {										//TODO: Check if attackable player is in attackrange
 					if(attackables.contains(loc2)) continue;
 					attackables.add(loc2);
 					continue;

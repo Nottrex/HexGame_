@@ -225,6 +225,7 @@ public class Window extends JFrame implements Runnable {
 					if (pa.canAttack().contains(l)) {
 						//TODO: ATTACK
 						System.out.println("HE CAN ATTACK " + l);
+						game.attackUnit(u.get(), u2.get());
 					} else selecetedField = l;
 				}
 			}

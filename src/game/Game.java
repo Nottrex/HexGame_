@@ -22,7 +22,7 @@ public class Game {
 		map = new GameMap(25, 25);
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
-		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 15, 15));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 20, 15));
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 		playerAmount = 2;
