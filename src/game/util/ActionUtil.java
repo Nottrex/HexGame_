@@ -33,7 +33,7 @@ public class ActionUtil {
 
 				int distance = directionLength.get(loc) + map.getFieldAt(loc2).getMovementCost();
 
-				Optional<Unit> u = game.getUnitAt(loc2);
+				Optional<Unit> u = map.getUnitAt(loc2);
 
 				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
 
@@ -60,14 +60,14 @@ public class ActionUtil {
 
 		List<Location> found = new ArrayList<>();
 		for (Location loc: directions.keySet()) {
-			Optional<Unit> u = game.getUnitAt(loc);
+			Optional<Unit> u = map.getUnitAt(loc);
 
 			if (!loc.equals(start) && (!u.isPresent())) {
 				found.add(loc);
 			}
 		}
 
-		game.getUnits().stream()
+		map.getUnits().stream()
 				.filter(u -> u.getPlayer() != unit.getPlayer())
 				.filter(u -> MapUtil.getDistance(unit.getX(), unit.getY(), u.getX(), u.getY()) >= unit.getType().getMinAttackDistance())
 				.filter(u -> MapUtil.getDistance(unit.getX(), unit.getY(), u.getX(), u.getY()) <= unit.getType().getMaxAttackDistance())

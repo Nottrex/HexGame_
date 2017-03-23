@@ -199,6 +199,9 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void onMouseClick(int x, int y) {
+		if (game == null) return;
+
+		GameMap m = game.getMap();
 		Location l = getHexFieldPosition(x, y);
 		if (selecetedField == null) {
 			if (game.getMap().getFieldAt(l) != Field.VOID)
@@ -209,28 +212,29 @@ public class Window extends JFrame implements Runnable {
 			if (game.getMap().getFieldAt(l) == Field.VOID) {
 				selecetedField = null;
 			} else {
-				Optional<Unit> u = game.getUnitAt(selecetedField);
-				Optional<Unit> u2 = game.getUnitAt(l);
+				Optional<Unit> u = m.getUnitAt(selecetedField);
+				Optional<Unit> u2 = m.getUnitAt(l);
 
 				if (u.isPresent() && !u2.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
 					pa = ActionUtil.getPossibleActions(game, u.get());
 
 					if (pa.canMoveTo().contains(l)) {
-						game.moveUnitTo(u.get(), l.x, l.y);
+						u.get().setX(l.x);
+						u.get().setY(l.y);
 					}
 
 					selecetedField = null;
 				} else if (u.isPresent() && u2.isPresent()) {
 					pa = ActionUtil.getPossibleActions(game, u.get());
 					if (u.get().getPlayer() == game.getPlayerTurn() && pa.canAttack().contains(l)) {
-						game.attackUnit(u.get(), u2.get());
+						//TODO: ATTACK UNITS?
 					} else selecetedField = l;
 				} else selecetedField = l;
 			}
 		}
 
 		if (selecetedField != null) {
-			Optional<Unit> u = game.getUnitAt(selecetedField);
+			Optional<Unit> u = m.getUnitAt(selecetedField);
 			if (u.isPresent()) pa = ActionUtil.getPossibleActions(game, u.get());
 		}
 
@@ -281,7 +285,7 @@ public class Window extends JFrame implements Runnable {
 			}
 		}
 
-		for (Unit u: game.getUnits()) {
+		for (Unit u: m.getUnits()) {
 			UnitType ut = u.getType();
 			double w = wx*ut.getSize();
 			double h = wy*ut.getSize();
@@ -298,7 +302,7 @@ public class Window extends JFrame implements Runnable {
 		if (selecetedField != null) {
 			drawHexField(selecetedField.x - m.getWidth()/2, selecetedField.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
 
-			Optional<Unit> u = game.getUnitAt(selecetedField);
+			Optional<Unit> u = m.getUnitAt(selecetedField);
 
 			if (u.isPresent()) {
 
@@ -356,7 +360,7 @@ public class Window extends JFrame implements Runnable {
 			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
 			g.drawString(f.getDisplayName(), lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
 
-			Optional<Unit> unit = game.getUnitAt(mouseLocation);
+			Optional<Unit> unit = m.getUnitAt(mouseLocation);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();
@@ -381,7 +385,7 @@ public class Window extends JFrame implements Runnable {
 			g.drawString(f.getDisplayName(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
 			g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
 
-			Optional<Unit> unit = game.getUnitAt(selecetedField);
+			Optional<Unit> unit = m.getUnitAt(selecetedField);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();

@@ -1,10 +1,18 @@
 package game;
 
 import game.enums.Field;
+import game.enums.PlayerColor;
+import game.enums.UnitType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class GameMap {
 	private Field[][] map;
 	private int width, height;
+	private List<Unit> units;
 
 	public GameMap(int width, int height) {
 		map = new Field[width][height];
@@ -15,6 +23,11 @@ public class GameMap {
 				map[x][y] = Field.values()[(int) (Math.random()*Field.values().length)];
 			}
 		}
+		units = new ArrayList<>();
+		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));
+		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 20, 15));
+		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 	}
 
 	public Field getFieldAt(Location l) {
@@ -33,7 +46,32 @@ public class GameMap {
 		if (x < 0 || x >= width || y < 0 || y >= height) return;
 		map[x][y] = field;
 	}
-	
+
+	public Optional<Unit> getUnitAt(Location loc) {
+		return units.stream().filter(u -> u.getX() == loc.x && u.getY() == loc.y).findAny();
+	}
+
+	public Optional<Unit> getUnitAt(int x, int y) {
+		return units.stream().filter(u -> u.getX() == x && u.getY() == y).findAny();
+	}
+
+	public List<Unit> playerUnits(PlayerColor player) {
+		return units.stream()
+				.filter(u -> u.getPlayer() == player)
+				.collect(Collectors.toList());
+	}
+
+	public List<Unit> activePlayerUnits(PlayerColor player) {
+		return units.stream()
+				.filter(u -> u.getPlayer() == player)
+				.filter(u -> u.isActive())
+				.collect(Collectors.toList());
+	}
+
+	public List<Unit> getUnits() {
+		return units;
+	}
+
 	public int getWidth() {
 		return width;
 	}
