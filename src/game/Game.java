@@ -59,7 +59,7 @@ public class Game {
 	}
 
 	public void attackUnit(Unit unit1, Unit unit2) {
-
+		//TODO: Attacks/ Fights
 	}
 
 	public List<Unit> playerUnits(PlayerColor player) {

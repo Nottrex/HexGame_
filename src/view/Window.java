@@ -215,16 +215,14 @@ public class Window extends JFrame implements Runnable {
 				if (u.isPresent() && !u2.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
 					pa = ActionUtil.getPossibleActions(game, u.get());
 
-					if(pa.canMoveTo().contains(l)) {
+					if (pa.canMoveTo().contains(l)) {
 						game.moveUnitTo(u.get(), l.x, l.y);
 					}
 
 					selecetedField = null;
-				} else if(u.isPresent() && u2.isPresent()) {
+				} else if (u.isPresent() && u2.isPresent()) {
 					pa = ActionUtil.getPossibleActions(game, u.get());
-					if (pa.canAttack().contains(l)) {
-						//TODO: ATTACK
-						System.out.println("HE CAN ATTACK " + l);
+					if (u.get().getPlayer() == game.getPlayerTurn() && pa.canAttack().contains(l)) {
 						game.attackUnit(u.get(), u2.get());
 					} else selecetedField = l;
 				}
