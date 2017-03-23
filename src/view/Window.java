@@ -34,6 +34,7 @@ public class Window extends JFrame implements Runnable {
 	private int mouseX = 0, mouseY = 0;
 
 	private boolean stop = false;
+
 	//Gamestuff
 	private Game game;
 	private List<PlayerColor> localPlayers;
@@ -177,6 +178,7 @@ public class Window extends JFrame implements Runnable {
 
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/select2");
+		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay_Red");
 
 		centerCamera();
 		redrawTopBar();
@@ -210,12 +212,19 @@ public class Window extends JFrame implements Runnable {
 				Optional<Unit> u = game.getUnitAt(selecetedField);
 				Optional<Unit> u2 = game.getUnitAt(l);
 
-				if (u.isPresent() && !u2.isPresent()) {
-					game.moveUnitTo(u.get(), l.x, l.y);
+				if (u.isPresent() && !u2.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
+					pa = ActionUtil.getPossibleActions(game, u.get());
+
+					if (pa.canMoveTo().contains(l)) {
+						game.moveUnitTo(u.get(), l.x, l.y);
+					}
 
 					selecetedField = null;
-				} else {
-					selecetedField = l;
+				} else if (u.isPresent() && u2.isPresent()) {
+					pa = ActionUtil.getPossibleActions(game, u.get());
+					if (u.get().getPlayer() == game.getPlayerTurn() && pa.canAttack().contains(l)) {
+						game.attackUnit(u.get(), u2.get());
+					} else selecetedField = l;
 				}
 			}
 		}
@@ -299,6 +308,10 @@ public class Window extends JFrame implements Runnable {
 
 				for (Location target: pa.canMoveTo()) {
 					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+				}
+
+				for (Location target: pa.canAttack()) {
+					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
 				}
 			}
 		}
