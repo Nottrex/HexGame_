@@ -15,7 +15,8 @@ public class ActionUtil {
 
 		Map<Location, Integer> directionLength = new HashMap<>();
 		Map<Location, List<Direction>> directions = new HashMap<>();
-		PriorityQueue<Location> open = new PriorityQueue<>((o1, o2) -> (int) Math.signum(directionLength.get(o1)-directionLength.get(o2)));
+		List<Location> attackables = new ArrayList<>();
+ 		PriorityQueue<Location> open = new PriorityQueue<>((o1, o2) -> (int) Math.signum(directionLength.get(o1)-directionLength.get(o2)));
 
 		Location start = new Location(unit.getX(), unit.getY());
 		directions.put(start, new ArrayList<>());
@@ -33,7 +34,12 @@ public class ActionUtil {
 
 				Optional<Unit> u = game.getUnitAt(loc2);
 
-				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
+				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance()) continue;
+				if((u.isPresent() && u.get().getPlayer() != unit.getPlayer())) {
+					if(attackables.contains(loc2)) continue;
+					attackables.add(loc2);
+					continue;
+				}
 
 				if (directionLength.containsKey(loc2)) {
 					if (directionLength.get(loc2) <= distance) continue;
@@ -61,6 +67,6 @@ public class ActionUtil {
 			}
 		}
 
-		return new PossibleActions(found, directions, new ArrayList<>());
+		return new PossibleActions(found, directions, attackables);
 	}
 }

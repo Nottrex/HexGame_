@@ -178,6 +178,7 @@ public class Window extends JFrame implements Runnable {
 
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/select2");
+		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay_Red");
 
 		centerCamera();
 		redrawTopBar();
@@ -308,6 +309,10 @@ public class Window extends JFrame implements Runnable {
 
 				for (Location target: pa.canMoveTo()) {
 					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+				}
+
+				for (Location target: pa.canAttack()) {
+					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
 				}
 			}
 		}
