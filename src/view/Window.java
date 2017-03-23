@@ -177,8 +177,8 @@ public class Window extends JFrame implements Runnable {
 		localPlayers.add(PlayerColor.RED);
 
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
-		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/select2");
-		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay_Red");
+		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/overlay_Yellow");
+		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/overlay_Red");
 
 		centerCamera();
 		redrawTopBar();
