@@ -183,7 +183,7 @@ public class Window extends JFrame implements Runnable {
 			for (int y = 0; y < m.getHeight(); y++) {
 				if (m.getFieldAt(x, y).getTextureName() == null) continue;
 
-				drawHexField(x - m.getWidth()/2, y - m.getHeight()/2, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), wx, wy);
+				drawHexField(x, y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), wx, wy);
 			}
 		}
 
@@ -192,17 +192,17 @@ public class Window extends JFrame implements Runnable {
 			double w = wx*ut.getSize();
 			double h = wy*ut.getSize();
 
-			double py = (u.getY() - m.getHeight()/2)*(Constants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
-			double px = (u.getX() - m.getWidth()/2)*wx - (u.getY() - m.getHeight()/2)*wy/(2*Constants.HEX_TILE_XY_RATIO) + (wx-w)/2;
+			double py = (u.getY())*(Constants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
+			double px = (u.getX())*wx - (u.getY())*wy/(2*Constants.HEX_TILE_XY_RATIO) + (wx-w)/2;
 
 			g.drawImage(TextureHandler.getImagePng("units_" + ut.getTextureName() + "_" + u.getPlayer().getTextureName()), (int) px, (int) py, (int) w, (int) h, null);
 		}
 
 		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
-		drawHexField(mloc.x - m.getWidth()/2, mloc.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
+		drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
 		if (selecetedField != null) {
-			drawHexField(selecetedField.x - m.getWidth()/2, selecetedField.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+			drawHexField(selecetedField.x, selecetedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
 
 			Optional<Unit> u = m.getUnitAt(selecetedField);
 
@@ -213,11 +213,11 @@ public class Window extends JFrame implements Runnable {
 				}
 
 				for (Location target: pa.canMoveTo()) {
-					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
+					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
 				}
 
 				for (Location target: pa.canAttack()) {
-					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
+					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
 				}
 			}
 		}
@@ -313,21 +313,19 @@ public class Window extends JFrame implements Runnable {
 
 		cam.tzoom = (m.getHeight()*Constants.HEX_TILE_XY_RATIO*Constants.HEX_TILE_XY_RATIO) / center.getHeight();
 
-		cam.ty = (Constants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2;
-		cam.tx = 0.5 - cam.tzoom*center.getWidth()/2;
+		cam.ty = (Constants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)*Constants.HEX_TILE_XY_RATIO*Constants.HEX_TILE_YY_RATIO;
+		cam.tx = 0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4);
 	}
 
 	private Location getHexFieldPosition(int px, int py) {
+		double dy = (py + cam.y/cam.zoom) / ((Constants.HEX_TILE_YY_RATIO)*Constants.HEX_TILE_XY_RATIO/cam.zoom);
 
-		GameMap m = game.getMap();
-
-		double dy = (py + cam.y/cam.zoom) / ((Constants.HEX_TILE_YY_RATIO)*Constants.HEX_TILE_XY_RATIO/cam.zoom) + m.getHeight()/2;
-		int y = (int) Math.floor(dy);
-		int x = (int) Math.floor((px + cam.x/cam.zoom + (y - m.getHeight()/2)*(Constants.HEX_TILE_XY_RATIO/cam.zoom)/(2*Constants.HEX_TILE_XY_RATIO)) * cam.zoom + m.getWidth()/2);
+		int	y = (int) Math.floor(dy);
+		int	x = (int) Math.floor((px + cam.x/cam.zoom + (y)*(Constants.HEX_TILE_XY_RATIO/cam.zoom)/(2*Constants.HEX_TILE_XY_RATIO)) * cam.zoom);
 
 		if ((dy%1) <= (1-Constants.HEX_TILE_YY_RATIO) / (Constants.HEX_TILE_YY_RATIO)) {
 			int my = (int) Math.floor(dy);
-			double vx = ((px + cam.x/cam.zoom + (my - m.getHeight()/2)*(Constants.HEX_TILE_XY_RATIO/cam.zoom)/(2*Constants.HEX_TILE_XY_RATIO)) * cam.zoom + m.getWidth()/2) % 1;
+			double vx = ((px + cam.x/cam.zoom + (my)*(Constants.HEX_TILE_XY_RATIO/cam.zoom)/(2*Constants.HEX_TILE_XY_RATIO)) * cam.zoom ) % 1;
 			double vy = ((dy%1) / ((1-Constants.HEX_TILE_YY_RATIO) / (Constants.HEX_TILE_YY_RATIO)))/2;
 
 			if (vx < 0.5) {
