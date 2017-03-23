@@ -1,5 +1,6 @@
 package view;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import game.*;
 import game.enums.Field;
 import game.enums.PlayerColor;
@@ -20,6 +21,7 @@ import javax.swing.*;
 public class Window extends JFrame implements Runnable {
 	private static final long serialVersionUID = 1L;
 
+	//Window stuff
 	private Insets i;
 	private Camera cam;
 
@@ -28,12 +30,13 @@ public class Window extends JFrame implements Runnable {
 		private JLabel top_info;
 	private JPanel bottom;
 	private JPanel center;
+	private boolean stop = false;
 
+	//Listener-pregamestuff
 	private boolean mousePressedInGame = false;
 	private int lastX = 0, lastY = 0;
 	private int mouseX = 0, mouseY = 0;
-
-	private boolean stop = false;
+	private int totalDistanceDragged = 0;
 
 	//Gamestuff
 	private Game game;
@@ -87,11 +90,15 @@ public class Window extends JFrame implements Runnable {
 		this.addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
+				//Update cam dragging
 				if (mousePressedInGame) {
+					totalDistanceDragged += Math.abs(e.getX()-lastX) + Math.abs(e.getY()-lastY);
 					onMouseMove(e.getX() - lastX, e.getY() - lastY);
 					lastX = e.getX();
 					lastY = e.getY();
 				}
+
+				//Update mouse move
 				int x = e.getX() - i.left;
 				int y = e.getY() - i.top;
 				if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
@@ -131,6 +138,23 @@ public class Window extends JFrame implements Runnable {
 					mousePressedInGame = true;
 					lastX = e.getX();
 					lastY = e.getY();
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_KLICK" then it should still count as a klick
+				if (mousePressedInGame && totalDistanceDragged > 0) {
+					if (totalDistanceDragged <= Constants.MAXIMUM_DRAG_DISTANCE_FOR_KLICK) {
+						int x = e.getX() - i.left;
+						int y = e.getY() - i.top;
+						if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
+							onMouseClick(x - center.getX(), y - center.getY());
+						}
+					}
+
+					totalDistanceDragged = 0;
+					mousePressedInGame = false;
 				}
 			}
 		});
@@ -179,6 +203,7 @@ public class Window extends JFrame implements Runnable {
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/overlay_Yellow");
 		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/overlay_Red");
+		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/overlay_Blue");
 
 		centerCamera();
 		redrawTopBar();
@@ -311,7 +336,7 @@ public class Window extends JFrame implements Runnable {
 				}
 
 				for (Location target: pa.canMoveTo()) {
-					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+					drawHexField(target.x - m.getWidth()/2, target.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
 				}
 
 				for (Location target: pa.canAttack()) {
