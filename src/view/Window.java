@@ -225,7 +225,7 @@ public class Window extends JFrame implements Runnable {
 					if (u.get().getPlayer() == game.getPlayerTurn() && pa.canAttack().contains(l)) {
 						game.attackUnit(u.get(), u2.get());
 					} else selecetedField = l;
-				}
+				} else selecetedField = l;
 			}
 		}
 

@@ -1,7 +1,7 @@
 package game.enums;
 
 public enum PlayerColor {
-	BLUE("blue", "Blue"), RED("red", "Red"), GREEN("green", "Green"), GREY("grey", "Grey");
+	BLUE("blue", "Blue"), RED("red", "Red"), GREEN("green", "Green"), YELLOW("yellow", "Yellow");
 
 	private String textureName, displayName;
 	PlayerColor(String textureName, String displayName) {
