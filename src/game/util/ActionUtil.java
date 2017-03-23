@@ -8,6 +8,7 @@ import game.enums.Direction;
 import game.enums.Field;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ActionUtil {
 	public static PossibleActions getPossibleActions(Game game, Unit unit) {
@@ -34,21 +35,19 @@ public class ActionUtil {
 
 				Optional<Unit> u = game.getUnitAt(loc2);
 
-				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance()) continue;
-				if (u.isPresent() && u.get().getPlayer() != unit.getPlayer()) {
-					if(attackables.contains(loc2)) continue;
-					attackables.add(loc2);
-					continue;
-				}
+				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
+
 				if (distance > unit.getType().getMovementDistance()) continue;
 
 				if (directionLength.containsKey(loc2)) {
 					if (directionLength.get(loc2) <= distance) continue;
 
-					List<Direction> dir = new ArrayList<>(directions.get(loc));
+					/*List<Direction> dir = new ArrayList<>(directions.get(loc));
 					dir.add(d);
 					directions.put(loc2, dir);
-					directionLength.put(loc2, distance);
+					directionLength.put(loc2, distance);*/
+					//Can never ever happen xD
+
 				} else {
 					List<Direction> dir = new ArrayList<>(directions.get(loc));
 					dir.add(d);
@@ -67,6 +66,12 @@ public class ActionUtil {
 				found.add(loc);
 			}
 		}
+
+		game.getUnits().stream()
+				.filter(u -> u.getPlayer() != unit.getPlayer())
+				.filter(u -> MapUtil.getDistance(unit.getX(), unit.getY(), u.getX(), u.getY()) >= unit.getType().getMinAttackDistance())
+				.filter(u -> MapUtil.getDistance(unit.getX(), unit.getY(), u.getX(), u.getY()) <= unit.getType().getMaxAttackDistance())
+				.forEach(u -> attackables.add(new Location(u.getX(), u.getY())));
 
 		return new PossibleActions(found, directions, attackables);
 	}
