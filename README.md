@@ -4,7 +4,7 @@ HexGame in Java
 
 ToDo List:
   
-	https://trello.com/b/PjcflNYq/heygame
+	https://trello.com/b/PjcflNYq/hexgame
 
 Graphics by Kenney:
 
