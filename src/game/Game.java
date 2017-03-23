@@ -12,7 +12,7 @@ public class Game {
 
 	private GameMap map;
 	private int playerAmount;
-	private PlayerColor[] player;
+	private PlayerColor[] players;
 
 	private int round;
 	private int playerTurn;
@@ -20,7 +20,7 @@ public class Game {
 	public Game() {
 		map = new GameMap(25, 25);
 		playerAmount = 2;
-		player = new PlayerColor[]{PlayerColor.BLUE, PlayerColor.RED};
+		players = new PlayerColor[]{PlayerColor.BLUE, PlayerColor.RED};
 	}
 
 	public void nextRound() {
@@ -47,8 +47,8 @@ public class Game {
 		return playerAmount;
 	}
 
-	public PlayerColor[] getPlayer() {
-		return player;
+	public PlayerColor[] getPlayers() {
+		return players;
 	}
 
 	public int getRound() {
@@ -56,7 +56,7 @@ public class Game {
 	}
 
 	public PlayerColor getPlayerTurn() {
-		return player[playerTurn];
+		return players[playerTurn];
 	}
 
 	public int getPlayerTurnID() {

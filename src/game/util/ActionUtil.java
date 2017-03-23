@@ -17,6 +17,8 @@ public class ActionUtil {
 		Map<Location, Integer> directionLength = new HashMap<>();
 		Map<Location, List<Direction>> directions = new HashMap<>();
 		List<Location> attackables = new ArrayList<>();
+		Map<Location, List<Direction>> attackDirections = new HashMap<>();
+
  		PriorityQueue<Location> open = new PriorityQueue<>((o1, o2) -> (int) Math.signum(directionLength.get(o1)-directionLength.get(o2)));
 
 		Location start = new Location(unit.getX(), unit.getY());
@@ -28,10 +30,24 @@ public class ActionUtil {
 		while (!open.isEmpty()) {
 			Location loc = open.poll();
 
+			for (Unit u: map.getUnits()) {
+				int d = MapUtil.getDistance(loc.x, loc.y, u.getX(), u.getY());
+				Location a = new Location(u.getX(), u.getY());
+				if (u.getPlayer() != unit.getPlayer() && d >= unit.getType().getMinAttackDistance() && d <= unit.getType().getMaxAttackDistance() && !attackables.contains(a)) {
+					attackables.add(a);
+					attackDirections.put(a, directions.get(loc));
+				}
+			}
+
+
 			for (Direction d: Direction.values()) {
 				Location loc2 = d.applyMovement(loc);
 
-				int distance = directionLength.get(loc) + map.getFieldAt(loc2).getMovementCost();
+				boolean zoneOfControlOfEnemy = map.getUnits().stream()
+						.filter(u -> u.getPlayer() != unit.getPlayer())
+						.anyMatch(u -> MapUtil.getDistance(loc2.x, loc2.y, u.getX(), u.getY()) == 1);
+
+				int distance = directionLength.get(loc) + map.getFieldAt(loc2).getMovementCost() + (zoneOfControlOfEnemy ? 1 : 0);
 
 				Optional<Unit> u = map.getUnitAt(loc2);
 
@@ -67,12 +83,6 @@ public class ActionUtil {
 			}
 		}
 
-		map.getUnits().stream()
-				.filter(u -> u.getPlayer() != unit.getPlayer())
-				.filter(u -> MapUtil.getDistance(unit.getX(), unit.getY(), u.getX(), u.getY()) >= unit.getType().getMinAttackDistance())
-				.filter(u -> MapUtil.getDistance(unit.getX(), unit.getY(), u.getX(), u.getY()) <= unit.getType().getMaxAttackDistance())
-				.forEach(u -> attackables.add(new Location(u.getX(), u.getY())));
-
-		return new PossibleActions(found, directions, attackables);
+		return new PossibleActions(found, directions, attackables, attackDirections);
 	}
 }
