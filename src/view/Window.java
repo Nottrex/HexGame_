@@ -1,6 +1,5 @@
 package view;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import game.*;
 import game.enums.Field;
 import game.enums.PlayerColor;
@@ -22,21 +21,18 @@ public class Window extends JFrame implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	//Window stuff
-	private Insets i;
-	private Camera cam;
+	protected Insets i;
+	protected JPanel panel;
+	protected JPanel top;
+	protected JLabel top_info;
+	protected JPanel bottom;
+	protected JPanel center;
 
-	private JPanel panel;
-	private JPanel top;
-		private JLabel top_info;
-	private JPanel bottom;
-	private JPanel center;
+	private Camera cam;
 	private boolean stop = false;
 
-	//Listener-pregamestuff
-	private boolean mousePressedInGame = false;
-	private int lastX = 0, lastY = 0;
-	private int mouseX = 0, mouseY = 0;
-	private int totalDistanceDragged = 0;
+	private MouseInputListener mouseListener;
+	private KeyInputListener keyListener;
 
 	//Gamestuff
 	private Game game;
@@ -50,137 +46,18 @@ public class Window extends JFrame implements Runnable {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 
-		panel = new JPanel(new BorderLayout());
-		this.setContentPane(panel);
-
-		top = new JPanel(new BorderLayout());
-		top.setBackground(Constants.COLOR_TOPBAR_BACKRGOUND);
-		top.setPreferredSize(new Dimension(500, 25));
-
-		top_info = new JLabel("Test", SwingConstants.CENTER);
-		top.add(top_info, BorderLayout.CENTER);
-
-		bottom = new JPanel(null) {
-			@Override
-			public void repaint() {
-				redrawInfoBar();
-			}
-		};
-		bottom.setPreferredSize(new Dimension(800, 100));
-		bottom.setBackground(Constants.COLOR_INFOBAR_BACKGROUND);
-
-		center = new JPanel(null) {
-			@Override
-			public void repaint() {
-				redrawGame();
-			}
-		};
-		center.setBackground(Constants.COLOR_GAME_BACKGROUND);
-
-		panel.add(top, BorderLayout.PAGE_START);
-		panel.add(center, BorderLayout.CENTER);
-		panel.add(bottom, BorderLayout.PAGE_END);
-
+		initComponents();
 
 		i = getInsets();
 		cam = new Camera();
 
-		this.addMouseWheelListener(e -> onMouseWheel(e.getScrollAmount() * e.getPreciseWheelRotation()));
+		mouseListener 	= new MouseInputListener(this);
+		keyListener 	= new KeyInputListener(this);
 
-		this.addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				//Update cam dragging
-				if (mousePressedInGame) {
-					totalDistanceDragged += Math.abs(e.getX()-lastX) + Math.abs(e.getY()-lastY);
-					onMouseMove(e.getX() - lastX, e.getY() - lastY);
-					lastX = e.getX();
-					lastY = e.getY();
-				}
-
-				//Update mouse move
-				int x = e.getX() - i.left;
-				int y = e.getY() - i.top;
-				if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
-					mouseX = x-center.getX();
-					mouseY = y-center.getY();
-					redrawInfoBar();
-				}
-			}
-
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				int x = e.getX() - i.left;
-				int y = e.getY() - i.top;
-				if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
-					mouseX = x-center.getX();
-					mouseY = y-center.getY();
-					redrawInfoBar();
-				}
-			}
-		});
-
-		this.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int x = e.getX() - i.left;
-				int y = e.getY() - i.top;
-				if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
-					onMouseClick(x - center.getX(), y - center.getY());
-				}
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				int x = e.getX() - i.left;
-				int y = e.getY() - i.top;
-				if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
-					mousePressedInGame = true;
-					lastX = e.getX();
-					lastY = e.getY();
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_CLICK" then it should still count as a click
-				if (mousePressedInGame && totalDistanceDragged > 0) {
-					if (totalDistanceDragged <= Constants.MAXIMUM_DRAG_DISTANCE_FOR_CLICK) {
-						int x = e.getX() - i.left;
-						int y = e.getY() - i.top;
-						if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
-							onMouseClick(x - center.getX(), y - center.getY());
-						}
-					}
-
-					totalDistanceDragged = 0;
-					mousePressedInGame = false;
-				}
-			}
-		});
-
-		this.addKeyListener(new KeyAdapter() {
-
-			HashMap<Integer, Boolean> pressed = new HashMap<>();
-
-			private boolean isPressed(int i) {
-				return pressed.containsKey(i) ? pressed.get(i) : false;
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				pressed.put(e.getKeyCode(), false);
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (!isPressed(e.getKeyCode())) {
-					onKeyType(e.getKeyCode());
-				}
-
-				pressed.put(e.getKeyCode(), true);
-			}
-		});
+		this.addMouseWheelListener(mouseListener);
+		this.addMouseMotionListener(mouseListener);
+		this.addMouseListener(mouseListener);
+		this.addKeyListener(keyListener);
 
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -209,7 +86,7 @@ public class Window extends JFrame implements Runnable {
 		redrawTopBar();
 	}
 
-	private void onMouseWheel(double d) {
+	protected void onMouseWheel(double d) {
 		double a = 1;
 		if (d < 0) {
 			a = 1/Constants.ZOOM;
@@ -223,7 +100,7 @@ public class Window extends JFrame implements Runnable {
 		cam.ty *= a;
 	}
 
-	private void onMouseClick(int x, int y) {
+	protected void onMouseClick(int x, int y) {
 		if (game == null) return;
 
 		GameMap m = game.getMap();
@@ -266,23 +143,23 @@ public class Window extends JFrame implements Runnable {
 		redrawInfoBar();
 	}
 
-	private void onMouseMove(int dx, int dy) {
+	protected void onMouseDrag(int dx, int dy) {
 		cam.tx -= (cam.zoom*dx);
 		cam.ty -= (cam.zoom*dy);
 	}
 
-	private void onKeyType(int keyCode) {
+	protected void onKeyType(int keyCode) {
 		if (keyCode == KeyEvent.VK_C) {
 			centerCamera();
 		}
 	}
 
-	private void redrawTopBar() {
+	protected void redrawTopBar() {
 		top_info.setText("Round: " + game.getRound() + "   " + game.getPlayerTurn() + "   " + game.getPlayerTurnID() + " / " + game.getPlayerAmount());
 	}
 
 	private boolean drawing = false;
-	private void redrawGame() {
+	protected void redrawGame() {
 		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || game == null || drawing) return;
 		drawing = true;
 
@@ -321,7 +198,7 @@ public class Window extends JFrame implements Runnable {
 			g.drawImage(TextureHandler.getImagePng("units_" + ut.getTextureName() + "_" + u.getPlayer().getTextureName()), (int) px, (int) py, (int) w, (int) h, null);
 		}
 
-		Location mloc = getHexFieldPosition(mouseX, mouseY);
+		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
 		drawHexField(mloc.x - m.getWidth()/2, mloc.y - m.getHeight()/2, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
 		if (selecetedField != null) {
@@ -357,7 +234,7 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private boolean drawing2 = false;
-	private void redrawInfoBar() {
+	protected void redrawInfoBar() {
 		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || game == null || drawing2) return;
 		drawing2 = true;
 
@@ -372,7 +249,7 @@ public class Window extends JFrame implements Runnable {
 		g.setColor(Color.WHITE);
 		int lx = (bottom.getWidth()-800)/2;
 
-		Location mouseLocation = getHexFieldPosition(mouseX, mouseY);
+		Location mouseLocation = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
 
 		if (mouseLocation != null) {
 			Field f = m.getFieldAt(mouseLocation);
@@ -475,5 +352,38 @@ public class Window extends JFrame implements Runnable {
 		while (!stop) {
 			redrawGame();
 		}
+	}
+
+	private void initComponents() {
+		panel = new JPanel(new BorderLayout());
+		this.setContentPane(panel);
+
+		top = new JPanel(new BorderLayout());
+		top.setBackground(Constants.COLOR_TOPBAR_BACKRGOUND);
+		top.setPreferredSize(new Dimension(500, 25));
+
+		top_info = new JLabel("Test", SwingConstants.CENTER);
+		top.add(top_info, BorderLayout.CENTER);
+
+		bottom = new JPanel(null) {
+			@Override
+			public void repaint() {
+				redrawInfoBar();
+			}
+		};
+		bottom.setPreferredSize(new Dimension(800, 100));
+		bottom.setBackground(Constants.COLOR_INFOBAR_BACKGROUND);
+
+		center = new JPanel(null) {
+			@Override
+			public void repaint() {
+				redrawGame();
+			}
+		};
+		center.setBackground(Constants.COLOR_GAME_BACKGROUND);
+
+		panel.add(top, BorderLayout.PAGE_START);
+		panel.add(center, BorderLayout.CENTER);
+		panel.add(bottom, BorderLayout.PAGE_END);
 	}
 }
