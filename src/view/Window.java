@@ -143,9 +143,9 @@ public class Window extends JFrame implements Runnable {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_KLICK" then it should still count as a klick
+				//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_CLICK" then it should still count as a click
 				if (mousePressedInGame && totalDistanceDragged > 0) {
-					if (totalDistanceDragged <= Constants.MAXIMUM_DRAG_DISTANCE_FOR_KLICK) {
+					if (totalDistanceDragged <= Constants.MAXIMUM_DRAG_DISTANCE_FOR_CLICK) {
 						int x = e.getX() - i.left;
 						int y = e.getY() - i.top;
 						if (x >= center.getX() && x < (center.getX() + center.getWidth()) && y >= center.getY() && y < (center.getY() + center.getHeight())) {
