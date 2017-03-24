@@ -9,6 +9,7 @@ import game.util.ActionUtil;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
@@ -178,11 +179,20 @@ public class Window extends JFrame implements Runnable {
 
 
 		{	//Draw TopBar
-			int width = 350;
-			int height = 49;
+			g.setColor(Color.WHITE);
+			int height = center.getHeight()/15;
+			int width = (height*380)/49;
 			int x = (center.getWidth()-width)/2;
 
+			String text = String.format("Round %d   %d / %d   %s", controller.game.getRound(), controller.game.getPlayerTurnID(), controller.game.getPlayerAmount(), controller.game.getPlayerTurn().getDisplayName());
+
+			Font font = g.getFont().deriveFont(height*0.5f);
+			g.setFont(font);
+
+			double fWidth = g.getFontMetrics(font).getStringBounds(text, g).getWidth();
+
 			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().getTextureName()), x, 0, width, height, null);
+			g.drawString(text, (int) (x + (width-fWidth)/2), height*3/4);
 		}
 
 		center.getGraphics().drawImage(buffer, 0, 0, null);
