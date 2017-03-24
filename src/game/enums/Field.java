@@ -7,7 +7,7 @@ import game.TextureHandler;
  * 
  */
 public enum Field {
-	WATER("water", "Water", 4, true, true),
+	WATER("water", "Water", 1, true, true),
 	FOREST("forest", "Forest", 2, false, true),
 	GRASS("grass", "Grass", 1, false, true),
 	GRASS_ROCK("grass_rock", "Grass-rock", 3, false, true),
@@ -16,24 +16,24 @@ public enum Field {
 	SAND("sand", "Sand", 2, false, true),
 	MARS("mars", "Mars", 1, false, true),
 	STONE("stone", "Stone", 1, false, true),
-	VOID(null, "Void", 999999999, false, true);
+	VOID(null, "Void", 999999999, false, false);
 
 
 	private String textureName, displayName;
 	private int movementCost;
 	private boolean waterTile;
-	private boolean accessable;
+	private boolean accessible;
 
-	Field(String textureName, String displayName, int movementCost, boolean waterTile, boolean accessable) {
+	Field(String textureName, String displayName, int movementCost, boolean waterTile, boolean accessible) {
 		this.textureName = textureName;
 		this.displayName = displayName;
 		this.movementCost = movementCost;
 		this.waterTile = waterTile;
-		this.accessable = accessable;
+		this.accessible = accessible;
 	}
 
-	public boolean isAccessable() {
-		return accessable;
+	public boolean isAccessible() {
+		return accessible;
 	}
 
 	public boolean isWaterTile() {

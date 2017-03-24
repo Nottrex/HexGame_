@@ -9,7 +9,6 @@ import game.enums.Field;
 import game.enums.UnitState;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ActionUtil {
 	public static PossibleActions getPossibleActions(Game game, Unit unit) {
@@ -56,7 +55,7 @@ public class ActionUtil {
 
 				Optional<Unit> u = map.getUnitAt(loc2);
 
-				if (!field.isAccessable() || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
+				if (!field.isAccessible() || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
 
 				if (!unit.getType().isFlying() && (field.isWaterTile() != unit.getType().isSwimming())) continue;
 

@@ -5,7 +5,6 @@ import game.GameMap;
 import game.Location;
 import game.Unit;
 import game.enums.Direction;
-import game.enums.Field;
 import game.enums.PlayerColor;
 import game.enums.UnitState;
 import game.util.ActionUtil;
@@ -40,10 +39,10 @@ public class Controller {
 
 		GameMap m = game.getMap();
 		if (selecetedField == null) {
-			if (game.getMap().getFieldAt(l).isAccessable())
+			if (game.getMap().getFieldAt(l).isAccessible())
 				selecetedField = l;
 		} else {
-			if (game.getMap().getFieldAt(l).isAccessable()) {
+			if (game.getMap().getFieldAt(l).isAccessible()) {
 				Optional<Unit> u = m.getUnitAt(selecetedField);
 				Optional<Unit> u2 = m.getUnitAt(l);
 
