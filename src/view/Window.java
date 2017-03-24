@@ -2,8 +2,8 @@ package view;
 
 import game.*;
 import game.enums.Field;
-import game.enums.PlayerColor;
 import game.enums.UnitType;
+import game.map.GameMap;
 import game.util.ActionUtil;
 
 import java.awt.*;
