@@ -88,9 +88,9 @@ public class Window extends JFrame implements Runnable {
 			a = Constants.ZOOM;
 		}
 
+		cam.tx -= (mouseListener.getMouseX())*cam.tzoom * (a-1);
+		cam.ty -= (mouseListener.getMouseY())*cam.tzoom * (a-1);
 		cam.tzoom *= a;
-		cam.tx = (center.getWidth() / 2 ) * (a - 1f) + a * cam.tx;
-		cam.ty = (center.getHeight() / 2) * (a - 1f) + a * cam.ty;
 	}
 
 	protected void onMouseDrag(int dx, int dy) {
