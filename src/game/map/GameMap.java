@@ -17,22 +17,6 @@ public class GameMap {
 	private int width, height;
 	private List<Unit> units;
 
-	public GameMap(int width, int height) {
-		map = new Field[width][height];
-		this.width = width;
-		this.height = height;
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				map[x][y] = Field.values()[(int) (Math.random()*Field.values().length)];
-			}
-		}
-		units = new ArrayList<>();
-		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
-		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));
-		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 20, 15));
-		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
-	}
-
 	public GameMap(MapGenerator gm) {
 		this.map = gm.getMap();
 		this.width = map.length;

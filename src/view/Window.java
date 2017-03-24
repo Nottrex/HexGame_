@@ -24,6 +24,7 @@ public class Window extends JFrame implements Runnable {
 	protected JPanel bottom;
 	protected JPanel center;
 
+	private int fps = 0;
 	private Camera cam;
 	private boolean stop = false;
 
@@ -107,9 +108,8 @@ public class Window extends JFrame implements Runnable {
 
 	private boolean drawing = false;
 	protected void redrawGame() {
-		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing) return;
+		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || cam == null) return;
 		drawing = true;
-
 
 		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
@@ -117,11 +117,6 @@ public class Window extends JFrame implements Runnable {
 
 		g.setColor(Constants.COLOR_GAME_BACKGROUND);
 		g.fillRect(0, 0, center.getWidth(), center.getHeight());
-
-		if (controller == null || controller.game == null || cam == null) {
-			drawing = false;
-			return;
-		}
 
 		cam.update();
 
@@ -193,7 +188,10 @@ public class Window extends JFrame implements Runnable {
 
 			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().getTextureName()), x, 0, width, height, null);
 			g.drawString(text, (int) (x + (width-fWidth)/2), height*3/4);
+
+			g.drawString("FPS: " + fps, 5, (int) (height * 0.5)+5);
 		}
+
 
 		center.getGraphics().drawImage(buffer, 0, 0, null);
 		drawing = false;
@@ -323,8 +321,16 @@ public class Window extends JFrame implements Runnable {
 
 	@Override
 	public void run() {
+		long t;
+		int i = 100;
 		while (!stop) {
+			i++;
+			t = System.nanoTime();
 			redrawGame();
+			if (i >= 30) {
+				i = 0;
+				fps = (int) (1000000000/(System.nanoTime()-t));
+			}
 		}
 	}
 
