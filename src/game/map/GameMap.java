@@ -33,15 +33,11 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 	}
 
-	public GameMap(Field[][] map) {
-		this.map = map;
+	public GameMap(MapGenerator gm) {
+		this.map = gm.getMap();
 		this.width = map.length;
 		this.height = map[0].length;
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				map[x][y] = Field.values()[(int) (Math.random()*Field.values().length)];
-			}
-		}
+
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));

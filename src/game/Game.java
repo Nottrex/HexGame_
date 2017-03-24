@@ -4,6 +4,7 @@ import game.enums.PlayerColor;
 import game.enums.UnitState;
 import game.map.GameMap;
 import game.map.MapGenerator;
+import game.map.presets.HexPreset;
 import game.map.presets.SquarePreset;
 
 public class Game {
@@ -16,7 +17,7 @@ public class Game {
 	private int playerTurn;
 
 	public Game() {
-		map = new GameMap(new MapGenerator(new SquarePreset(40, 40)).getMap());
+		map = new GameMap(new MapGenerator(new HexPreset(40, 40)));
 		playerAmount = 2;
 		players = new PlayerColor[]{PlayerColor.BLUE, PlayerColor.RED};
 	}
