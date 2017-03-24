@@ -4,9 +4,8 @@ import java.util.Random;
 
 public class ValueNoise_2D {
 	
-	private int height;
 	private int width;
-	
+
 	private int wantedHeight;
 	private int wantedWidth;
 	
@@ -18,13 +17,12 @@ public class ValueNoise_2D {
 	private float alpha = 20;
 
 	public ValueNoise_2D(int w, int h){
-		height = Math.max(w, h);
 		width = Math.max(w, h);
 		
 		wantedHeight = h;
 		wantedWidth = w;
 		
-		heightMap = new float[width][height];
+		heightMap = new float[width][width];
 	}
 	
 	public void calculate(){
@@ -48,7 +46,7 @@ public class ValueNoise_2D {
 			for(int x = 0; x < width; x++){
 				for(int y = 0; y < width; y++){
 					float currentX = x / (float)width * currentFrequenzyX;
-					float currentY = y / (float)height * currentFrequenzyY;
+					float currentY = y / (float)width * currentFrequenzyY;
 					int indexX = (int)currentX;
 					int indexY = (int)currentY;
 					
@@ -71,27 +69,19 @@ public class ValueNoise_2D {
 
 	private void normalize(){
 		float min = Float.MAX_VALUE;
+		float max = Float.MIN_VALUE;
 		for(int x = 0; x < width; x++){
 			for(int y = 0; y < width; y++){
 				if(heightMap[x][y] < min) min = heightMap[x][y];
+				if(heightMap[x][y] > max) max = heightMap[x][y];
 			}
 		}
+
+		max -= min;
 		
 		for(int x = 0; x < width; x++){
 			for(int y = 0; y < width; y++){
 				heightMap[x][y] -= min;
-			}
-		}
-		
-		float max = Float.MIN_VALUE;
-		for(int x = 0; x < width; x++){
-			for(int y = 0; y < width; y++){
-				if(heightMap[x][y] > max) max = heightMap[x][y]; 
-			}
-		}
-		
-		for(int x = 0; x < width; x++){
-			for(int y = 0; y < width; y++){
 				heightMap[x][y] /= max;
 			}
 		}
@@ -103,7 +93,7 @@ public class ValueNoise_2D {
 	}
 
 	public float[][] getHeightMap() {
-		if(width == wantedWidth && height == wantedHeight)return heightMap;
+		if(width == wantedWidth && width == wantedHeight)return heightMap;
 		else{ 
 			float[][] realMap = new float[wantedWidth][wantedHeight];
 			for(int x = 0; x < wantedWidth; x++){
