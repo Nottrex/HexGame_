@@ -3,7 +3,7 @@ package game.enums;
 import game.TextureHandler;
 
 public enum UnitType {
-	TANK("tank", "Tank", 0.75, 5, 1, 2, false, false);
+	TANK("tank", "Tank", 0.75, 5, 1, 2, false, false, true);
 	
 	private int movementDistance;
 	private int minAttackDistance, maxAttackDistance;
@@ -11,8 +11,9 @@ public enum UnitType {
 	private String textureName, displayName;
 	private boolean flying;
 	private boolean swimming;
+	private boolean walking;
 
-	UnitType(String textureName, String displayName, double size, int movementDistance, int minAttackDistance, int maxAttackDistance, boolean flying, boolean swimming) {
+	UnitType(String textureName, String displayName, double size, int movementDistance, int minAttackDistance, int maxAttackDistance, boolean flying, boolean swimming, boolean walking) {
 		this.movementDistance = movementDistance;
 		this.textureName = textureName;
 		this.displayName = displayName;
@@ -22,6 +23,11 @@ public enum UnitType {
 
 		this.flying = flying;
 		this.swimming = swimming;
+		this.walking = walking;
+	}
+
+	public boolean isWalking() {
+		return walking;
 	}
 
 	public boolean isFlying() {

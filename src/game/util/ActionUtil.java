@@ -32,14 +32,18 @@ public class ActionUtil {
 
 			if (unit.getState() == UnitState.INACTIVE) continue;
 
-			for (Unit u: map.getUnits()) {
-				int d = MapUtil.getDistance(loc.x, loc.y, u.getX(), u.getY());
-				Location a = new Location(u.getX(), u.getY());
-				if (u.getPlayer() != unit.getPlayer() && d >= unit.getType().getMinAttackDistance() && d <= unit.getType().getMaxAttackDistance() && !attackables.contains(a)) {
-					attackables.add(a);
-					attackDirections.put(a, directions.get(loc));
+			Optional<Unit> unitLoc = map.getUnitAt(loc);
+			if (!unitLoc.isPresent() || unitLoc.get() == unit) {
+				for (Unit u: map.getUnits()) {
+					int d = MapUtil.getDistance(loc.x, loc.y, u.getX(), u.getY());
+					Location a = new Location(u.getX(), u.getY());
+					if (u.getPlayer() != unit.getPlayer() && d >= unit.getType().getMinAttackDistance() && d <= unit.getType().getMaxAttackDistance() && !attackables.contains(a)) {
+						attackables.add(a);
+						attackDirections.put(a, directions.get(loc));
+					}
 				}
 			}
+
 
 			if (unit.getState() != UnitState.ACTIVE) continue;
 
@@ -57,7 +61,7 @@ public class ActionUtil {
 
 				if (!field.isAccessible() || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
 
-				if (!unit.getType().isFlying() && (field.isWaterTile() != unit.getType().isSwimming())) continue;
+				if (!unit.getType().isFlying() && !(field.isWaterTile() && unit.getType().isSwimming()) && !(!field.isWaterTile()) && unit.getType().isWalking()) continue;
 
 				if (distance > unit.getType().getMovementDistance()) continue;
 
