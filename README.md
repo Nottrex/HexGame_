@@ -12,6 +12,7 @@ Graphics by Kenney:
 
 	http://kenney.nl/assets/sci-fi-rts
 
+	http://kenney.nl/assets/ui-pack
 
 	http://kenney.nl/assets/ui-pack-space-expansion
 
