@@ -34,11 +34,7 @@ public class Window extends JFrame implements Runnable {
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
 
-	//Gamestuff
-	private Game game;
-	private List<PlayerColor> localPlayers;
-	private Location selecetedField = null;
-	private PossibleActions pa = null;
+	private Controller controller;
 
 	public Window() {
 		super("HexGame");
@@ -72,10 +68,7 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void init() {
-		game = new Game();
-		localPlayers = new ArrayList<>();
-		localPlayers.add(PlayerColor.BLUE);
-		localPlayers.add(PlayerColor.RED);
+		controller = new Controller(this);
 
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
@@ -100,49 +93,6 @@ public class Window extends JFrame implements Runnable {
 		cam.ty *= a;
 	}
 
-	protected void onMouseClick(int x, int y) {
-		if (game == null) return;
-
-		GameMap m = game.getMap();
-		Location l = getHexFieldPosition(x, y);
-		if (selecetedField == null) {
-			if (game.getMap().getFieldAt(l) != Field.VOID)
-				selecetedField = l;
-		} else {
-
-
-			if (game.getMap().getFieldAt(l) == Field.VOID) {
-				selecetedField = null;
-			} else {
-				Optional<Unit> u = m.getUnitAt(selecetedField);
-				Optional<Unit> u2 = m.getUnitAt(l);
-
-				if (u.isPresent() && !u2.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
-					pa = ActionUtil.getPossibleActions(game, u.get());
-
-					if (pa.canMoveTo().contains(l)) {
-						u.get().setX(l.x);
-						u.get().setY(l.y);
-					}
-
-					selecetedField = null;
-				} else if (u.isPresent() && u2.isPresent()) {
-					pa = ActionUtil.getPossibleActions(game, u.get());
-					if (u.get().getPlayer() == game.getPlayerTurn() && pa.canAttack().contains(l)) {
-						//TODO: ATTACK UNITS?
-					} else selecetedField = l;
-				} else selecetedField = l;
-			}
-		}
-
-		if (selecetedField != null) {
-			Optional<Unit> u = m.getUnitAt(selecetedField);
-			if (u.isPresent()) pa = ActionUtil.getPossibleActions(game, u.get());
-		}
-
-		redrawInfoBar();
-	}
-
 	protected void onMouseDrag(int dx, int dy) {
 		cam.tx -= (cam.zoom*dx);
 		cam.ty -= (cam.zoom*dy);
@@ -153,19 +103,16 @@ public class Window extends JFrame implements Runnable {
 			centerCamera();
 		}
 
-		if (keyCode == KeyEvent.VK_ENTER) {
-			game.nextPlayer();
-			redrawTopBar();
-		}
+		controller.onKeyType(keyCode);
 	}
 
 	protected void redrawTopBar() {
-		top_info.setText("Round: " + game.getRound() + "   " + game.getPlayerTurn() + "   " + game.getPlayerTurnID() + " / " + game.getPlayerAmount());
+		top_info.setText("Round: " + controller.game.getRound() + "   " + controller.game.getPlayerTurn() + "   " + controller.game.getPlayerTurnID() + " / " + controller.game.getPlayerAmount());
 	}
 
 	private boolean drawing = false;
 	protected void redrawGame() {
-		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || game == null || drawing) return;
+		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || controller == null || controller.game == null || drawing) return;
 		drawing = true;
 
 		cam.update();
@@ -178,7 +125,7 @@ public class Window extends JFrame implements Runnable {
 		g.fillRect(0, 0, center.getWidth(), center.getHeight());
 
 		g.setColor(Color.BLUE);
-		GameMap m = game.getMap();
+		GameMap m = controller.game.getMap();
 
 		g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
 
@@ -206,22 +153,22 @@ public class Window extends JFrame implements Runnable {
 		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
 		drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
-		if (selecetedField != null) {
-			drawHexField(selecetedField.x, selecetedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+		if (controller.selecetedField != null) {
+			drawHexField(controller.selecetedField.x, controller.selecetedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
 
-			Optional<Unit> u = m.getUnitAt(selecetedField);
+			Optional<Unit> u = m.getUnitAt(controller.selecetedField);
 
 			if (u.isPresent()) {
 
-				if (pa == null) {
-					pa = ActionUtil.getPossibleActions(game, u.get());
+				if (controller.pa == null) {
+					controller.pa = ActionUtil.getPossibleActions(controller.game, u.get());
 				}
 
-				for (Location target: pa.canMoveTo()) {
+				for (Location target: controller.pa.canMoveTo()) {
 					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
 				}
 
-				for (Location target: pa.canAttack()) {
+				for (Location target: controller.pa.canAttack()) {
 					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
 				}
 			}
@@ -232,6 +179,10 @@ public class Window extends JFrame implements Runnable {
 		drawing = false;
 	}
 
+	protected void onMouseClick(int x, int y) {
+		controller.onMouseClick(getHexFieldPosition(x, y));
+	}
+
 	private void drawHexField(int x, int y, Graphics g, BufferedImage img, double wx, double wy) {
 		double py = (y)*(Constants.HEX_TILE_YY_RATIO)*wy;
 		double px = (x)*wx - (y)*wy/(2*Constants.HEX_TILE_XY_RATIO);
@@ -240,11 +191,11 @@ public class Window extends JFrame implements Runnable {
 
 	private boolean drawing2 = false;
 	protected void redrawInfoBar() {
-		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || game == null || drawing2) return;
+		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || controller == null || controller.game == null || drawing2) return;
 		drawing2 = true;
 
 		BufferedImage buffer2 = new BufferedImage(bottom.getWidth(), bottom.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		GameMap m = game.getMap();
+		GameMap m = controller.game.getMap();
 
 		Graphics g = buffer2.getGraphics();
 		g.setColor(Constants.COLOR_INFOBAR_BACKGROUND);
@@ -281,18 +232,18 @@ public class Window extends JFrame implements Runnable {
 			}
 		}
 
-		if (selecetedField != null) {
-			Field f = m.getFieldAt(selecetedField);
+		if (controller.selecetedField != null) {
+			Field f = m.getFieldAt(controller.selecetedField);
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.getTextureName()), 400 + lx + 5, 10, (int) (90/Constants.HEX_TILE_XY_RATIO), 90, null);
 			}
 
-			g.drawString(String.format("x: %d    y: %d", selecetedField.x, selecetedField.y), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
+			g.drawString(String.format("x: %d    y: %d", controller.selecetedField.x, controller.selecetedField.y), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
 			g.drawString(f.getDisplayName(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
 			g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
 
-			Optional<Unit> unit = m.getUnitAt(selecetedField);
+			Optional<Unit> unit = m.getUnitAt(controller.selecetedField);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();
@@ -314,7 +265,7 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void centerCamera() {
-		GameMap m = game.getMap();
+		GameMap m = controller.game.getMap();
 
 		cam.tzoom = (m.getHeight()*Constants.HEX_TILE_XY_RATIO*Constants.HEX_TILE_XY_RATIO) / center.getHeight();
 
