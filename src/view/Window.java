@@ -77,6 +77,8 @@ public class Window extends JFrame implements Runnable {
 		}
 
 		centerCamera();
+
+		redrawMap();
 	}
 
 	protected void onMouseWheel(double d) {
@@ -106,12 +108,36 @@ public class Window extends JFrame implements Runnable {
 		controller.onKeyType(keyCode);
 	}
 
+	private BufferedImage mapBuffer;
+	private void redrawMap() {
+		if (controller == null || controller.game == null) return;
+
+		GameMap m = controller.game.getMap();
+
+		double width = Constants.HEX_TILE_WIDTH;
+		double height = width*Constants.HEX_TILE_XY_RATIO;
+
+		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
+		Graphics g = mapBuffer.getGraphics();
+
+		g.setColor(new Color(0, 0, 0, 0));
+		g.fillRect(0, 0, (int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)));
+
+		for (int x = 0; x < m.getWidth(); x++) {
+			for (int y = 0; y < m.getHeight(); y++) {
+				if (m.getFieldAt(x, y).getTextureName() == null) continue;
+
+				drawHexField(x+(int)Math.ceil(m.getHeight()/2.0), y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), width, height);
+			}
+		}
+	}
+
 	private boolean drawing = false;
 	protected void redrawGame() {
 		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || cam == null) return;
 		drawing = true;
 
-		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 		Graphics g = buffer.getGraphics();
 
@@ -127,13 +153,17 @@ public class Window extends JFrame implements Runnable {
 
 		double wx = 1/cam.zoom;
 		double wy = wx*Constants.HEX_TILE_XY_RATIO;
-		for (int x = 0; x < m.getWidth(); x++) {
+		{
+			g.drawImage(mapBuffer, (int) (-((int)Math.ceil(m.getHeight()/2.0))*wx), 0, (int) (wx * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (wy * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), null);
+		}
+
+		/*for (int x = 0; x < m.getWidth(); x++) {
 			for (int y = 0; y < m.getHeight(); y++) {
 				if (m.getFieldAt(x, y).getTextureName() == null) continue;
 
 				drawHexField(x, y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), wx, wy);
 			}
-		}
+		}*/
 
 		for (Unit u: m.getUnits()) {
 			UnitType ut = u.getType();
