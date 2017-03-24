@@ -87,7 +87,6 @@ public class Controller {
 	protected void onKeyType(int keyCode) {
 		if (keyCode == KeyEvent.VK_ENTER) {
 			game.nextPlayer();
-			window.redrawTopBar();
 		}
 	}
 }

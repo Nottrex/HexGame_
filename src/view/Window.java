@@ -2,6 +2,7 @@ package view;
 
 import game.*;
 import game.enums.Field;
+import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.util.ActionUtil;
 
@@ -18,8 +19,6 @@ public class Window extends JFrame implements Runnable {
 	//Window stuff
 	protected Insets i;
 	protected JPanel panel;
-	protected JPanel top;
-	protected JLabel top_info;
 	protected JPanel bottom;
 	protected JPanel center;
 
@@ -70,8 +69,11 @@ public class Window extends JFrame implements Runnable {
 		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
 		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
 
+		for (PlayerColor pc: PlayerColor.values()) {
+			TextureHandler.loadImagePng("bar_" + pc.getTextureName(), "ui/bar/bar_" + pc.getTextureName());
+		}
+
 		centerCamera();
-		redrawTopBar();
 	}
 
 	protected void onMouseWheel(double d) {
@@ -101,16 +103,11 @@ public class Window extends JFrame implements Runnable {
 		controller.onKeyType(keyCode);
 	}
 
-	protected void redrawTopBar() {
-		top_info.setText("Round: " + controller.game.getRound() + "   " + controller.game.getPlayerTurn() + "   " + controller.game.getPlayerTurnID() + " / " + controller.game.getPlayerAmount());
-	}
-
 	private boolean drawing = false;
 	protected void redrawGame() {
-		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || controller == null || controller.game == null || drawing) return;
+		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing) return;
 		drawing = true;
 
-		cam.update();
 
 		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
@@ -118,6 +115,13 @@ public class Window extends JFrame implements Runnable {
 
 		g.setColor(Constants.COLOR_GAME_BACKGROUND);
 		g.fillRect(0, 0, center.getWidth(), center.getHeight());
+
+		if (controller == null || controller.game == null || cam == null) {
+			drawing = false;
+			return;
+		}
+
+		cam.update();
 
 		g.setColor(Color.BLUE);
 		GameMap m = controller.game.getMap();
@@ -170,6 +174,16 @@ public class Window extends JFrame implements Runnable {
 		}
 
 		g.translate((int) (cam.x/cam.zoom), (int) (cam.y/cam.zoom));
+
+
+		{	//Draw TopBar
+			int width = 350;
+			int height = 49;
+			int x = (center.getWidth()-width)/2;
+
+			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().getTextureName()), x, 0, width, height, null);
+		}
+
 		center.getGraphics().drawImage(buffer, 0, 0, null);
 		drawing = false;
 	}
@@ -307,13 +321,6 @@ public class Window extends JFrame implements Runnable {
 		panel = new JPanel(new BorderLayout());
 		this.setContentPane(panel);
 
-		top = new JPanel(new BorderLayout());
-		top.setBackground(Constants.COLOR_TOPBAR_BACKRGOUND);
-		top.setPreferredSize(new Dimension(500, 25));
-
-		top_info = new JLabel("Test", SwingConstants.CENTER);
-		top.add(top_info, BorderLayout.CENTER);
-
 		bottom = new JPanel(null) {
 			@Override
 			public void repaint() {
@@ -331,7 +338,6 @@ public class Window extends JFrame implements Runnable {
 		};
 		center.setBackground(Constants.COLOR_GAME_BACKGROUND);
 
-		panel.add(top, BorderLayout.PAGE_START);
 		panel.add(center, BorderLayout.CENTER);
 		panel.add(bottom, BorderLayout.PAGE_END);
 
