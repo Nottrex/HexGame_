@@ -389,6 +389,7 @@ public class Window extends JFrame implements Runnable {
 		panel.add(center, BorderLayout.CENTER);
 		panel.add(bottom, BorderLayout.PAGE_END);
 
+
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		TextureHandler.loadImagePng("cursor","ui/cursor");
 		Cursor c = toolkit.createCustomCursor(TextureHandler.getImagePng("cursor") , new Point(0, 0), "img");
