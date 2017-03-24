@@ -2,17 +2,12 @@ package view;
 
 import game.*;
 import game.enums.Field;
-import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.util.ActionUtil;
-import game.util.PossibleActions;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import javax.swing.*;
@@ -153,10 +148,10 @@ public class Window extends JFrame implements Runnable {
 		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
 		drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
-		if (controller.selecetedField != null) {
-			drawHexField(controller.selecetedField.x, controller.selecetedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+		if (controller.selectedField != null) {
+			drawHexField(controller.selectedField.x, controller.selectedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
 
-			Optional<Unit> u = m.getUnitAt(controller.selecetedField);
+			Optional<Unit> u = m.getUnitAt(controller.selectedField);
 
 			if (u.isPresent()) {
 
@@ -232,18 +227,18 @@ public class Window extends JFrame implements Runnable {
 			}
 		}
 
-		if (controller.selecetedField != null) {
-			Field f = m.getFieldAt(controller.selecetedField);
+		if (controller.selectedField != null) {
+			Field f = m.getFieldAt(controller.selectedField);
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.getTextureName()), 400 + lx + 5, 10, (int) (90/Constants.HEX_TILE_XY_RATIO), 90, null);
                 g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
 			}
 
-			g.drawString(String.format("x: %d    y: %d", controller.selecetedField.x, controller.selecetedField.y), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
+			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
 			g.drawString(f.getDisplayName(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
 
-			Optional<Unit> unit = m.getUnitAt(controller.selecetedField);
+			Optional<Unit> unit = m.getUnitAt(controller.selectedField);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();

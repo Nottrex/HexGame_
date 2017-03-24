@@ -21,7 +21,7 @@ public class Controller {
 
 	protected Game game;
 	protected List<PlayerColor> localPlayers;
-	protected Location selecetedField = null;
+	protected Location selectedField = null;
 	protected PossibleActions pa = null;
 
 	public Controller(Window window) {
@@ -38,12 +38,12 @@ public class Controller {
 		if (game == null) return;
 
 		GameMap m = game.getMap();
-		if (selecetedField == null) {
+		if (selectedField == null) {
 			if (game.getMap().getFieldAt(l).isAccessible())
-				selecetedField = l;
+				selectedField = l;
 		} else {
 			if (game.getMap().getFieldAt(l).isAccessible()) {
-				Optional<Unit> u = m.getUnitAt(selecetedField);
+				Optional<Unit> u = m.getUnitAt(selectedField);
 				Optional<Unit> u2 = m.getUnitAt(l);
 
 				if (u.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
@@ -53,7 +53,7 @@ public class Controller {
 					if (u2.isPresent() && pa.canAttack().contains(l)) {
 						List<Direction> movement = pa.moveToToAttack(l);
 
-						Location a = selecetedField;
+						Location a = selectedField;
 						for (Direction d: movement) {
 							a = d.applyMovement(a);
 						}
@@ -64,20 +64,20 @@ public class Controller {
 						//TODO: ATTACK UNITS?
 
 						unit.setState(UnitState.INACTIVE);
-						selecetedField = null;
+						selectedField = null;
 					} else if (pa.canMoveTo().contains(l)) {
 						unit.setX(l.x);
 						unit.setY(l.y);
 
 						unit.setState(UnitState.MOVED);
-						selecetedField = null;
-					} else selecetedField = l;
-				} else selecetedField = l;
-			} else selecetedField = null;
+						selectedField = null;
+					} else selectedField = l;
+				} else selectedField = l;
+			} else selectedField = null;
 		}
 
-		if (selecetedField != null) {
-			Optional<Unit> u = m.getUnitAt(selecetedField);
+		if (selectedField != null) {
+			Optional<Unit> u = m.getUnitAt(selectedField);
 			if (u.isPresent()) pa = ActionUtil.getPossibleActions(game, u.get());
 		}
 
