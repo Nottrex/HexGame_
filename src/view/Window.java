@@ -237,11 +237,11 @@ public class Window extends JFrame implements Runnable {
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.getTextureName()), 400 + lx + 5, 10, (int) (90/Constants.HEX_TILE_XY_RATIO), 90, null);
+                g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
 			}
 
 			g.drawString(String.format("x: %d    y: %d", controller.selecetedField.x, controller.selecetedField.y), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
 			g.drawString(f.getDisplayName(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
-			g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
 
 			Optional<Unit> unit = m.getUnitAt(controller.selecetedField);
 
