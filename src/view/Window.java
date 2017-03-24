@@ -88,14 +88,9 @@ public class Window extends JFrame implements Runnable {
 			a = Constants.ZOOM;
 		}
 
-		Location point = getHexFieldPosition(getMousePosition().x, getMousePosition().y);
-
-        int mouseX = point.x - i.left;
-        int mouseY = point.y - i.top - 25;
-
-		cam.tzoom *= 1/a;
-		cam.tx = (int)(mouseX * (a - 1f) + a * cam.x);
-		cam.ty = (int)(mouseY * (a - 1f) + a * cam.y);
+		cam.tzoom *= a;
+		cam.tx = (center.getWidth() / 2 ) * (a - 1f) + a * cam.tx;
+		cam.ty = (center.getHeight() / 2) * (a - 1f) + a * cam.ty;
 	}
 
 	protected void onMouseDrag(int dx, int dy) {
