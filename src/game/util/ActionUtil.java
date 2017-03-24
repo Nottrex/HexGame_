@@ -6,6 +6,7 @@ import game.Location;
 import game.Unit;
 import game.enums.Direction;
 import game.enums.Field;
+import game.enums.UnitState;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,32 +40,27 @@ public class ActionUtil {
 				}
 			}
 
+			if (unit.getState() != UnitState.ACTIVE) continue;
 
 			for (Direction d: Direction.values()) {
 				Location loc2 = d.applyMovement(loc);
+				Field field = map.getFieldAt(loc2);
 
 				boolean zoneOfControlOfEnemy = map.getUnits().stream()
 						.filter(u -> u.getPlayer() != unit.getPlayer())
 						.anyMatch(u -> MapUtil.getDistance(loc2.x, loc2.y, u.getX(), u.getY()) == 1);
 
-				int distance = directionLength.get(loc) + map.getFieldAt(loc2).getMovementCost() + (zoneOfControlOfEnemy ? 1 : 0);
+				int distance = directionLength.get(loc) + (unit.getType().isFlying() ? 1 : map.getFieldAt(loc2).getMovementCost()) + (zoneOfControlOfEnemy ? 1 : 0);
 
 				Optional<Unit> u = map.getUnitAt(loc2);
 
-				if (map.getFieldAt(loc2) == Field.VOID || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
+				if (!field.isAccessable() || distance > unit.getType().getMovementDistance() + unit.getType().getMaxAttackDistance() || (u.isPresent() && u.get().getPlayer() != unit.getPlayer())) continue;
+
+				if (!unit.getType().isFlying() && (field.isWaterTile() != unit.getType().isSwimming())) continue;
 
 				if (distance > unit.getType().getMovementDistance()) continue;
 
-				if (directionLength.containsKey(loc2)) {
-					if (directionLength.get(loc2) <= distance) continue;
-
-					/*List<Direction> dir = new ArrayList<>(directions.get(loc));
-					dir.add(d);
-					directions.put(loc2, dir);
-					directionLength.put(loc2, distance);*/
-					//Can never ever happen xD
-
-				} else {
+				if (!directionLength.containsKey(loc2)) {
 					List<Direction> dir = new ArrayList<>(directions.get(loc));
 					dir.add(d);
 					directions.put(loc2, dir);
