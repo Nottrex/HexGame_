@@ -1,7 +1,7 @@
 package view;
 
 import game.Game;
-import game.GameMap;
+import game.map.GameMap;
 import game.Location;
 import game.Unit;
 import game.enums.Direction;

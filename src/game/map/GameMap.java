@@ -1,5 +1,7 @@
-package game;
+package game.map;
 
+import game.Location;
+import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
 import game.enums.UnitState;
@@ -19,6 +21,22 @@ public class GameMap {
 		map = new Field[width][height];
 		this.width = width;
 		this.height = height;
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				map[x][y] = Field.values()[(int) (Math.random()*Field.values().length)];
+			}
+		}
+		units = new ArrayList<>();
+		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));
+		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 20, 15));
+		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
+	}
+
+	public GameMap(Field[][] map) {
+		this.map = map;
+		this.width = map.length;
+		this.height = map[0].length;
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				map[x][y] = Field.values()[(int) (Math.random()*Field.values().length)];

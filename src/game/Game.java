@@ -2,12 +2,9 @@ package game;
 
 import game.enums.PlayerColor;
 import game.enums.UnitState;
-import game.enums.UnitType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import game.map.GameMap;
+import game.map.MapGenerator;
+import game.map.presets.SquarePreset;
 
 public class Game {
 
@@ -19,7 +16,7 @@ public class Game {
 	private int playerTurn;
 
 	public Game() {
-		map = new GameMap(25, 25);
+		map = new GameMap(new MapGenerator(new SquarePreset(40, 40)).getMap());
 		playerAmount = 2;
 		players = new PlayerColor[]{PlayerColor.BLUE, PlayerColor.RED};
 	}

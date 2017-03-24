@@ -2,17 +2,13 @@ package view;
 
 import game.*;
 import game.enums.Field;
-import game.enums.PlayerColor;
 import game.enums.UnitType;
+import game.map.GameMap;
 import game.util.ActionUtil;
-import game.util.PossibleActions;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import javax.swing.*;
