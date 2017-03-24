@@ -22,7 +22,6 @@ public class MapGenerator {
             for(int y = 0; y < out[0].length; y++){
                 if(mp.getPresetMap()[x][y] == Field.VOID) {
                     out[x][y] = Field.VOID;
-                    System.out.println(x + " " + y);
                     continue;
                 }
 
@@ -37,7 +36,6 @@ public class MapGenerator {
                 else if(f <= 7.0f/9.0f)out[x][y] = Field.DIRT_ROCK;
                 else if(f <= 8.0f/9.0f)out[x][y] = Field.MARS;
                 else if(f <= 9.0f/9.0f)out[x][y] = Field.STONE;
-                else System.out.println(f);
             }
         }
 
