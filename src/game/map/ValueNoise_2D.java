@@ -12,7 +12,7 @@ public class ValueNoise_2D {
 	
 	private float[][] heightMap;
 	
-	private int octaves = 8;
+	private int octaves = 4;
 	private int startFrequenzyX = 3;
 	private int startFrequenzyY = 3;
 	private float alpha = 20;

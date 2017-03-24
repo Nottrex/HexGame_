@@ -28,11 +28,11 @@ public class MapGenerator {
 
                 float f = vn.getHeightMap()[x][y];
 
-                if(f <= 1.0f/9.0f)out[x][y] = Field.WATER;
-                else if(f <= 2.0f/9.0f)out[x][y] = Field.SAND;
-                else if(f <= 3.0f/9.0f)out[x][y] = Field.GRASS;
-                else if(f <= 4.0f/9.0f)out[x][y] = Field.FOREST;
-                else if(f <= 5.0f/9.0f)out[x][y] = Field.GRASS_ROCK;
+                if(f <= 1.5f/9.0f)out[x][y] = Field.WATER;
+                else if(f <= 2.4f/9.0f)out[x][y] = Field.SAND;
+                else if(f <= 3.8f/9.0f)out[x][y] = Field.GRASS;
+                else if(f <= 4.8f/9.0f)out[x][y] = Field.FOREST;
+                else if(f <= 5.4f/9.0f)out[x][y] = Field.GRASS_ROCK;
                 else if(f <= 6.0f/9.0f)out[x][y] = Field.DIRT;
                 else if(f <= 7.0f/9.0f)out[x][y] = Field.DIRT_ROCK;
                 else if(f <= 8.0f/9.0f)out[x][y] = Field.MARS;
