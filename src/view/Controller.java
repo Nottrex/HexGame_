@@ -25,6 +25,7 @@ public class Controller {
 
 	public Controller(Window window) {
 		game = new Game();
+		game.nextRound();
 		localPlayers = new ArrayList<>();
 		localPlayers.add(PlayerColor.BLUE);
 		localPlayers.add(PlayerColor.RED);
