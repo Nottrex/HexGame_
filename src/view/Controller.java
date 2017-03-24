@@ -4,8 +4,10 @@ import game.Game;
 import game.GameMap;
 import game.Location;
 import game.Unit;
+import game.enums.Direction;
 import game.enums.Field;
 import game.enums.PlayerColor;
+import game.enums.UnitState;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
 
@@ -38,33 +40,41 @@ public class Controller {
 
 		GameMap m = game.getMap();
 		if (selecetedField == null) {
-			if (game.getMap().getFieldAt(l) != Field.VOID)
+			if (game.getMap().getFieldAt(l).isAccessable())
 				selecetedField = l;
 		} else {
-
-
-			if (game.getMap().getFieldAt(l) == Field.VOID) {
-				selecetedField = null;
-			} else {
+			if (game.getMap().getFieldAt(l).isAccessable()) {
 				Optional<Unit> u = m.getUnitAt(selecetedField);
 				Optional<Unit> u2 = m.getUnitAt(l);
 
-				if (u.isPresent() && !u2.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
-					pa = ActionUtil.getPossibleActions(game, u.get());
+				if (u.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
+					Unit unit = u.get();
+					pa = ActionUtil.getPossibleActions(game, unit);
 
-					if (pa.canMoveTo().contains(l)) {
-						u.get().setX(l.x);
-						u.get().setY(l.y);
-					}
+					if (u2.isPresent() && pa.canAttack().contains(l)) {
+						List<Direction> movement = pa.moveToToAttack(l);
 
-					selecetedField = null;
-				} else if (u.isPresent() && u2.isPresent()) {
-					pa = ActionUtil.getPossibleActions(game, u.get());
-					if (u.get().getPlayer() == game.getPlayerTurn() && pa.canAttack().contains(l)) {
+						Location a = selecetedField;
+						for (Direction d: movement) {
+							a = d.applyMovement(a);
+						}
+
+						unit.setX(a.x);
+						unit.setY(a.y);
+
 						//TODO: ATTACK UNITS?
+
+						unit.setState(UnitState.INACTIVE);
+						selecetedField = null;
+					} else if (pa.canMoveTo().contains(l)) {
+						unit.setX(l.x);
+						unit.setY(l.y);
+
+						unit.setState(UnitState.MOVED);
+						selecetedField = null;
 					} else selecetedField = l;
 				} else selecetedField = l;
-			}
+			} else selecetedField = null;
 		}
 
 		if (selecetedField != null) {

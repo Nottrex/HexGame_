@@ -1,6 +1,7 @@
 package game;
 
 import game.enums.PlayerColor;
+import game.enums.UnitState;
 import game.enums.UnitType;
 
 import java.util.ArrayList;
@@ -26,14 +27,14 @@ public class Game {
 	public void nextRound() {
 		round++;
 		playerTurn = 0;
-
-		for (Unit u : map.getUnits()) {
-			u.setActive(true);
-		}
 	}
 
 	public void nextPlayer() {
 		playerTurn++;
+		for (Unit u : map.getUnits()) {
+			u.setState(UnitState.ACTIVE);
+		}
+
 		if (playerTurn >= playerAmount) {
 			nextRound();
 		}

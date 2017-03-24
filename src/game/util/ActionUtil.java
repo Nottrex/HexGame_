@@ -31,6 +31,8 @@ public class ActionUtil {
 		while (!open.isEmpty()) {
 			Location loc = open.poll();
 
+			if (unit.getState() == UnitState.INACTIVE) continue;
+
 			for (Unit u: map.getUnits()) {
 				int d = MapUtil.getDistance(loc.x, loc.y, u.getX(), u.getY());
 				Location a = new Location(u.getX(), u.getY());

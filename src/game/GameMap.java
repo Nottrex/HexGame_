@@ -2,6 +2,7 @@ package game;
 
 import game.enums.Field;
 import game.enums.PlayerColor;
+import game.enums.UnitState;
 import game.enums.UnitType;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class GameMap {
 	public List<Unit> activePlayerUnits(PlayerColor player) {
 		return units.stream()
 				.filter(u -> u.getPlayer() == player)
-				.filter(u -> u.isActive())
+				.filter(u -> u.getState() != UnitState.INACTIVE)
 				.collect(Collectors.toList());
 	}
 

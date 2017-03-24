@@ -8,14 +8,12 @@ public class Unit {
 	private PlayerColor player;
 	private UnitType type;
 	private UnitState state;
-	private boolean isActive;
 	private int x, y;
 
 	public Unit(PlayerColor player, UnitType type, int x, int y) {
 		this.player = player;
 		this.type = type;
 		this.state = UnitState.ACTIVE;
-		this.isActive = true;
 		this.x = x;
 		this.y = y;
 	}
@@ -24,25 +22,6 @@ public class Unit {
 		this.player = player;
 		this.type = type;
 		this.state = state;
-		this.isActive = true;
-		this.x = x;
-		this.y = y;
-	}
-
-	public Unit(PlayerColor player, UnitType type, boolean isActive, int x, int y) {
-		this.player = player;
-		this.type = type;
-		this.state = UnitState.ACTIVE;
-		this.isActive = isActive;
-		this.x = x;
-		this.y = y;
-	}
-
-	public Unit(PlayerColor player, UnitType type, UnitState state, boolean isActive, int x, int y) {
-		this.player = player;
-		this.type = type;
-		this.state = state;
-		this.isActive = isActive;
 		this.x = x;
 		this.y = y;
 	}
@@ -69,14 +48,6 @@ public class Unit {
 
 	public void setState(UnitState state) {
 		this.state = state;
-	}
-
-	public boolean isActive() {
-		return isActive;
-	}
-
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
 	}
 
 	public int getX() {
