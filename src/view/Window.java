@@ -82,15 +82,20 @@ public class Window extends JFrame implements Runnable {
 	protected void onMouseWheel(double d) {
 		double a = 1;
 		if (d < 0) {
-			a = 1/Constants.ZOOM;
+			a = 1 / Constants.ZOOM;
 		}
 		if (d > 0) {
 			a = Constants.ZOOM;
 		}
 
-		cam.tzoom *= a;
-		cam.tx *= a;
-		cam.ty *= a;
+		Location point = getHexFieldPosition(getMousePosition().x, getMousePosition().y);
+
+        int mouseX = point.x - i.left;
+        int mouseY = point.y - i.top - 25;
+
+		cam.tzoom *= 1/a;
+		cam.tx = (int)(mouseX * (a - 1f) + a * cam.x);
+		cam.ty = (int)(mouseY * (a - 1f) + a * cam.y);
 	}
 
 	protected void onMouseDrag(int dx, int dy) {
