@@ -191,7 +191,7 @@ public class Window extends JFrame implements Runnable {
 
 			double fWidth = g.getFontMetrics(font).getStringBounds(text, g).getWidth();
 
-			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().getTextureName()), x, 0, width, height, null);
+			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().getTextureName()), x, 5, width, height, null);
 			g.drawString(text, (int) (x + (width-fWidth)/2), height*3/4);
 		}
 
