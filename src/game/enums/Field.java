@@ -7,7 +7,7 @@ import game.TextureHandler;
  * 
  */
 public enum Field {
-	FOREST("forest", "Forest", 2), GRASS("grass", "Grass", 1), GRASS_ROCK("grass_rock", "Grass-rock", 3), DIRT("dirt", "Dirt", 1), DIRT_ROCK("dirt_rock", "Dirt-rock", 3), SAND("sand", "Sand", 2), MARS("mars", "Mars", 1), STONE("stone", "Stone", 1), VOID(null, "Void", 999999999);
+	WATER("Water", "Water", 4), FOREST("forest", "Forest", 2), GRASS("grass", "Grass", 1), GRASS_ROCK("grass_rock", "Grass-rock", 3), DIRT("dirt", "Dirt", 1), DIRT_ROCK("dirt_rock", "Dirt-rock", 3), SAND("sand", "Sand", 2), MARS("mars", "Mars", 1), STONE("stone", "Stone", 1), VOID(null, "Void", 999999999);
 
 
 	private String textureName, displayName;

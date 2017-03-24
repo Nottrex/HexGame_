@@ -152,6 +152,7 @@ public class Window extends JFrame implements Runnable {
 		if (keyCode == KeyEvent.VK_C) {
 			centerCamera();
 		}
+
 		if (keyCode == KeyEvent.VK_ENTER) {
 			game.nextPlayer();
 			redrawTopBar();
