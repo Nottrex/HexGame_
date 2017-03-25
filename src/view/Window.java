@@ -27,7 +27,7 @@ public class Window extends JFrame implements Runnable {
 	protected JPanel bottom;
 	protected JPanel center;
 
-	private int fps = 0;
+	private int fps = 0, width, height;
 	private Camera cam;
 	private boolean stop = false;
 
@@ -44,6 +44,9 @@ public class Window extends JFrame implements Runnable {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 
+		width = getWidth();
+		height = getHeight();
+
 		initComponents();
 
 		i = getInsets();
@@ -57,10 +60,33 @@ public class Window extends JFrame implements Runnable {
 		this.addMouseListener(mouseListener);
 		this.addKeyListener(keyListener);
 
+		this.addComponentListener(new ComponentListener() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				int widthDifference = width - getWidth();
+				int heightDifference = height - getHeight();
+
+				if(widthDifference == 0 && heightDifference == 0) return;
+				cam.tx += (widthDifference * cam.tzoom / 2);
+				cam.ty += (heightDifference * cam.tzoom / 2);
+
+				width = getWidth();
+				height = getHeight();
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {}
+
+			@Override
+			public void componentShown(ComponentEvent e) {}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {}
+		});
+
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-
 			}
 		});
 
@@ -92,7 +118,7 @@ public class Window extends JFrame implements Runnable {
 		for (PlayerColor pc: PlayerColor.values()) {
 			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
 		}
-
+    
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
 		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
@@ -437,7 +463,7 @@ public class Window extends JFrame implements Runnable {
 			redrawGame();
 			if (i >= 30) {
 				i = 0;
-				fps = (int) (1000000000/(System.nanoTime()-Math.max(t, 1L)));
+				if ((System.nanoTime()-t) != 0) fps = (int) (1000000000/(System.nanoTime()-t));
 			}
 		}
 	}
