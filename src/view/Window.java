@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 public class Window extends JFrame implements Runnable {
@@ -31,6 +32,8 @@ public class Window extends JFrame implements Runnable {
 	private KeyInputListener keyListener;
 
 	private Controller controller;
+
+	private Clip music;
 
 	public Window() {
 		super("HexGame");
@@ -59,6 +62,9 @@ public class Window extends JFrame implements Runnable {
 		});
 
 		init();
+		music.setMicrosecondPosition(0L);
+		music.loop(Clip.LOOP_CONTINUOUSLY);
+		music.start();
 
 		new Thread(this).start();
 	}
@@ -82,6 +88,9 @@ public class Window extends JFrame implements Runnable {
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
 		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
 		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
+
+		AudioHandler.loadMusicWav("EP", "music/EP");
+		music = AudioHandler.getMusicWav("EP");
 
 		for (PlayerColor pc: PlayerColor.values()) {
 			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
