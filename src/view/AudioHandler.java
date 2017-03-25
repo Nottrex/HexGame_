@@ -23,11 +23,11 @@ public class AudioHandler {
 		Clip a = null;
 		try {
 			a = AudioSystem.getClip();
-			a.open(AudioSystem.getAudioInputStream(new BufferedInputStream(AudioHandler.class.getResourceAsStream("/res/audio/" + fileName + ".wav"))));
+			a.open(AudioSystem.getAudioInputStream(ClassLoader.getSystemResource("res/audio/" + fileName + ".wav")));
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			e.printStackTrace();
 		}
-		
+
 		audio_wav.put(audioName, a);
 	}
 

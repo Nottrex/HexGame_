@@ -6,6 +6,9 @@ import game.map.GameMap;
 import game.map.MapGenerator;
 import game.map.presets.HexPreset;
 import game.map.presets.SquarePreset;
+import view.AudioHandler;
+
+import javax.sound.sampled.Clip;
 
 public class Game {
 
