@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 
 public class Window extends JFrame implements Runnable {
@@ -64,6 +65,8 @@ public class Window extends JFrame implements Runnable {
 		init();
 		music.setMicrosecondPosition(0L);
 		music.loop(Clip.LOOP_CONTINUOUSLY);
+		FloatControl fc = (FloatControl) music.getControl(FloatControl.Type.MASTER_GAIN);
+		fc.setValue(GUIConstants.VOLUME);
 		music.start();
 
 		new Thread(this).start();
