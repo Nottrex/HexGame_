@@ -1,21 +1,18 @@
 package game.enums;
 
-import game.TextureHandler;
-
 public enum UnitType {
-	TANK("tank", "Tank", 0.75, 5, 1, 2, false, false, true);
+	TANK("Tank", 0.75, 5, 1, 2, false, false, true);
 	
 	private int movementDistance;
 	private int minAttackDistance, maxAttackDistance;
 	private double size;
-	private String textureName, displayName;
+	private String  displayName;
 	private boolean flying;
 	private boolean swimming;
 	private boolean walking;
 
-	UnitType(String textureName, String displayName, double size, int movementDistance, int minAttackDistance, int maxAttackDistance, boolean flying, boolean swimming, boolean walking) {
+	UnitType(String displayName, double size, int movementDistance, int minAttackDistance, int maxAttackDistance, boolean flying, boolean swimming, boolean walking) {
 		this.movementDistance = movementDistance;
-		this.textureName = textureName;
 		this.displayName = displayName;
 		this.size = size;
 		this.minAttackDistance = minAttackDistance;
@@ -38,10 +35,6 @@ public enum UnitType {
 		return swimming;
 	}
 
-	public String getTextureName() {
-		return textureName;
-	}
-
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -60,13 +53,5 @@ public enum UnitType {
 
 	public double getSize() {
 		return size;
-	}
-
-	static {
-		for (UnitType ut: UnitType.values()) {
-			for (PlayerColor pc: PlayerColor.values()) {
-				TextureHandler.loadImagePng("units_" + ut.getTextureName() + "_" + pc.getTextureName(), "units/" + ut.getTextureName() + "/" + pc.getTextureName());
-			}
-		}
 	}
 }

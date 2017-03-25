@@ -2,7 +2,7 @@ package view;
 
 import java.awt.*;
 
-public class Constants {
+public class GUIConstants {
 	public static final Color COLOR_GAME_BACKGROUND 		= new Color(135, 206, 235);
 	public static final Color COLOR_INFOBAR_BACKGROUND 		= Color.DARK_GRAY;
 

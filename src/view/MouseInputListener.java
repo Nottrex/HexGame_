@@ -75,7 +75,7 @@ public class MouseInputListener extends MouseAdapter {
 	public void mouseReleased(MouseEvent e) {
 		//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_CLICK" then it should still count as a click
 		if (mousePressedInGame && totalDistanceDragged > 0) {
-			if (totalDistanceDragged <= Constants.MAXIMUM_DRAG_DISTANCE_FOR_CLICK) {
+			if (totalDistanceDragged <= GUIConstants.MAXIMUM_DRAG_DISTANCE_FOR_CLICK) {
 				int x = e.getX() - window.i.left;
 				int y = e.getY() - window.i.top;
 				if (x >= window.center.getX() && x < (window.center.getX() + window.center.getWidth()) && y >= window.center.getY() && y < (window.center.getY() + window.center.getHeight())) {

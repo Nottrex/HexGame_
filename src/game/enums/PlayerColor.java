@@ -1,16 +1,11 @@
 package game.enums;
 
 public enum PlayerColor {
-	BLUE("blue", "Blue"), RED("red", "Red"), GREEN("green", "Green"), YELLOW("yellow", "Yellow");
+	BLUE("Blue"), RED("Red"), GREEN("Green"), YELLOW("Yellow");
 
-	private String textureName, displayName;
-	PlayerColor(String textureName, String displayName) {
-		this.textureName = textureName;
+	private String displayName;
+	PlayerColor(String displayName) {
 		this.displayName = displayName;
-	}
-
-	public String getTextureName() {
-		return textureName;
 	}
 
 	public String getDisplayName() {
