@@ -114,11 +114,17 @@ public class Window extends JFrame implements Runnable {
 
 		GameMap m = controller.game.getMap();
 
-		double width = Constants.HEX_TILE_WIDTH;
+		int maxSize = (int) Math.min((long) (Constants.MAX_HEAP_FILL*Runtime.getRuntime().maxMemory()/4), (long)Integer.MAX_VALUE);
+
+
+		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * Constants.HEX_TILE_XY_RATIO * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), Constants.HEX_TILE_WIDTH_MAX));
+
 		double height = width*Constants.HEX_TILE_XY_RATIO;
 
 		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = mapBuffer.getGraphics();
+
+
 
 		g.setColor(new Color(0, 0, 0, 0));
 		g.fillRect(0, 0, (int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)));
