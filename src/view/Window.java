@@ -299,7 +299,11 @@ public class Window extends JFrame implements Runnable {
 			case UP_RIGHT:
 				g.drawImage(TextureHandler.getImagePng("arrow_up_right"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
 				break;
+			case UP_LEFT:
+				g.drawImage(TextureHandler.getImagePng("arrow_up_left"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
+				break;
 			case DOWN_LEFT:
+				g.drawImage(TextureHandler.getImagePng("arrow_down_left"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
 				break;
 			case DOWN_RIGHT:
 				g.drawImage(TextureHandler.getImagePng("arrow_down_right"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
