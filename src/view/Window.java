@@ -1,6 +1,7 @@
 package view;
 
 import game.*;
+import game.enums.Direction;
 import game.enums.Field;
 import game.enums.PlayerColor;
 import game.enums.UnitType;
@@ -10,6 +11,7 @@ import game.util.ActionUtil;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Optional;
 
 import javax.sound.sampled.Clip;
@@ -87,17 +89,21 @@ public class Window extends JFrame implements Runnable {
 			}
 		}
 
+		for (PlayerColor pc: PlayerColor.values()) {
+			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
+		}
+
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
 		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
 		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
 
+		for (Direction d: Direction.values()) {
+			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
+		}
+
 		AudioHandler.loadMusicWav("EP", "music/EP");
 		music = AudioHandler.getMusicWav("EP");
-
-		for (PlayerColor pc: PlayerColor.values()) {
-			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
-		}
 
 		centerCamera();
 
@@ -218,6 +224,24 @@ public class Window extends JFrame implements Runnable {
 				for (Location target: controller.pa.canAttack()) {
 					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
 				}
+
+				if (controller.pa.canMoveTo().contains(mloc)) {
+					List<Direction> movements = controller.pa.moveTo(mloc);
+					Location a = controller.selectedField;
+
+					for (Direction d: movements) {
+						drawMovementArrow(a.x, a.y, g, d, wx, wy);
+						a = d.applyMovement(a);
+					}
+				} else if (controller.pa.canAttack().contains(mloc)) {
+					List<Direction> movements = controller.pa.moveToToAttack(mloc);
+					Location a = controller.selectedField;
+
+					for (Direction d: movements) {
+						drawMovementArrow(a.x, a.y, g, d, wx, wy);
+						a = d.applyMovement(a);
+					}
+				}
 			}
 		}
 
@@ -256,6 +280,35 @@ public class Window extends JFrame implements Runnable {
 		double py = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy;
 		double px = (x)*wx - (y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO);
 		g.drawImage(img, (int) px, (int) py, (int) wx +2, (int) wy +2, null);
+	}
+
+	private void drawMovementArrow(int x, int y, Graphics g, Direction d, double wx, double wy) {
+			double centerY1 = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy + wy/2;
+			double centerX1 = (x)*wx - (y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
+
+			double centerY2 = (y+d.getYMovement())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + wy/2;
+			double centerX2 = (x+d.getXMovement())*wx - (y+d.getYMovement())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
+
+			switch (d) {
+			case RIGHT:
+				g.drawImage(TextureHandler.getImagePng("arrow_right"), (int) (centerX1+wx*GUIConstants.ARROW_SIZE/2), (int) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (GUIConstants.ARROW_SIZE*wx), null);
+				break;
+			case LEFT:
+				g.drawImage(TextureHandler.getImagePng("arrow_left"), (int) (centerX2+wx*GUIConstants.ARROW_SIZE/2), (int) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (GUIConstants.ARROW_SIZE*wx), null);
+				break;
+			case UP_RIGHT:
+				g.drawImage(TextureHandler.getImagePng("arrow_up_right"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
+				break;
+			case DOWN_LEFT:
+				break;
+			case DOWN_RIGHT:
+				g.drawImage(TextureHandler.getImagePng("arrow_down_right"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
+				break;
+			default:
+				break;
+		}
+
+		//g.drawImage(TextureHandler.getImagePng("arrow_" + d.toString().toLowerCase()), (int) centerX1, (int) centerY2, (int) (centerX2-centerX1), (int) (centerY1-centerY2), null);
 	}
 
 	private boolean drawing2 = false;
@@ -380,7 +433,7 @@ public class Window extends JFrame implements Runnable {
 			redrawGame();
 			if (i >= 30) {
 				i = 0;
-				fps = (int) (1000000000/(System.nanoTime()-t));
+				fps = (int) (1000000000/(System.nanoTime()-Math.max(t, 1L)));
 			}
 		}
 	}
