@@ -17,7 +17,7 @@ public class Game {
 	private int playerTurn;
 
 	public Game() {
-		map = new GameMap(new MapGenerator(new HexPreset(251, 251)));
+		map = new GameMap(new MapGenerator(new HexPreset(51, 51)));
 		playerAmount = 2;
 		players = new PlayerColor[]{PlayerColor.BLUE, PlayerColor.RED};
 	}

@@ -9,7 +9,6 @@ import game.util.ActionUtil;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
@@ -67,13 +66,25 @@ public class Window extends JFrame implements Runnable {
 	private void init() {
 		controller = new Controller(this);
 
+		for (Field f: Field.values()) {
+			if (f != Field.VOID) {
+				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());
+			}
+		}
+
+		for (UnitType ut: UnitType.values()) {
+			for (PlayerColor pc: PlayerColor.values()) {
+				TextureHandler.loadImagePng("units_" + ut.toString().toLowerCase() + "_" + pc.toString().toLowerCase(), "units/" + ut.toString().toLowerCase() + "/" + pc.toString().toLowerCase());
+			}
+		}
+
 		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
 		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
 		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
 		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
 
 		for (PlayerColor pc: PlayerColor.values()) {
-			TextureHandler.loadImagePng("bar_" + pc.getTextureName(), "ui/bar/bar_" + pc.getTextureName());
+			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
 		}
 
 		centerCamera();
@@ -84,10 +95,10 @@ public class Window extends JFrame implements Runnable {
 	protected void onMouseWheel(double d) {
 		double a = 1;
 		if (d < 0) {
-			a = 1 / Constants.ZOOM;
+			a = 1 / GUIConstants.ZOOM;
 		}
 		if (d > 0) {
-			a = Constants.ZOOM;
+			a = GUIConstants.ZOOM;
 		}
 
 		cam.tx -= (mouseListener.getMouseX())*cam.tzoom * (a-1);
@@ -114,26 +125,26 @@ public class Window extends JFrame implements Runnable {
 
 		GameMap m = controller.game.getMap();
 
-		int maxSize = (int) Math.min((long) (Constants.MAX_HEAP_FILL*Runtime.getRuntime().maxMemory()/4), (long)Integer.MAX_VALUE);
+		int maxSize = (int) Math.min((long) (GUIConstants.MAX_HEAP_FILL*Runtime.getRuntime().maxMemory()/4), (long)Integer.MAX_VALUE);
 
 
-		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * Constants.HEX_TILE_XY_RATIO * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), Constants.HEX_TILE_WIDTH_MAX));
+		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * GUIConstants.HEX_TILE_XY_RATIO * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), GUIConstants.HEX_TILE_WIDTH_MAX));
 
-		double height = width*Constants.HEX_TILE_XY_RATIO;
+		double height = width* GUIConstants.HEX_TILE_XY_RATIO;
 
-		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
+		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = mapBuffer.getGraphics();
 
 
 
 		g.setColor(new Color(0, 0, 0, 0));
-		g.fillRect(0, 0, (int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)));
+		g.fillRect(0, 0, (int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)));
 
 		for (int x = 0; x < m.getWidth(); x++) {
 			for (int y = 0; y < m.getHeight(); y++) {
-				if (m.getFieldAt(x, y).getTextureName() == null) continue;
+				if (m.getFieldAt(x, y) == Field.VOID) continue;
 
-				drawHexField(x+(int)Math.ceil(m.getHeight()/2.0), y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), width, height);
+				drawHexField(x+(int)Math.ceil(m.getHeight()/2.0), y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).toString().toLowerCase()), width, height);
 			}
 		}
 	}
@@ -147,7 +158,7 @@ public class Window extends JFrame implements Runnable {
 
 		Graphics g = buffer.getGraphics();
 
-		g.setColor(Constants.COLOR_GAME_BACKGROUND);
+		g.setColor(GUIConstants.COLOR_GAME_BACKGROUND);
 		g.fillRect(0, 0, center.getWidth(), center.getHeight());
 
 		cam.update();
@@ -158,28 +169,20 @@ public class Window extends JFrame implements Runnable {
 		g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
 
 		double wx = 1/cam.zoom;
-		double wy = wx*Constants.HEX_TILE_XY_RATIO;
+		double wy = wx* GUIConstants.HEX_TILE_XY_RATIO;
 		{
-			g.drawImage(mapBuffer, (int) (-((int)Math.ceil(m.getHeight()/2.0))*wx), 0, (int) (wx * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (wy * Constants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), null);
+			g.drawImage(mapBuffer, (int) (-((int)Math.ceil(m.getHeight()/2.0))*wx), 0, (int) (wx * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (wy * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), null);
 		}
-
-		/*for (int x = 0; x < m.getWidth(); x++) {
-			for (int y = 0; y < m.getHeight(); y++) {
-				if (m.getFieldAt(x, y).getTextureName() == null) continue;
-
-				drawHexField(x, y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).getTextureName()), wx, wy);
-			}
-		}*/
 
 		for (Unit u: m.getUnits()) {
 			UnitType ut = u.getType();
 			double w = wx*ut.getSize();
 			double h = wy*ut.getSize();
 
-			double py = (u.getY())*(Constants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
-			double px = (u.getX())*wx - (u.getY())*wy/(2*Constants.HEX_TILE_XY_RATIO) + (wx-w)/2;
+			double py = (u.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
+			double px = (u.getX())*wx - (u.getY())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
 
-			g.drawImage(TextureHandler.getImagePng("units_" + ut.getTextureName() + "_" + u.getPlayer().getTextureName()), (int) px, (int) py, (int) w, (int) h, null);
+			g.drawImage(TextureHandler.getImagePng("units_" + ut.toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), (int) px, (int) py, (int) w, (int) h, null);
 		}
 
 		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
@@ -222,7 +225,7 @@ public class Window extends JFrame implements Runnable {
 
 			double fWidth = g.getFontMetrics(font).getStringBounds(text, g).getWidth();
 
-			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().getTextureName()), x, 5, width, height, null);
+			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().toString().toLowerCase()), x, 5, width, height, null);
 			g.drawString(text, (int) (x + (width-fWidth)/2), height*3/4);
 
 			g.drawString("FPS: " + fps, 5, (int) (height * 0.5)+5);
@@ -238,8 +241,8 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private void drawHexField(int x, int y, Graphics g, BufferedImage img, double wx, double wy) {
-		double py = (y)*(Constants.HEX_TILE_YY_RATIO)*wy;
-		double px = (x)*wx - (y)*wy/(2*Constants.HEX_TILE_XY_RATIO);
+		double py = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy;
+		double px = (x)*wx - (y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO);
 		g.drawImage(img, (int) px, (int) py, (int) wx +2, (int) wy +2, null);
 	}
 
@@ -252,7 +255,7 @@ public class Window extends JFrame implements Runnable {
 		GameMap m = controller.game.getMap();
 
 		Graphics g = buffer2.getGraphics();
-		g.setColor(Constants.COLOR_INFOBAR_BACKGROUND);
+		g.setColor(GUIConstants.COLOR_INFOBAR_BACKGROUND);
 		g.fillRect(0, 0, bottom.getWidth(), bottom.getHeight());
 
 
@@ -265,19 +268,19 @@ public class Window extends JFrame implements Runnable {
 			Field f = m.getFieldAt(mouseLocation);
 
 			if (f != Field.VOID) {
-				g.drawImage(TextureHandler.getImagePng("field_" + f.getTextureName()), lx + 5, 10, (int) (90/Constants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString("Costs: " + f.getMovementCost(), lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
+				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase()), lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
+				g.drawString("Costs: " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
-			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
-			g.drawString(f.getDisplayName(), lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
+			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);
+			g.drawString(f.getDisplayName(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 40);
 
 			Optional<Unit> unit = m.getUnitAt(mouseLocation);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().getTextureName() + "_" + u.getPlayer().getTextureName()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90), null);
+				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90), null);
 
 				g.drawString(u.getType().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
@@ -290,19 +293,19 @@ public class Window extends JFrame implements Runnable {
 			Field f = m.getFieldAt(controller.selectedField);
 
 			if (f != Field.VOID) {
-				g.drawImage(TextureHandler.getImagePng("field_" + f.getTextureName()), 400 + lx + 5, 10, (int) (90/Constants.HEX_TILE_XY_RATIO), 90, null);
-                g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 60);
+				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase()), 400 + lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
+                g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
-			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 20);
-			g.drawString(f.getDisplayName(), 400 + lx + 10 + (int) (90/Constants.HEX_TILE_XY_RATIO), 40);
+			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);
+			g.drawString(f.getDisplayName(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 40);
 
 			Optional<Unit> unit = m.getUnitAt(controller.selectedField);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().getTextureName() + "_" + u.getPlayer().getTextureName()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90), null);
+				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90), null);
 
 				g.drawString(u.getType().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
@@ -321,22 +324,22 @@ public class Window extends JFrame implements Runnable {
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
 
-		cam.tzoom = (m.getHeight()*Constants.HEX_TILE_XY_RATIO*Constants.HEX_TILE_XY_RATIO) / center.getHeight();
+		cam.tzoom = (m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight();
 
-		cam.ty = (Constants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)*Constants.HEX_TILE_XY_RATIO*Constants.HEX_TILE_YY_RATIO;
+		cam.ty = (GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO;
 		cam.tx = 0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4);
 	}
 
 	private Location getHexFieldPosition(int px, int py) {
-		double dy = (py + cam.y/cam.zoom) / ((Constants.HEX_TILE_YY_RATIO)*Constants.HEX_TILE_XY_RATIO/cam.zoom);
+		double dy = (py + cam.y/cam.zoom) / ((GUIConstants.HEX_TILE_YY_RATIO)* GUIConstants.HEX_TILE_XY_RATIO/cam.zoom);
 
 		int	y = (int) Math.floor(dy);
-		int	x = (int) Math.floor((px + cam.x/cam.zoom + (y)*(Constants.HEX_TILE_XY_RATIO/cam.zoom)/(2*Constants.HEX_TILE_XY_RATIO)) * cam.zoom);
+		int	x = (int) Math.floor((px + cam.x/cam.zoom + (y)*(GUIConstants.HEX_TILE_XY_RATIO/cam.zoom)/(2* GUIConstants.HEX_TILE_XY_RATIO)) * cam.zoom);
 
-		if ((dy%1) <= (1-Constants.HEX_TILE_YY_RATIO) / (Constants.HEX_TILE_YY_RATIO)) {
+		if ((dy%1) <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
 			int my = (int) Math.floor(dy);
-			double vx = ((px + cam.x/cam.zoom + (my)*(Constants.HEX_TILE_XY_RATIO/cam.zoom)/(2*Constants.HEX_TILE_XY_RATIO)) * cam.zoom ) % 1;
-			double vy = ((dy%1) / ((1-Constants.HEX_TILE_YY_RATIO) / (Constants.HEX_TILE_YY_RATIO)))/2;
+			double vx = ((px + cam.x/cam.zoom + (my)*(GUIConstants.HEX_TILE_XY_RATIO/cam.zoom)/(2* GUIConstants.HEX_TILE_XY_RATIO)) * cam.zoom ) % 1;
+			double vy = ((dy%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
 
 			if (vx < 0.5) {
 				if (vx + vy  < 0.5) {
@@ -381,7 +384,7 @@ public class Window extends JFrame implements Runnable {
 			}
 		};
 		bottom.setPreferredSize(new Dimension(800, 100));
-		bottom.setBackground(Constants.COLOR_INFOBAR_BACKGROUND);
+		bottom.setBackground(GUIConstants.COLOR_INFOBAR_BACKGROUND);
 
 		center = new JPanel(null) {
 			@Override
@@ -389,7 +392,7 @@ public class Window extends JFrame implements Runnable {
 				redrawGame();
 			}
 		};
-		center.setBackground(Constants.COLOR_GAME_BACKGROUND);
+		center.setBackground(GUIConstants.COLOR_GAME_BACKGROUND);
 
 		panel.add(center, BorderLayout.CENTER);
 		panel.add(bottom, BorderLayout.PAGE_END);
