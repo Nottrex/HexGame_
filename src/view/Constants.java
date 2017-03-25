@@ -11,5 +11,7 @@ public class Constants {
 	public static final double HEX_TILE_XY_RATIO			= 1.2/1.4;
 	public static final double HEX_TILE_YY_RATIO			= 1.05/1.4;
 	public static final double ZOOM							= 1.1;
-	public static final double HEX_TILE_WIDTH				= 120;
+
+	public static final double HEX_TILE_WIDTH_MAX			= 120;
+	public static final double MAX_HEAP_FILL				= 0.75;
 }
