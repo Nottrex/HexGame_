@@ -18,6 +18,6 @@ Graphics by Kenney:
 
 	http://kenney.nl/assets/game-icons
 	
-Music from Jukedeck - create your own at<.
+Music from Jukedeck - create your own at:
 		
 	http://jukedeck.com
