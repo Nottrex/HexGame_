@@ -59,16 +59,15 @@ public class ImageButton extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
 
 		if (entered) {
 			if (clicked) {
-				g2.drawImage(clickImage, 0, 0, getWidth(), getHeight(), null);
+				g.drawImage(clickImage, 0, 0, getWidth(), getHeight(), null);
 			} else {
-				g2.drawImage(hoverImage, 0, 0, getWidth(), getHeight(), null);
+				g.drawImage(hoverImage, 0, 0, getWidth(), getHeight(), null);
 			}
 		} else {
-			g2.drawImage(normalImage, 0, 0, getWidth(), getHeight(), null);
+			g.drawImage(normalImage, 0, 0, getWidth(), getHeight(), null);
 		}
 	}
 

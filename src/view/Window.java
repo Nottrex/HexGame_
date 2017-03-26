@@ -442,15 +442,17 @@ public class Window extends JFrame implements Runnable {
 
 	@Override
 	public void run() {
-		long t;
-		int i = 100;
+		int i = 0;
+		long t = System.currentTimeMillis();
 		while (!stop) {
 			i++;
-			t = System.nanoTime();
 			redrawGame();
-			if (i >= 30) {
+
+			if (System.currentTimeMillis()-t > 500) {
+				long t2 = System.currentTimeMillis();
+				fps = (int) (i / ((t2-t)/1000.0));
+				t = t2;
 				i = 0;
-				if ((System.nanoTime()-t) != 0) fps = (int) (1000000000/(System.nanoTime()-t));
 			}
 		}
 	}
