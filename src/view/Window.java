@@ -517,7 +517,7 @@ public class Window extends JFrame implements Runnable {
 		panel.add(bottom, BorderLayout.PAGE_END);
 		panel.updateUI();
 
-		audioPlayer = new AudioPlayer("EP", Clip.LOOP_CONTINUOUSLY);
+		audioPlayer = new AudioPlayer("MD", Clip.LOOP_CONTINUOUSLY);
 		audioPlayer.start();
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -565,6 +565,7 @@ public class Window extends JFrame implements Runnable {
 		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
 
 		AudioHandler.loadMusicWav("EP", "music/EP");
+        AudioHandler.loadMusicWav("MD", "music/MD");
 		redrawMap();
 	}
 }
