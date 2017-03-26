@@ -7,7 +7,7 @@ import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
-import view.components.ImageButton;
+import view.components.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,6 +29,8 @@ public class Window extends JFrame implements Runnable {
 	protected JPanel center;
 
 	private ImageButton button_audioOn;
+	private ImageTextLabel topBar;
+	private TextLabel fpsLabel;
 
 	private int fps = 0, width, height;
 	private Camera cam;
@@ -189,92 +191,74 @@ public class Window extends JFrame implements Runnable {
 
 		g.setColor(Color.BLUE);
 		GameMap m = controller.game.getMap();
+		{	//Draw In-game stuff
+			g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
 
-		g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
+			double wx = 1/cam.zoom;
+			double wy = wx* GUIConstants.HEX_TILE_XY_RATIO;
+			{
+				g.drawImage(mapBuffer, (int) (-((int)Math.ceil(m.getHeight()/2.0))*wx), 0, (int) (wx * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (wy * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), null);
+			}
 
-		double wx = 1/cam.zoom;
-		double wy = wx* GUIConstants.HEX_TILE_XY_RATIO;
-		{
-			g.drawImage(mapBuffer, (int) (-((int)Math.ceil(m.getHeight()/2.0))*wx), 0, (int) (wx * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (wy * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), null);
-		}
+			for (Unit u: m.getUnits()) {
+				UnitType ut = u.getType();
+				double w = wx*ut.getSize();
+				double h = wy*ut.getSize();
 
-		for (Unit u: m.getUnits()) {
-			UnitType ut = u.getType();
-			double w = wx*ut.getSize();
-			double h = wy*ut.getSize();
+				double py = (u.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
+				double px = (u.getX())*wx - (u.getY())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
 
-			double py = (u.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
-			double px = (u.getX())*wx - (u.getY())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
+				g.drawImage(TextureHandler.getImagePng("units_" + ut.toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), (int) px, (int) py, (int) w, (int) h, null);
+			}
 
-			g.drawImage(TextureHandler.getImagePng("units_" + ut.toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), (int) px, (int) py, (int) w, (int) h, null);
-		}
+			Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
+			drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
-		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
-		drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
+			Location selectedField = controller.selectedField;
 
-		Location selectedField = controller.selectedField;
+			if (selectedField != null) {
+				drawHexField(selectedField.x, selectedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
 
-		if (selectedField != null) {
-			drawHexField(selectedField.x, selectedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+				Optional<Unit> u = m.getUnitAt(selectedField);
 
-			Optional<Unit> u = m.getUnitAt(selectedField);
+				if (u.isPresent()) {
 
-			if (u.isPresent()) {
-
-				if (controller.pa == null) {
-					controller.pa = ActionUtil.getPossibleActions(controller.game, u.get());
-				}
-
-				for (Location target: controller.pa.canMoveTo()) {
-					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
-				}
-
-				for (Location target: controller.pa.canAttack()) {
-					drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
-				}
-
-				if (controller.pa.canMoveTo().contains(mloc)) {
-					List<Direction> movements = controller.pa.moveTo(mloc);
-					Location a = selectedField;
-
-					for (Direction d: movements) {
-						drawMovementArrow(a.x, a.y, g, d, wx, wy);
-						a = d.applyMovement(a);
+					if (controller.pa == null) {
+						controller.pa = ActionUtil.getPossibleActions(controller.game, u.get());
 					}
-				} else if (controller.pa.canAttack().contains(mloc)) {
-					List<Direction> movements = controller.pa.moveToToAttack(mloc);
-					Location a = selectedField;
 
-					for (Direction d: movements) {
-						drawMovementArrow(a.x, a.y, g, d, wx, wy);
-						a = d.applyMovement(a);
+					for (Location target: controller.pa.canMoveTo()) {
+						drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
+					}
+
+					for (Location target: controller.pa.canAttack()) {
+						drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
+					}
+
+					if (controller.pa.canMoveTo().contains(mloc)) {
+						List<Direction> movements = controller.pa.moveTo(mloc);
+						Location a = selectedField;
+
+						for (Direction d: movements) {
+							drawMovementArrow(a.x, a.y, g, d, wx, wy);
+							a = d.applyMovement(a);
+						}
+					} else if (controller.pa.canAttack().contains(mloc)) {
+						List<Direction> movements = controller.pa.moveToToAttack(mloc);
+						Location a = selectedField;
+
+						for (Direction d: movements) {
+							drawMovementArrow(a.x, a.y, g, d, wx, wy);
+							a = d.applyMovement(a);
+						}
 					}
 				}
 			}
+
+			g.translate((int) (cam.x/cam.zoom), (int) (cam.y/cam.zoom));
 		}
 
-		g.translate((int) (cam.x/cam.zoom), (int) (cam.y/cam.zoom));
-
-
-		{	//Draw TopBar
-			g.setColor(Color.WHITE);
-			int height = center.getHeight()/15;
-			int width = (height*380)/49;
-			int x = (center.getWidth()-width)/2;
-
-			String text = String.format("Round %d   %d / %d   %s", controller.game.getRound(), controller.game.getPlayerTurnID(), controller.game.getPlayerAmount(), controller.game.getPlayerTurn().getDisplayName());
-
-			Font font = g.getFont().deriveFont(height*0.5f);
-			g.setFont(font);
-
-			double fWidth = g.getFontMetrics(font).getStringBounds(text, g).getWidth();
-
-			g.drawImage(TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().toString().toLowerCase()), x, 5, width, height, null);
-			g.drawString(text, (int) (x + (width-fWidth)/2), height*3/4);
-
-			g.drawString("FPS: " + fps, 5, (int) (height * 0.5)+5);
-		}
-
+		//Draw gui stuff
 		for (Component c: center.getComponents()) {
 			g.translate(c.getX(), c.getY());
 
@@ -478,16 +462,33 @@ public class Window extends JFrame implements Runnable {
 		};
 		center.setBackground(GUIConstants.COLOR_GAME_BACKGROUND);
 		button_audioOn = new ImageButton(TextureHandler.getImagePng("button_audioOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_AUDIO));
+		fpsLabel = new TextLabel(() -> ("FPS: " + fps));
+		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
+			@Override
+			public BufferedImage getImage() {
+				return TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().toString().toLowerCase());
+			}
+
+			@Override
+			public String getText() {
+				return String.format("Round %d   %d / %d   %s", controller.game.getRound(), controller.game.getPlayerTurnID(), controller.game.getPlayerAmount(), controller.game.getPlayerTurn().getDisplayName());
+			}
+		});
 
 		center.add(button_audioOn);
+		center.add(topBar);
+		center.add(fpsLabel);
 		center.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				int height = center.getHeight();
 				int width = center.getWidth();
 				int buttonHeight = height / 12;
+				int barHeight = height / 15;
 
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
+				topBar.setBounds((width-(380*barHeight)/49)/2, 5, (380*barHeight)/49, barHeight);
+				fpsLabel.setBounds(5, 5, barHeight*5, barHeight);
 			}
 		});
 
