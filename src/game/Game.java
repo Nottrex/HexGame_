@@ -7,6 +7,7 @@ import game.map.MapGenerator;
 import game.map.presets.HexPreset;
 
 public class Game {
+	public static final String VERSION = "0.2";
 
 	private GameMap map;
 	private int playerAmount;

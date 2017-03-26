@@ -1,12 +1,32 @@
 package networking.packets;
 
+import networking.gamePackets.clientPackets.PacketClientInfo;
+import networking.gamePackets.clientPackets.PacketClientKicked;
+import networking.gamePackets.clientPackets.PacketServerInfo;
+import networking.gamePackets.preGamePackets.*;
+
 public class PacketHandler {
-	
+
+	static {
+		addPacket(PacketServerInfo.class);
+		addPacket(PacketClientInfo.class);
+		addPacket(PacketClientKicked.class);
+
+		addPacket(PacketGameBegin.class);
+		addPacket(PacketPlayerQuit.class);
+		addPacket(PacketPlayerJoined.class);
+
+		addPacket(PacketPlayerReady.class);
+		addPacket(PacketPlayerPickColor.class);
+	}
+
 	@SuppressWarnings("unchecked")
 	private static Class<? extends Packet>[] packets = new Class[256];
-	
-	public static void setPacket(Class<? extends Packet> packet, int packetID) {
-		packets[packetID] = packet;
+
+
+	private static int id = 0;
+	private static void addPacket(Class<? extends Packet> packet) {
+		packets[id++] = packet;
 	}
 	
 	public static Class<? extends Packet> getPacket(int packetID) {

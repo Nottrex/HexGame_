@@ -63,8 +63,8 @@ public class Client implements Runnable {
 	
 	//Private
 	
-	private void onReceivePacket(int packetID, Packet packet) {
-		listener.onReceivePacket(packetID, packet);
+	private void onReceivePacket(Packet packet) {
+		listener.onReceivePacket(packet);
 	}
 
 	private void onLeave() {
@@ -84,7 +84,7 @@ public class Client implements Runnable {
 					data[i] = (byte) (is.read()-128);
 				}
 				try {
-					onReceivePacket(packetID, PacketHandler.getPacket(packetID).getConstructor(byte[].class).newInstance(data));
+					onReceivePacket(PacketHandler.getPacket(packetID).getConstructor(byte[].class).newInstance(data));
 				} catch (InstantiationException	| IllegalAccessException | IllegalArgumentException	| InvocationTargetException	| NoSuchMethodException | SecurityException e) {
 					System.err.println("Error parsing packet: " + packetID);
 				}				

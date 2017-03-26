@@ -37,10 +37,10 @@ public class Server implements Runnable {
 		try {
 			Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
 			while(e.hasMoreElements()) {
-			    NetworkInterface n = (NetworkInterface) e.nextElement();
+			    NetworkInterface n = e.nextElement();
 			    Enumeration<InetAddress> ee = n.getInetAddresses();
 			    while (ee.hasMoreElements()) {
-			        InetAddress i = (InetAddress) ee.nextElement();
+			        InetAddress i = ee.nextElement();
 			        if (i.getAddress().length == 4) System.out.println(i.getHostAddress());
 			    }
 			}
@@ -97,7 +97,7 @@ public class Server implements Runnable {
 	//PRIVATE
 	
 	private void onReceivePacket(Socket s, int packetID, Packet packet) {
-		if (listener != null) listener.onReceivePacket(s, packetID, packet);
+		if (listener != null) listener.onReceivePacket(s, packet);
 	}
 	
 	private void onClientLeave(Socket s) {
