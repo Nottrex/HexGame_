@@ -15,10 +15,9 @@ public class Game {
 	private int round;
 	private int playerTurn;
 
-	public Game() {
-		map = new GameMap(new MapGenerator(new HexPreset(61, 61)));
-		playerAmount = 2;
-		players = new PlayerColor[]{PlayerColor.BLUE, PlayerColor.RED};
+	public Game(PlayerColor[] players, GameMap map) {
+		this.map = map;
+		playerAmount = players.length;
 	}
 
 	public void nextRound() {

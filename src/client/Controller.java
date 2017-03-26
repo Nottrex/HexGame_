@@ -1,5 +1,6 @@
-package view;
+package client;
 
+import client.window.Window;
 import game.Game;
 import game.map.GameMap;
 import game.Location;
@@ -10,7 +11,6 @@ import game.enums.UnitState;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,13 +19,13 @@ public class Controller {
 
 	private Window window;	//TODO Remove everything window related!
 
-	protected Game game;
-	protected List<PlayerColor> localPlayers;
-	protected Location selectedField = null;
-	protected PossibleActions pa = null;
+	public Game game;
+	public List<PlayerColor> localPlayers;
+	public Location selectedField = null;
+	public PossibleActions pa = null;
 
 	public Controller(Window window) {
-		game = new Game();
+		//game = new Game();
 		game.nextRound();
 		localPlayers = new ArrayList<>();
 		localPlayers.add(PlayerColor.BLUE);
@@ -34,7 +34,7 @@ public class Controller {
 		this.window = window;
 	}
 
-	protected void onMouseClick(Location l) {
+	public void onMouseClick(Location l) {
 		if (game == null) return;
 
 		GameMap m = game.getMap();
@@ -84,7 +84,7 @@ public class Controller {
 		window.redrawInfoBar();
 	}
 
-	protected void onKeyType(int keyCode) {
+	public void onKeyType(int keyCode) {
 		if (keyCode == KeyBindings.KEY_NEXT_PLAYER) {
 			game.nextPlayer();
 			selectedField = null;

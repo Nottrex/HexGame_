@@ -1,4 +1,4 @@
-package view.audio;
+package client.audio;
 
 
 public class AudioConstants {

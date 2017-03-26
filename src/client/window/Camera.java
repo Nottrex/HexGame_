@@ -1,4 +1,4 @@
-package view;
+package client.window;
 
 public class Camera {
 	public double zoom, x, y;

@@ -1,7 +1,9 @@
-package view;
+package client.window;
 
-import view.audio.AudioHandler;
-import view.audio.AudioPlayer;
+import client.Controller;
+import client.KeyBindings;
+import client.audio.AudioHandler;
+import client.audio.AudioPlayer;
 import game.*;
 import game.enums.Direction;
 import game.enums.Field;
@@ -9,7 +11,7 @@ import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
-import view.components.*;
+import client.components.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -320,7 +322,7 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	private boolean drawing2 = false;
-	protected void redrawInfoBar() {
+	public void redrawInfoBar() {
 		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || controller == null || controller.game == null || drawing2) return;
 		drawing2 = true;
 

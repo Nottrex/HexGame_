@@ -1,4 +1,4 @@
-package view.audio;
+package client.audio;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,4 +1,6 @@
-package view;
+package client;
+
+import client.window.Window;
 
 public class Main {
 
