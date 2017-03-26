@@ -497,8 +497,8 @@ public class Window extends JFrame implements Runnable {
 			public void componentResized(ComponentEvent e) {
 				int height = (center.getHeight() + center.getWidth()) / 2;
 				int width = center.getWidth();
-				int buttonHeight = height / 30;
-				int barHeight = height / 30;
+				int buttonHeight = height / 80 + 23;
+				int barHeight = height / 80 + 23;
 
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
 				button_musicOn.setBounds(width - buttonHeight*2 - 5*2, 5, buttonHeight, buttonHeight);
