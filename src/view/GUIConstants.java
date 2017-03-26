@@ -17,5 +17,5 @@ public class GUIConstants {
   
 	public static final double ARROW_SIZE 					= 0.5;
   
-	public static final int VOLUME 							= -20;
+	public static final int MUSIC_VOLUME 							= -20;
 }

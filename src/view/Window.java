@@ -102,7 +102,7 @@ public class Window extends JFrame implements Runnable {
 		music.setMicrosecondPosition(0L);
 		music.loop(Clip.LOOP_CONTINUOUSLY);
 		FloatControl fc = (FloatControl) music.getControl(FloatControl.Type.MASTER_GAIN);
-		fc.setValue(GUIConstants.VOLUME);
+		fc.setValue(GUIConstants.MUSIC_VOLUME);
 		music.start();
 
 		new Thread(this).start();
