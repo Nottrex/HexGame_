@@ -495,10 +495,10 @@ public class Window extends JFrame implements Runnable {
 		center.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				int height = center.getHeight();
+				int height = (center.getHeight() + center.getWidth()) / 2;
 				int width = center.getWidth();
-				int buttonHeight = height / 15;
-				int barHeight = height / 15;
+				int buttonHeight = height / 30;
+				int barHeight = height / 30;
 
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
 				button_musicOn.setBounds(width - buttonHeight*2 - 5*2, 5, buttonHeight, buttonHeight);
@@ -508,7 +508,7 @@ public class Window extends JFrame implements Runnable {
 
 
 				if (controller != null && controller.localPlayers.contains(controller.game.getPlayerTurn())) {
-					button_endTurn.setBounds(width - buttonHeight - 5, height - buttonHeight - 5, buttonHeight, buttonHeight);
+					button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
 				}
 			}
 		});
