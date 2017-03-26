@@ -1,7 +1,7 @@
 package view;
 
-import audio.AudioHandler;
-import audio.AudioPlayer;
+import view.audio.AudioHandler;
+import view.audio.AudioPlayer;
 import game.*;
 import game.enums.Direction;
 import game.enums.Field;
@@ -30,6 +30,9 @@ public class Window extends JFrame implements Runnable {
 	protected JPanel center;
 
 	private ImageButton button_audioOn;
+	private ImageButton button_musicOn;
+	private ImageButton button_centerCamera;
+	private ImageButton button_endTurn;
 	private ImageTextLabel topBar;
 	private TextLabel fpsLabel;
 
@@ -43,6 +46,7 @@ public class Window extends JFrame implements Runnable {
 	private Controller controller;
 	private AudioPlayer audioPlayer;
 	private boolean audioOn = true;
+	private boolean musicOn = true;
 
 	public Window() {
 		super("HexGame");
@@ -130,11 +134,21 @@ public class Window extends JFrame implements Runnable {
 			audioOn = !audioOn;
 
 			if (audioOn) {
-				audioPlayer.resume();
 				button_audioOn.setImage(TextureHandler.getImagePng("button_audioOn"));
 			} else {
-				audioPlayer.pause();
 				button_audioOn.setImage(TextureHandler.getImagePng("button_audioOff"));
+			}
+		}
+
+		if (keyCode == KeyBindings.KEY_TOGGLE_MUSIC) {
+			musicOn = !musicOn;
+
+			if (musicOn) {
+				audioPlayer.resume();
+				button_musicOn.setImage(TextureHandler.getImagePng("button_musicOn"));
+			} else {
+				audioPlayer.pause();
+				button_musicOn.setImage(TextureHandler.getImagePng("button_musicOff"));
 			}
 		}
 
@@ -385,7 +399,7 @@ public class Window extends JFrame implements Runnable {
 
 		cam.tzoom = (m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight();
 
-		cam.ty = (GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO;
+		cam.ty = (GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO - 20*cam.tzoom;
 		cam.tx = 0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4);
 	}
 
@@ -456,6 +470,9 @@ public class Window extends JFrame implements Runnable {
 		};
 		center.setBackground(GUIConstants.COLOR_GAME_BACKGROUND);
 		button_audioOn = new ImageButton(TextureHandler.getImagePng("button_audioOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_AUDIO));
+		button_musicOn = new ImageButton(TextureHandler.getImagePng("button_musicOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_MUSIC));
+		button_centerCamera = new ImageButton(TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
+		button_endTurn = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
 		fpsLabel = new TextLabel(() -> ("FPS: " + fps));
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
@@ -470,6 +487,9 @@ public class Window extends JFrame implements Runnable {
 		});
 
 		center.add(button_audioOn);
+		center.add(button_musicOn);
+		center.add(button_centerCamera);
+		center.add(button_endTurn);
 		center.add(topBar);
 		center.add(fpsLabel);
 		center.addComponentListener(new ComponentAdapter() {
@@ -481,8 +501,15 @@ public class Window extends JFrame implements Runnable {
 				int barHeight = height / 15;
 
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
+				button_musicOn.setBounds(width - buttonHeight*2 - 5, 5, buttonHeight, buttonHeight);
+				button_centerCamera.setBounds(width - buttonHeight*3 - 5, 5, buttonHeight, buttonHeight);
 				topBar.setBounds((width-(380*barHeight)/49)/2, 5, (380*barHeight)/49, barHeight);
 				fpsLabel.setBounds(5, 5, barHeight*5, barHeight);
+
+
+				if (controller != null && controller.localPlayers.contains(controller.game.getPlayerTurn())) {
+					button_endTurn.setBounds(width - buttonHeight - 5, height - buttonHeight - 5, buttonHeight, buttonHeight);
+				}
 			}
 		});
 
@@ -529,6 +556,13 @@ public class Window extends JFrame implements Runnable {
 
 		TextureHandler.loadImagePng("button_audioOn", "ui/buttons/audioOn");
 		TextureHandler.loadImagePng("button_audioOff", "ui/buttons/audioOff");
+
+		TextureHandler.loadImagePng("button_musicOn", "ui/buttons/musicOn");
+		TextureHandler.loadImagePng("button_musicOff", "ui/buttons/musicOff");
+
+		TextureHandler.loadImagePng("button_centerCamera", "ui/buttons/centerCamera");
+
+		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
 
 		AudioHandler.loadMusicWav("EP", "music/EP");
 		redrawMap();
