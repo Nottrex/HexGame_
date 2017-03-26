@@ -9,35 +9,17 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class ImageButton extends JComponent {
-	private BufferedImage normalImage;
-	private BufferedImage hoverImage;
-	private BufferedImage clickImage;
+	private BufferedImage image;
 
-	private boolean clicked = false;
 	private boolean entered = false;
 
-	private ActionListener actionListener;
-
 	public ImageButton(BufferedImage image, ActionListener actionListener) {
-		this(image, image, image, actionListener);
-	}
-
-	public ImageButton(BufferedImage normalImage, BufferedImage hoverImage, BufferedImage clickImage, ActionListener actionListener) {
-		this.normalImage = normalImage;
-		this.hoverImage = hoverImage;
-		this.clickImage = clickImage;
-
-		this.actionListener = actionListener;
+		this.image = image;
 
 		this.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				clicked = true;
-			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				clicked = false;
 				if (entered) {
 					actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
 				}
@@ -61,31 +43,13 @@ public class ImageButton extends JComponent {
 		super.paintComponent(g);
 
 		if (entered) {
-			if (clicked) {
-				g.drawImage(clickImage, 0, 0, getWidth(), getHeight(), null);
-			} else {
-				g.drawImage(hoverImage, 0, 0, getWidth(), getHeight(), null);
-			}
+			g.drawImage(image, getWidth()/20, getHeight()/20, (getWidth()*18)/20, (getHeight()*18)/20, null);
 		} else {
-			g.drawImage(normalImage, 0, 0, getWidth(), getHeight(), null);
+			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		}
 	}
 
-	public void setNormalImage(BufferedImage normalImage) {
-		this.normalImage = normalImage;
-	}
-
-	public void setHoverImage(BufferedImage hoverImage) {
-		this.hoverImage = hoverImage;
-	}
-
-	public void setClickImage(BufferedImage clickImage) {
-		this.clickImage = clickImage;
-	}
-
 	public void setImage(BufferedImage image) {
-		this.normalImage = image;
-		this.hoverImage = image;
-		this.clickImage = image;
+		this.image = image;
 	}
 }
