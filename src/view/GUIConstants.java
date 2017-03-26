@@ -16,6 +16,4 @@ public class GUIConstants {
 	public static final double MAX_HEAP_FILL				= 0.75;
   
 	public static final double ARROW_SIZE 					= 0.5;
-  
-	public static final int MUSIC_VOLUME 							= -20;
 }

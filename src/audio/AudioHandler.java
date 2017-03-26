@@ -1,4 +1,4 @@
-package view;
+package audio;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

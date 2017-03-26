@@ -1,5 +1,7 @@
 package view;
 
+import audio.AudioHandler;
+import audio.AudioPlayer;
 import game.*;
 import game.enums.Direction;
 import game.enums.Field;
@@ -16,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 
 public class Window extends JFrame implements Runnable {
@@ -40,8 +41,7 @@ public class Window extends JFrame implements Runnable {
 	private KeyInputListener keyListener;
 
 	private Controller controller;
-
-	private Clip music;
+	private AudioPlayer audioPlayer;
 	private boolean audioOn = true;
 
 	public Window() {
@@ -99,12 +99,6 @@ public class Window extends JFrame implements Runnable {
 
 		centerCamera();
 
-		music.setMicrosecondPosition(0L);
-		music.loop(Clip.LOOP_CONTINUOUSLY);
-		FloatControl fc = (FloatControl) music.getControl(FloatControl.Type.MASTER_GAIN);
-		fc.setValue(GUIConstants.MUSIC_VOLUME);
-		music.start();
-
 		new Thread(this).start();
 	}
 
@@ -136,11 +130,10 @@ public class Window extends JFrame implements Runnable {
 			audioOn = !audioOn;
 
 			if (audioOn) {
-				music.start();
-				music.loop(Clip.LOOP_CONTINUOUSLY);
+				audioPlayer.resume();
 				button_audioOn.setImage(TextureHandler.getImagePng("button_audioOn"));
 			} else {
-				music.stop();
+				audioPlayer.pause();
 				button_audioOn.setImage(TextureHandler.getImagePng("button_audioOff"));
 			}
 		}
@@ -431,6 +424,7 @@ public class Window extends JFrame implements Runnable {
 		while (!stop) {
 			i++;
 			redrawGame();
+			audioPlayer.updateVolume();
 
 			if (System.currentTimeMillis()-t > 500) {
 				long t2 = System.currentTimeMillis();
@@ -496,6 +490,9 @@ public class Window extends JFrame implements Runnable {
 		panel.add(bottom, BorderLayout.PAGE_END);
 		panel.updateUI();
 
+		audioPlayer = new AudioPlayer("EP", Clip.LOOP_CONTINUOUSLY);
+		audioPlayer.start();
+
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		TextureHandler.loadImagePng("cursor","ui/cursor");
 		Cursor c = toolkit.createCustomCursor(TextureHandler.getImagePng("cursor") , new Point(0, 0), "img");
@@ -534,8 +531,6 @@ public class Window extends JFrame implements Runnable {
 		TextureHandler.loadImagePng("button_audioOff", "ui/buttons/audioOff");
 
 		AudioHandler.loadMusicWav("EP", "music/EP");
-		music = AudioHandler.getMusicWav("EP");
-
 		redrawMap();
 	}
 }
