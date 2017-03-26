@@ -7,6 +7,7 @@ import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
+import view.components.ImageButton;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,6 +28,8 @@ public class Window extends JFrame implements Runnable {
 	protected JPanel bottom;
 	protected JPanel center;
 
+	private ImageButton button_audioOn;
+
 	private int fps = 0, width, height;
 	private Camera cam;
 	private boolean stop = false;
@@ -37,6 +40,7 @@ public class Window extends JFrame implements Runnable {
 	private Controller controller;
 
 	private Clip music;
+	private boolean audioOn = true;
 
 	public Window() {
 		super("HexGame");
@@ -46,8 +50,6 @@ public class Window extends JFrame implements Runnable {
 
 		width = getWidth();
 		height = getHeight();
-
-		initComponents();
 
 		i = getInsets();
 		cam = new Camera();
@@ -91,6 +93,10 @@ public class Window extends JFrame implements Runnable {
 		});
 
 		init();
+		initComponents();
+
+		centerCamera();
+
 		music.setMicrosecondPosition(0L);
 		music.loop(Clip.LOOP_CONTINUOUSLY);
 		FloatControl fc = (FloatControl) music.getControl(FloatControl.Type.MASTER_GAIN);
@@ -98,42 +104,6 @@ public class Window extends JFrame implements Runnable {
 		music.start();
 
 		new Thread(this).start();
-	}
-
-	private void init() {
-		controller = new Controller(this);
-
-		for (Field f: Field.values()) {
-			if (f != Field.VOID) {
-				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());
-			}
-		}
-
-		for (UnitType ut: UnitType.values()) {
-			for (PlayerColor pc: PlayerColor.values()) {
-				TextureHandler.loadImagePng("units_" + ut.toString().toLowerCase() + "_" + pc.toString().toLowerCase(), "units/" + ut.toString().toLowerCase() + "/" + pc.toString().toLowerCase());
-			}
-		}
-
-		for (PlayerColor pc: PlayerColor.values()) {
-			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
-		}
-    
-		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
-		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
-		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
-		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
-
-		for (Direction d: Direction.values()) {
-			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
-		}
-
-		AudioHandler.loadMusicWav("EP", "music/EP");
-		music = AudioHandler.getMusicWav("EP");
-
-		centerCamera();
-
-		redrawMap();
 	}
 
 	protected void onMouseWheel(double d) {
@@ -156,8 +126,21 @@ public class Window extends JFrame implements Runnable {
 	}
 
 	protected void onKeyType(int keyCode) {
-		if (keyCode == KeyEvent.VK_C) {
+		if (keyCode == KeyBindings.KEY_CENTER_CAMERA) {
 			centerCamera();
+		}
+
+		if (keyCode == KeyBindings.KEY_TOGGLE_AUDIO) {
+			audioOn = !audioOn;
+
+			if (audioOn) {
+				music.start();
+				music.loop(Clip.LOOP_CONTINUOUSLY);
+				button_audioOn.setImage(TextureHandler.getImagePng("button_audioOn"));
+			} else {
+				music.stop();
+				button_audioOn.setImage(TextureHandler.getImagePng("button_audioOff"));
+			}
 		}
 
 		controller.onKeyType(keyCode);
@@ -171,15 +154,12 @@ public class Window extends JFrame implements Runnable {
 
 		int maxSize = (int) Math.min((long) (GUIConstants.MAX_HEAP_FILL*Runtime.getRuntime().maxMemory()/4), (long)Integer.MAX_VALUE);
 
-
 		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * GUIConstants.HEX_TILE_XY_RATIO * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), GUIConstants.HEX_TILE_WIDTH_MAX));
 
 		double height = width* GUIConstants.HEX_TILE_XY_RATIO;
 
 		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = mapBuffer.getGraphics();
-
-
 
 		g.setColor(new Color(0, 0, 0, 0));
 		g.fillRect(0, 0, (int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)));
@@ -232,10 +212,12 @@ public class Window extends JFrame implements Runnable {
 		Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
 		drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
 
-		if (controller.selectedField != null) {
-			drawHexField(controller.selectedField.x, controller.selectedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+		Location selectedField = controller.selectedField;
 
-			Optional<Unit> u = m.getUnitAt(controller.selectedField);
+		if (selectedField != null) {
+			drawHexField(selectedField.x, selectedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
+
+			Optional<Unit> u = m.getUnitAt(selectedField);
 
 			if (u.isPresent()) {
 
@@ -253,7 +235,7 @@ public class Window extends JFrame implements Runnable {
 
 				if (controller.pa.canMoveTo().contains(mloc)) {
 					List<Direction> movements = controller.pa.moveTo(mloc);
-					Location a = controller.selectedField;
+					Location a = selectedField;
 
 					for (Direction d: movements) {
 						drawMovementArrow(a.x, a.y, g, d, wx, wy);
@@ -261,7 +243,7 @@ public class Window extends JFrame implements Runnable {
 					}
 				} else if (controller.pa.canAttack().contains(mloc)) {
 					List<Direction> movements = controller.pa.moveToToAttack(mloc);
-					Location a = controller.selectedField;
+					Location a = selectedField;
 
 					for (Direction d: movements) {
 						drawMovementArrow(a.x, a.y, g, d, wx, wy);
@@ -293,6 +275,13 @@ public class Window extends JFrame implements Runnable {
 			g.drawString("FPS: " + fps, 5, (int) (height * 0.5)+5);
 		}
 
+		for (Component c: center.getComponents()) {
+			g.translate(c.getX(), c.getY());
+
+			c.update(g);
+
+			g.translate(-c.getX(), -c.getY());
+		}
 
 		center.getGraphics().drawImage(buffer, 0, 0, null);
 		drawing = false;
@@ -337,8 +326,6 @@ public class Window extends JFrame implements Runnable {
 			default:
 				break;
 		}
-
-		//g.drawImage(TextureHandler.getImagePng("arrow_" + d.toString().toLowerCase()), (int) centerX1, (int) centerY2, (int) (centerX2-centerX1), (int) (centerY1-centerY2), null);
 	}
 
 	private boolean drawing2 = false;
@@ -488,14 +475,64 @@ public class Window extends JFrame implements Runnable {
 			}
 		};
 		center.setBackground(GUIConstants.COLOR_GAME_BACKGROUND);
+		button_audioOn = new ImageButton(TextureHandler.getImagePng("button_audioOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_AUDIO));
+
+		center.add(button_audioOn);
+		center.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				int height = center.getHeight();
+				int width = center.getWidth();
+				int buttonHeight = height / 12;
+
+				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
+			}
+		});
 
 		panel.add(center, BorderLayout.CENTER);
 		panel.add(bottom, BorderLayout.PAGE_END);
-
+		panel.updateUI();
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		TextureHandler.loadImagePng("cursor","ui/cursor");
 		Cursor c = toolkit.createCustomCursor(TextureHandler.getImagePng("cursor") , new Point(0, 0), "img");
-		this.setCursor (c);
+		this.setCursor(c);
+	}
+
+	private void init() {
+		controller = new Controller(this);
+
+		for (Field f: Field.values()) {
+			if (f != Field.VOID) {
+				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());
+			}
+		}
+
+		for (UnitType ut: UnitType.values()) {
+			for (PlayerColor pc: PlayerColor.values()) {
+				TextureHandler.loadImagePng("units_" + ut.toString().toLowerCase() + "_" + pc.toString().toLowerCase(), "units/" + ut.toString().toLowerCase() + "/" + pc.toString().toLowerCase());
+			}
+		}
+
+		for (PlayerColor pc: PlayerColor.values()) {
+			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
+		}
+
+		for (Direction d: Direction.values()) {
+			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
+		}
+
+		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
+		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
+		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
+		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
+
+		TextureHandler.loadImagePng("button_audioOn", "ui/buttons/audioOn");
+		TextureHandler.loadImagePng("button_audioOff", "ui/buttons/audioOff");
+
+		AudioHandler.loadMusicWav("EP", "music/EP");
+		music = AudioHandler.getMusicWav("EP");
+
+		redrawMap();
 	}
 }

@@ -17,11 +17,15 @@ public class MouseInputListener extends MouseAdapter {
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		if (window.center == null) return;
+
 		window.onMouseWheel(e.getScrollAmount() * e.getPreciseWheelRotation());
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		if (window.center == null) return;
+
 		//Update dragging
 		if (mousePressedInGame) {
 			totalDistanceDragged += Math.abs(e.getX()-lastX) + Math.abs(e.getY()-lastY);
@@ -42,6 +46,8 @@ public class MouseInputListener extends MouseAdapter {
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		if (window.center == null) return;
+
 		int x = e.getX() - window.i.left;
 		int y = e.getY() - window.i.top;
 		if (x >= window.center.getX() && x < (window.center.getX() + window.center.getWidth()) && y >= window.center.getY() && y < (window.center.getY() + window.center.getHeight())) {
@@ -53,6 +59,8 @@ public class MouseInputListener extends MouseAdapter {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (window.center == null) return;
+
 		int x = e.getX() - window.i.left;
 		int y = e.getY() - window.i.top;
 		if (x >= window.center.getX() && x < (window.center.getX() + window.center.getWidth()) && y >= window.center.getY() && y < (window.center.getY() + window.center.getHeight())) {
@@ -62,6 +70,8 @@ public class MouseInputListener extends MouseAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		if (window.center == null) return;
+
 		int x = e.getX() - window.i.left;
 		int y = e.getY() - window.i.top;
 		if (x >= window.center.getX() && x < (window.center.getX() + window.center.getWidth()) && y >= window.center.getY() && y < (window.center.getY() + window.center.getHeight())) {
@@ -73,6 +83,8 @@ public class MouseInputListener extends MouseAdapter {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (window.center == null) return;
+
 		//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_CLICK" then it should still count as a click
 		if (mousePressedInGame && totalDistanceDragged > 0) {
 			if (totalDistanceDragged <= GUIConstants.MAXIMUM_DRAG_DISTANCE_FOR_CLICK) {

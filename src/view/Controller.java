@@ -85,7 +85,7 @@ public class Controller {
 	}
 
 	protected void onKeyType(int keyCode) {
-		if (keyCode == KeyEvent.VK_ENTER) {
+		if (keyCode == KeyBindings.KEY_NEXT_PLAYER) {
 			game.nextPlayer();
 		}
 	}
