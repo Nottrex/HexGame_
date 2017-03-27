@@ -28,9 +28,7 @@ public class ViewMainMenu implements View {
 		window.getPanel().add(buttonQuitGame);
 
 		buttonQuitGame.addActionListener(e -> System.exit(0));
-		buttonStartGame.addActionListener(e -> window.updateView(new ViewGame()));
-
-		window.getPanel().updateUI();
+		buttonStartGame.addActionListener(e -> window.updateView(new ViewServerConnect()));
 	}
 
 	@Override
@@ -45,7 +43,8 @@ public class ViewMainMenu implements View {
 
 	@Override
 	public void stop() {
-		window.getPanel().removeAll();
+
+
 	}
 
 

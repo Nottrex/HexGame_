@@ -2,13 +2,13 @@ package networking.packets;
 
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
-import networking.gamePackets.clientPackets.PacketServerInfo;
 import networking.gamePackets.preGamePackets.*;
 
 public class PacketHandler {
 
+	private static Class<? extends Packet>[] packets = new Class[256];
+
 	static {
-		addPacket(PacketServerInfo.class);
 		addPacket(PacketClientInfo.class);
 		addPacket(PacketClientKicked.class);
 
@@ -21,8 +21,6 @@ public class PacketHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Class<? extends Packet>[] packets = new Class[256];
-
 
 	private static int id = 0;
 	private static void addPacket(Class<? extends Packet> packet) {

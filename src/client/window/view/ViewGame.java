@@ -62,7 +62,6 @@ public class ViewGame implements View {
 		cam = new Camera();
 
 		loadResources();
-		controller.setupGame();
 
 		mouseListener 	= new MouseInputListener(this);
 		keyListener 	= new KeyInputListener(this);
@@ -107,12 +106,13 @@ public class ViewGame implements View {
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
 			public BufferedImage getImage() {
-				return TextureHandler.getImagePng("bar_" + controller.game.getPlayerTurn().toString().toLowerCase());
+				return TextureHandler.getImagePng("bar_" + controller.game.getPlayerColor().toString().toLowerCase());
 			}
 
 			@Override
 			public String getText() {
-				return String.format("Round %d   %d / %d   %s", controller.game.getRound(), controller.game.getPlayerTurnID(), controller.game.getPlayerAmount(), controller.game.getPlayerTurn().getDisplayName());
+				return String.format("Round %d   %d / %d   %s   %s", controller.game.getRound(), controller.game.getPlayerTurnID(), controller.game.getPlayerAmount(), controller.game.getPlayerTurn(), controller.game
+				.getPlayerColor().getDisplayName());
 			}
 		});
 
@@ -138,10 +138,7 @@ public class ViewGame implements View {
 				topBar.setBounds((width-(380*barHeight)/49)/2, 5, (380*barHeight)/49, barHeight);
 				fpsLabel.setBounds(5, 5, barHeight*5, barHeight);
 
-
-				if (controller != null && controller.localPlayers.contains(controller.game.getPlayerTurn())) {
-					button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
-				}
+				button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
 			}
 		});
 
@@ -505,7 +502,6 @@ public class ViewGame implements View {
 	public void stop() {
 		stop = true;
 		while (drawing) try {Thread.sleep(1);} catch(Exception e) {};
-		window.getPanel().removeAll();
 		window.removeMouseWheelListener(mouseListener);
 		window.removeMouseMotionListener(mouseListener);
 		window.removeMouseListener(mouseListener);

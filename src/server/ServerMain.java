@@ -5,11 +5,7 @@ import game.enums.PlayerColor;
 import networking.ServerState;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
-import networking.gamePackets.clientPackets.PacketServerInfo;
-import networking.gamePackets.preGamePackets.PacketPlayerJoined;
-import networking.gamePackets.preGamePackets.PacketPlayerPickColor;
-import networking.gamePackets.preGamePackets.PacketPlayerQuit;
-import networking.gamePackets.preGamePackets.PacketPlayerReady;
+import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
 import networking.server.Server;
 import networking.server.ServerListener;
@@ -27,6 +23,8 @@ public class ServerMain implements ServerListener {
 	private Map<Socket, String> players;
 	private Map<String, Boolean> playerReady;
 	private Map<String, PlayerColor> playerColor;
+
+	private Game game;
 
 	public ServerMain() {
 		serverState = ServerState.WAITING_FOR_PLAYERS;
@@ -67,6 +65,8 @@ public class ServerMain implements ServerListener {
 	public void playerQuit(String player) {
 		Socket s = getPlayerSocket(player);
 
+		System.out.println("PlayerQuit: " + player);
+
 		players.keySet().stream()
 				.filter(s2 -> s2 != s)
 				.forEach(s2 -> server.sendPacket(s2, new PacketPlayerQuit(player)));
@@ -78,31 +78,43 @@ public class ServerMain implements ServerListener {
 	public void playerJoined(String player) {
 		Socket s = getPlayerSocket(player);
 
-		players.keySet().stream()
-				.filter(s2 -> s2 != s)
-				.forEach(s2 -> server.sendPacket(s, new PacketPlayerJoined(players.get(s2))));
-
-		playerReady.keySet().stream()
-				.forEach(s2 -> server.sendPacket(s, new PacketPlayerReady(s2, playerReady.get(s2))));
-
-		playerColor.keySet().stream()
-				.forEach(s2 -> server.sendPacket(s, new PacketPlayerPickColor(s2, playerColor.get(s2))));
+		System.out.println("PlayerJoined: " + player);
 
 		playerReady.put(player, false);
 		playerColor.put(player, PlayerColor.BLUE);
 
 		players.keySet().stream()
-				.forEach(s2 -> server.sendPacket(s2, new PacketPlayerJoined(player)));
+				.filter(s2 -> s2 != s)
+				.forEach(s2 -> server.sendPacket(s, new PacketPlayerJoined(players.get(s2), playerReady.get(players.get(s2)), playerColor.get(players.get(s2)))));
 
 		players.keySet().stream()
-				.forEach(s2 -> server.sendPacket(s2, new PacketPlayerPickColor(player, playerColor.get(player))));
-		players.keySet().stream()
-				.forEach(s2 -> server.sendPacket(s2, new PacketPlayerReady(player, playerReady.get(player))));
-
+				.forEach(s2 -> server.sendPacket(s2, new PacketPlayerJoined(player, playerReady.get(player), playerColor.get(player))));
 	}
 
 	public void startGame() {
-		System.out.println("Start game!");
+		System.out.println("StartGame");
+		for (String s: players.values()) {
+			boolean f = false;
+			do {
+				f = false;
+
+				for (String s2: players.values()) {
+					if (s2.equals(s)) break;
+
+					if (playerColor.get(s2) == playerColor.get(s)) {
+						f = true;
+					}
+				}
+
+				if (f) {
+					playerColor.put(s, PlayerColor.values()[(int) (Math.random()*PlayerColor.values().length)]);
+				}
+			} while (f);
+		}
+
+		game = new Game(51, 51, playerColor);
+
+		players.keySet().stream().forEach(s2 -> server.sendPacket(s2, new PacketGameBegin(game.getMap(), playerColor)));
 	}
 
 	public void onReceivePacket(Socket s, Packet p) {
@@ -111,13 +123,13 @@ public class ServerMain implements ServerListener {
 			if (!players.containsKey(s)) return;
 
 			if (players.get(s).equals(packet.getPlayer())) {
+				System.out.println("PlayerReady: " + packet.getPlayer() + " " + packet.isReady());
 				playerReady.put(packet.getPlayer(), packet.isReady());
 
 				players.keySet().stream()
-						.filter(s2 -> s2 != s)
 						.forEach(s2 -> server.sendPacket(s2, new PacketPlayerReady(packet.getPlayer(), packet.isReady())));
 
-				if (!playerReady.values().contains(false)) {
+				if (!playerReady.values().contains(false) && players.keySet().size() > 1) {
 					serverState = ServerState.INGAME;
 					new Thread(() -> startGame()).start();
 				}
@@ -129,10 +141,11 @@ public class ServerMain implements ServerListener {
 			if (!players.containsKey(s)) return;
 
 			if (players.get(s).equals(packet.getPlayer())) {
+
+				System.out.println("PlayerPickColor: " + packet.getPlayer() + " " + packet.getColor().getDisplayName());
 				playerColor.put(packet.getPlayer(), packet.getColor());
 
 				players.keySet().stream()
-						.filter(s2 -> s2 != s)
 						.forEach(s2 -> server.sendPacket(s2, new PacketPlayerPickColor(packet.getPlayer(), packet.getColor())));
 			}
 		}
@@ -188,8 +201,6 @@ public class ServerMain implements ServerListener {
 
 	public void onClientJoin(Socket s) {
 		System.out.println("Connected: " + s.getInetAddress());
-
-		server.sendPacket(s, new PacketServerInfo(Game.VERSION, serverState));
 	}
 
 	public static void main(String[] args) {

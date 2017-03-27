@@ -1,6 +1,5 @@
 package client;
 
-import client.window.Window;
 import game.Game;
 import game.map.GameMap;
 import game.Location;
@@ -8,41 +7,54 @@ import game.Unit;
 import game.enums.Direction;
 import game.enums.PlayerColor;
 import game.enums.UnitState;
-import game.map.MapGenerator;
-import game.map.presets.HexPreset;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
+import networking.client.Client;
+import networking.client.ClientListener;
+import networking.gamePackets.clientPackets.PacketClientInfo;
+import networking.gamePackets.preGamePackets.PacketGameBegin;
+import networking.packets.Packet;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Controller {
+public class Controller implements ClientListener {
 
-	private Window window;	//TODO Remove everything window related!
+	private Client client;
+	private String userName;
 
 	public Game game;
-	public List<PlayerColor> localPlayers;
 	public Location selectedField = null;
 	public PossibleActions pa = null;
 
-	public Controller(Window window) {
-		//game = new Game();
-
-		this.window = window;
-	}
-
-	public void setupGame() {
-		game = new Game(new PlayerColor[] {PlayerColor.BLUE, PlayerColor.RED}, new GameMap(new MapGenerator(new HexPreset(100, 100))));
-
-		game.nextRound();
-		localPlayers = new ArrayList<>();
-		localPlayers.add(PlayerColor.BLUE);
-		localPlayers.add(PlayerColor.RED);
-	}
+	private ClientListener viewPacketListener;
 
 	public void stopConnection() {
 		game = null;
+		if (client != null) client.close();
+		client = null;
+		viewPacketListener = null;
+	}
+
+	public void connect(String userName, String hostName, int port) {
+		if (client != null) client.close();
+
+		this.userName = userName;
+		try {
+			client = new Client(hostName, port, this);
+			client.sendPacket(new PacketClientInfo(userName, Game.VERSION));
+		} catch (Exception e) {
+			onLeave();
+		}
+
+	}
+
+	public void sendPacket(Packet packet) {
+		if (client != null) client.sendPacket(packet);
+	}
+
+	public void setViewPacketListener(ClientListener clientListener) {
+		this.viewPacketListener = clientListener;
 	}
 
 	public void onMouseClick(Location l) {
@@ -57,7 +69,7 @@ public class Controller {
 				Optional<Unit> u = m.getUnitAt(selectedField);
 				Optional<Unit> u2 = m.getUnitAt(l);
 
-				if (u.isPresent() && u.get().getPlayer() == game.getPlayerTurn()) {
+				if (u.isPresent() && userName.equals(game.getPlayerTurn())) {
 					Unit unit = u.get();
 					pa = ActionUtil.getPossibleActions(game, unit);
 
@@ -91,8 +103,6 @@ public class Controller {
 			Optional<Unit> u = m.getUnitAt(selectedField);
 			if (u.isPresent()) pa = ActionUtil.getPossibleActions(game, u.get());
 		}
-
-		//window.redrawInfoBar();
 	}
 
 	public void onKeyType(int keyCode) {
@@ -100,5 +110,24 @@ public class Controller {
 			game.nextPlayer();
 			selectedField = null;
 		}
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	@Override
+	public void onReceivePacket(Packet p) {
+		if (p instanceof PacketGameBegin) {
+			PacketGameBegin packet = (PacketGameBegin) p;
+			game = new Game(packet.getMap(), packet.getPlayers());
+		}
+
+		if (viewPacketListener != null) viewPacketListener.onReceivePacket(p);
+	}
+
+	@Override
+	public void onLeave() {
+		if (viewPacketListener != null) viewPacketListener.onLeave();
 	}
 }

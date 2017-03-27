@@ -76,6 +76,7 @@ public class Client implements Runnable {
 		try {
 			while (!socket.isClosed()) {
 				int amount = is.read() << 24 | is.read() << 16 | is.read() << 8 | is.read();
+
 				int packetID = is.read();
 				byte[] data = new byte[amount];
 				int i = is.read(data);

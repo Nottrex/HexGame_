@@ -7,13 +7,18 @@ import client.window.Window;
 import javax.swing.*;
 import java.awt.*;
 
-public class ViewServerConnect implements View {
+public class ViewErrorScreen implements View {
 
 	private Window window;
 	private Controller controller;
 
-	private JButton buttonConnect, buttonBackToMainMenu;
-	private JTextField textFieldName, textFieldHostName, textFieldPort;
+	private String error;
+	private JLabel labelError;
+	private JButton buttonBackToMainMenu;
+
+	public ViewErrorScreen(String error) {
+		this.error = error;
+	}
 
 	@Override
 	public void init(Window window, Controller controller) {
@@ -22,20 +27,13 @@ public class ViewServerConnect implements View {
 
 		window.getPanel().setLayout(new FlowLayout());
 
-		buttonConnect = new JButton("Connect");
+		labelError = new JLabel(error);
 		buttonBackToMainMenu = new JButton("Back to Main Menu");
-		textFieldName = new JTextField("[NAME]");
-		textFieldHostName = new JTextField("[HostName]");
-		textFieldPort = new JTextField("[PORT]");
 
-		window.getPanel().add(textFieldName);
-		window.getPanel().add(textFieldHostName);
-		window.getPanel().add(textFieldPort);
-		window.getPanel().add(buttonConnect);
+		window.getPanel().add(labelError);
 		window.getPanel().add(buttonBackToMainMenu);
 
 		buttonBackToMainMenu.addActionListener(e -> window.updateView(new ViewMainMenu()));
-		buttonConnect.addActionListener(e -> window.updateView(new ViewGameSetup(textFieldName.getText(), textFieldHostName.getText(), Integer.valueOf(textFieldPort.getText()))));
 	}
 
 	@Override

@@ -131,7 +131,7 @@ public class Server implements Runnable {
 						}				
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 				
 				onClientLeave(s);

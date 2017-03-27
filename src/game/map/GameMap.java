@@ -29,6 +29,14 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 	}
 
+	public GameMap(Field[][] map, List<Unit> units) {
+		this.map = map;
+		this.width = map.length;
+		this.height = (width > 0) ? map[0].length : 0;
+
+		this.units = units;
+	}
+
 	public Field getFieldAt(Location l) {
 		if (l.x < 0 || l.x >= width || l.y < 0 || l.y >= height) return Field.VOID;
 

@@ -6,19 +6,26 @@ import game.map.GameMap;
 import game.map.MapGenerator;
 import game.map.presets.HexPreset;
 
+import java.util.Map;
+
 public class Game {
 	public static final String VERSION = "0.2";
 
 	private GameMap map;
 	private int playerAmount;
-	private PlayerColor[] players;
+	private Map<String, PlayerColor> players;
 
 	private int round;
 	private int playerTurn;
 
-	public Game(PlayerColor[] players, GameMap map) {
+	public Game(GameMap map, Map<String, PlayerColor> players) {
 		this.map = map;
-		playerAmount = players.length;
+		playerAmount = players.keySet().size();
+		this.players = players;
+	}
+
+	public Game(int width, int height, Map<String, PlayerColor> players) {
+		this.map = new GameMap(new MapGenerator(new HexPreset(width, height)));
 		this.players = players;
 	}
 
@@ -46,7 +53,7 @@ public class Game {
 		return playerAmount;
 	}
 
-	public PlayerColor[] getPlayers() {
+	public Map<String, PlayerColor> getPlayers() {
 		return players;
 	}
 
@@ -54,8 +61,12 @@ public class Game {
 		return round;
 	}
 
-	public PlayerColor getPlayerTurn() {
-		return players[playerTurn];
+	public PlayerColor getPlayerColor() {
+		return players.get(getPlayerTurn());
+	}
+
+	public String getPlayerTurn() {
+		return (String) players.keySet().toArray()[playerTurn];
 	}
 
 	public int getPlayerTurnID() {

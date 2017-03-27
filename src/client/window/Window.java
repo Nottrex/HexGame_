@@ -37,7 +37,7 @@ public class Window extends JFrame implements Runnable {
 		});
 
 		new Thread(this).start();
-		controller = new Controller(this);
+		controller = new Controller();
 		updateView(new ViewMainMenu());
 	}
 
@@ -60,7 +60,7 @@ public class Window extends JFrame implements Runnable {
 				view.draw();
 			} else {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(250);
 				} catch (Exception e) {}
 
 			}
@@ -74,10 +74,16 @@ public class Window extends JFrame implements Runnable {
 		}
 	}
 
+	public boolean isCurrentView(View view) {
+		return this.view == view;
+	}
+
 	public void updateView(View newView) {
 		if (this.view != null) this.view.stop();
 		this.view = newView;
+		panel.removeAll();
 		newView.init(this, controller);
+		panel.updateUI();
 	}
 
 	private void initComponents() {
