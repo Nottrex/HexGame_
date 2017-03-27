@@ -8,6 +8,8 @@ import game.Unit;
 import game.enums.Direction;
 import game.enums.PlayerColor;
 import game.enums.UnitState;
+import game.map.MapGenerator;
+import game.map.presets.HexPreset;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
 
@@ -26,12 +28,21 @@ public class Controller {
 
 	public Controller(Window window) {
 		//game = new Game();
+
+		this.window = window;
+	}
+
+	public void setupGame() {
+		game = new Game(new PlayerColor[] {PlayerColor.BLUE, PlayerColor.RED}, new GameMap(new MapGenerator(new HexPreset(100, 100))));
+
 		game.nextRound();
 		localPlayers = new ArrayList<>();
 		localPlayers.add(PlayerColor.BLUE);
 		localPlayers.add(PlayerColor.RED);
+	}
 
-		this.window = window;
+	public void stopConnection() {
+		game = null;
 	}
 
 	public void onMouseClick(Location l) {
@@ -81,7 +92,7 @@ public class Controller {
 			if (u.isPresent()) pa = ActionUtil.getPossibleActions(game, u.get());
 		}
 
-		window.redrawInfoBar();
+		//window.redrawInfoBar();
 	}
 
 	public void onKeyType(int keyCode) {

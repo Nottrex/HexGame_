@@ -1,26 +1,11 @@
 package client.window;
 
 import client.Controller;
-import client.KeyBindings;
-import client.audio.AudioHandler;
-import client.audio.AudioPlayer;
 import client.window.view.ViewMainMenu;
-import game.*;
-import game.enums.Direction;
-import game.enums.Field;
-import game.enums.PlayerColor;
-import game.enums.UnitType;
-import game.map.GameMap;
-import game.util.ActionUtil;
-import client.components.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import java.util.Optional;
 
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 public class Window extends JFrame implements Runnable {
@@ -28,8 +13,6 @@ public class Window extends JFrame implements Runnable {
 
 	//Window stuff
 	private JPanel panel;
-
-	private Insets i;
 
 	private int fps = 0;
 	private boolean stop = false;
@@ -41,11 +24,11 @@ public class Window extends JFrame implements Runnable {
 		super("HexGame");
 		setMinimumSize(new Dimension(800, 600));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setVisible(true);
-
-		i = getInsets();
 
 		initComponents();
+
+		setVisible(true);
+		setVisible(true);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -54,16 +37,14 @@ public class Window extends JFrame implements Runnable {
 		});
 
 		new Thread(this).start();
+		controller = new Controller(this);
 		updateView(new ViewMainMenu());
-	}
-
-	public Insets getInsets() {
-		return i;
 	}
 
 	public int getFPS() {
 		return fps;
 	}
+
 
 	public JPanel getPanel() {
 		return panel;

@@ -58,6 +58,9 @@ public class ViewGame implements View {
 
 		cam = new Camera();
 
+		loadResources();
+		controller.setupGame();
+
 		mouseListener 	= new MouseInputListener(this);
 		keyListener 	= new KeyInputListener(this);
 
@@ -144,43 +147,6 @@ public class ViewGame implements View {
 		audioPlayer = new AudioPlayer("MD", Clip.LOOP_CONTINUOUSLY);
 		audioPlayer.start();
 
-		for (Field f: Field.values()) {
-			if (f != Field.VOID) {
-				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());
-			}
-		}
-
-		for (UnitType ut: UnitType.values()) {
-			for (PlayerColor pc: PlayerColor.values()) {
-				TextureHandler.loadImagePng("units_" + ut.toString().toLowerCase() + "_" + pc.toString().toLowerCase(), "units/" + ut.toString().toLowerCase() + "/" + pc.toString().toLowerCase());
-			}
-		}
-
-		for (PlayerColor pc: PlayerColor.values()) {
-			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
-		}
-
-		for (Direction d: Direction.values()) {
-			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
-		}
-
-		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
-		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
-		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
-		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
-
-		TextureHandler.loadImagePng("button_audioOn", "ui/buttons/audioOn");
-		TextureHandler.loadImagePng("button_audioOff", "ui/buttons/audioOff");
-
-		TextureHandler.loadImagePng("button_musicOn", "ui/buttons/musicOn");
-		TextureHandler.loadImagePng("button_musicOff", "ui/buttons/musicOff");
-
-		TextureHandler.loadImagePng("button_centerCamera", "ui/buttons/centerCamera");
-
-		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
-
-		AudioHandler.loadMusicWav("EP", "music/EP");
-		AudioHandler.loadMusicWav("MD", "music/MD");
 		redrawMap();
 
 		centerCamera();
@@ -265,9 +231,9 @@ public class ViewGame implements View {
 	private boolean drawing = false;
 	@Override
 	public void draw() {
-		audioPlayer.updateVolume();
-		if (center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || cam == null) return;
+		if (audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || cam == null) return;
 		drawing = true;
+		audioPlayer.updateVolume();
 
 		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -535,7 +501,48 @@ public class ViewGame implements View {
 		window.removeKeyListener(keyListener);
 		window.removeComponentListener(componentListener);
 		audioPlayer.stop();
+		controller.stopConnection();
 
 		window.getPanel().removeAll();
+	}
+
+	private void loadResources() {
+		for (Field f: Field.values()) {
+			if (f != Field.VOID) {
+				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());
+			}
+		}
+
+		for (UnitType ut: UnitType.values()) {
+			for (PlayerColor pc: PlayerColor.values()) {
+				TextureHandler.loadImagePng("units_" + ut.toString().toLowerCase() + "_" + pc.toString().toLowerCase(), "units/" + ut.toString().toLowerCase() + "/" + pc.toString().toLowerCase());
+			}
+		}
+
+		for (PlayerColor pc: PlayerColor.values()) {
+			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
+		}
+
+		for (Direction d: Direction.values()) {
+			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
+		}
+
+		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
+		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
+		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
+		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
+
+		TextureHandler.loadImagePng("button_audioOn", "ui/buttons/audioOn");
+		TextureHandler.loadImagePng("button_audioOff", "ui/buttons/audioOff");
+
+		TextureHandler.loadImagePng("button_musicOn", "ui/buttons/musicOn");
+		TextureHandler.loadImagePng("button_musicOff", "ui/buttons/musicOff");
+
+		TextureHandler.loadImagePng("button_centerCamera", "ui/buttons/centerCamera");
+
+		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
+
+		AudioHandler.loadMusicWav("EP", "music/EP");
+		AudioHandler.loadMusicWav("MD", "music/MD");
 	}
 }

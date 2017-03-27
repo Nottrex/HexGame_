@@ -19,6 +19,7 @@ public class Game {
 	public Game(PlayerColor[] players, GameMap map) {
 		this.map = map;
 		playerAmount = players.length;
+		this.players = players;
 	}
 
 	public void nextRound() {
