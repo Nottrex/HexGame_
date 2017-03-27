@@ -29,6 +29,8 @@ public class ViewMainMenu implements View {
 
 		buttonQuitGame.addActionListener(e -> System.exit(0));
 		buttonStartGame.addActionListener(e -> window.updateView(new ViewGame()));
+
+		window.getPanel().updateUI();
 	}
 
 	@Override

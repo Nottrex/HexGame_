@@ -27,6 +27,8 @@ import java.util.*;
 
 public class ViewGame implements View {
 
+	private boolean stop = true;
+
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
 	private ComponentListener componentListener;
@@ -42,6 +44,7 @@ public class ViewGame implements View {
 	private ImageButton button_musicOn;
 	private ImageButton button_centerCamera;
 	private ImageButton button_endTurn;
+	private ImageButton button_backToMainMenu;
 	private ImageTextLabel topBar;
 	private TextLabel fpsLabel;
 
@@ -99,6 +102,7 @@ public class ViewGame implements View {
 		button_musicOn = new ImageButton(TextureHandler.getImagePng("button_musicOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_MUSIC));
 		button_centerCamera = new ImageButton(TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
+		button_backToMainMenu = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> window.updateView(new ViewMainMenu()));
 		fpsLabel = new TextLabel(() -> ("FPS: " + window.getFPS()));
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
@@ -116,6 +120,7 @@ public class ViewGame implements View {
 		center.add(button_musicOn);
 		center.add(button_centerCamera);
 		center.add(button_endTurn);
+		center.add(button_backToMainMenu);
 		center.add(topBar);
 		center.add(fpsLabel);
 		center.addComponentListener(new ComponentAdapter() {
@@ -129,6 +134,7 @@ public class ViewGame implements View {
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
 				button_musicOn.setBounds(width - buttonHeight*2 - 5*2, 5, buttonHeight, buttonHeight);
 				button_centerCamera.setBounds(width - buttonHeight*3 - 5*3, 5, buttonHeight, buttonHeight);
+				button_backToMainMenu.setBounds(5, 5*2 + barHeight, buttonHeight, buttonHeight);
 				topBar.setBounds((width-(380*barHeight)/49)/2, 5, (380*barHeight)/49, barHeight);
 				fpsLabel.setBounds(5, 5, barHeight*5, barHeight);
 
@@ -150,6 +156,8 @@ public class ViewGame implements View {
 		redrawMap();
 
 		centerCamera();
+
+		stop = false;
 	}
 
 	public JPanel getCenter() {
@@ -231,7 +239,7 @@ public class ViewGame implements View {
 	private boolean drawing = false;
 	@Override
 	public void draw() {
-		if (audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || cam == null) return;
+		if (stop || audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || controller.game.getMap() == null || cam == null) return;
 		drawing = true;
 		audioPlayer.updateVolume();
 
@@ -495,6 +503,9 @@ public class ViewGame implements View {
 
 	@Override
 	public void stop() {
+		stop = true;
+		while (drawing) try {Thread.sleep(1);} catch(Exception e) {};
+		window.getPanel().removeAll();
 		window.removeMouseWheelListener(mouseListener);
 		window.removeMouseMotionListener(mouseListener);
 		window.removeMouseListener(mouseListener);
@@ -503,7 +514,6 @@ public class ViewGame implements View {
 		audioPlayer.stop();
 		controller.stopConnection();
 
-		window.getPanel().removeAll();
 	}
 
 	private void loadResources() {
