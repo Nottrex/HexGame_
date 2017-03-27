@@ -33,6 +33,7 @@ public class ServerMain implements ServerListener {
 
 		players = new HashMap<>();
 		playerReady = new HashMap<>();
+		playerColor = new HashMap<>();
 
 		Scanner s = new Scanner(System.in);
 
