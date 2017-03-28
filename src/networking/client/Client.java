@@ -88,6 +88,7 @@ public class Client implements Runnable {
 					onReceivePacket(PacketHandler.getPacket(packetID).getConstructor(byte[].class).newInstance(data));
 				} catch (InstantiationException	| IllegalAccessException | IllegalArgumentException	| InvocationTargetException	| NoSuchMethodException | SecurityException e) {
 					System.err.println("Error parsing packet: " + packetID);
+					e.printStackTrace();
 				}				
 			}
 		} catch (Exception e) {

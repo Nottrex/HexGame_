@@ -7,7 +7,7 @@ import client.window.Window;
 import javax.swing.*;
 import java.awt.*;
 
-public class ViewMainMenu implements View {
+public class ViewMainMenu extends View {
 
 	private Window window;
 	private Controller controller;
@@ -30,22 +30,4 @@ public class ViewMainMenu implements View {
 		buttonQuitGame.addActionListener(e -> System.exit(0));
 		buttonStartGame.addActionListener(e -> window.updateView(new ViewServerConnect()));
 	}
-
-	@Override
-	public boolean autoDraw() {
-		return false;
-	}
-
-	@Override
-	public void draw() {
-
-	}
-
-	@Override
-	public void stop() {
-
-
-	}
-
-
 }

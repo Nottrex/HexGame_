@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ViewGameSetup implements View, ClientListener {
+public class ViewGameSetup extends View implements ClientListener {
 
 	private Window window;
 	private Controller controller;
@@ -70,27 +70,17 @@ public class ViewGameSetup implements View, ClientListener {
 		controller.connect(userName, hostName, port);
 	}
 
-	@Override
-	public boolean autoDraw() {
-		return false;
-	}
-
-	@Override
-	public void draw() {
-
-	}
-
-	@Override
-	public void stop() {
-
-	}
-
-	public void updateInfo() {
+	private void updateInfo() {
 		String info = "";
 		for (String player: ready.keySet()) {
 			info += String.format("%s%s - %s - %b\n", player.equals(userName) ? "->" : "", player, color.get(player).getDisplayName(), ready.get(player));
 		}
 		this.info.setText(info);
+	}
+
+	private void onAllPlayersReady() {
+		button_toggleReady.setEnabled(false);
+		button_toggleColor.setEnabled(false);
 	}
 
 	@Override
@@ -124,6 +114,10 @@ public class ViewGameSetup implements View, ClientListener {
 			PacketPlayerReady packet = (PacketPlayerReady) p;
 			ready.put(packet.getPlayer(), packet.isReady());
 			updateInfo();
+		}
+
+		if (p instanceof PacketAllPlayersReady) {
+			onAllPlayersReady();
 		}
 
 		if (p instanceof PacketGameBegin) {

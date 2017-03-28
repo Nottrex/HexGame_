@@ -92,7 +92,12 @@ public class ServerMain implements ServerListener {
 	}
 
 	public void startGame() {
-		System.out.println("StartGame");
+
+		System.out.println("All players ready - Generating map");
+		PacketAllPlayersReady packet1 = new PacketAllPlayersReady();
+		players.keySet().stream()
+				.forEach(s -> server.sendPacket(s, packet1));
+
 		for (String s: players.values()) {
 			boolean f = false;
 			do {
@@ -114,7 +119,10 @@ public class ServerMain implements ServerListener {
 
 		game = new Game(51, 51, playerColor);
 
-		players.keySet().stream().forEach(s2 -> server.sendPacket(s2, new PacketGameBegin(game.getMap(), playerColor)));
+		System.out.println("StartGame");
+
+		PacketGameBegin packet2 = new PacketGameBegin(game.getMap(), playerColor);
+		players.keySet().stream().forEach(s -> server.sendPacket(s, packet2));
 	}
 
 	public void onReceivePacket(Socket s, Packet p) {

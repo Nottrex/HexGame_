@@ -25,7 +25,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-public class ViewGame implements View {
+public class ViewGame extends View {
 
 	private boolean stop = true;
 

@@ -12,6 +12,7 @@ public class PacketHandler {
 		addPacket(PacketClientInfo.class);
 		addPacket(PacketClientKicked.class);
 
+		addPacket(PacketAllPlayersReady.class);
 		addPacket(PacketGameBegin.class);
 		addPacket(PacketPlayerQuit.class);
 		addPacket(PacketPlayerJoined.class);

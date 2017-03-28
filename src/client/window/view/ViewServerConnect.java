@@ -7,7 +7,7 @@ import client.window.Window;
 import javax.swing.*;
 import java.awt.*;
 
-public class ViewServerConnect implements View {
+public class ViewServerConnect extends View {
 
 	private Window window;
 	private Controller controller;
@@ -36,20 +36,5 @@ public class ViewServerConnect implements View {
 
 		buttonBackToMainMenu.addActionListener(e -> window.updateView(new ViewMainMenu()));
 		buttonConnect.addActionListener(e -> window.updateView(new ViewGameSetup(textFieldName.getText(), textFieldHostName.getText(), Integer.valueOf(textFieldPort.getText()))));
-	}
-
-	@Override
-	public boolean autoDraw() {
-		return false;
-	}
-
-	@Override
-	public void draw() {
-
-	}
-
-	@Override
-	public void stop() {
-
 	}
 }

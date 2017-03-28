@@ -7,7 +7,7 @@ import client.window.Window;
 import javax.swing.*;
 import java.awt.*;
 
-public class ViewErrorScreen implements View {
+public class ViewErrorScreen extends View {
 
 	private Window window;
 	private Controller controller;
@@ -34,20 +34,5 @@ public class ViewErrorScreen implements View {
 		window.getPanel().add(buttonBackToMainMenu);
 
 		buttonBackToMainMenu.addActionListener(e -> window.updateView(new ViewMainMenu()));
-	}
-
-	@Override
-	public boolean autoDraw() {
-		return false;
-	}
-
-	@Override
-	public void draw() {
-
-	}
-
-	@Override
-	public void stop() {
-
 	}
 }
