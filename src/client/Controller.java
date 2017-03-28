@@ -58,6 +58,11 @@ public class Controller implements ClientListener {
 
 	}
 
+	public AnimationAction getAnimationAction() {
+		if (animationActions.isEmpty()) return null;
+		return animationActions.get(0);
+	}
+
 	public void updateAnimationActions() {
 		long time = System.currentTimeMillis();
 		if (!animationActions.isEmpty()) {
@@ -97,8 +102,7 @@ public class Controller implements ClientListener {
 		if (waitForPacket || game == null) return;
 
 		if (!animationActions.isEmpty()) {
-			animationActions.get(0).finish();
-			animationActions.remove(0);
+			animationActionFinished();
 			return;
 		}
 
@@ -134,7 +138,7 @@ public class Controller implements ClientListener {
 
 						//TODO: ATTACK UNITS?
 					} else if (pa.canMoveTo().contains(l)) {
-						client.sendPacket(new PacketUnitMoved(userName, unit, l.x, l.y, pa.moveTo(selectedField)));
+						client.sendPacket(new PacketUnitMoved(userName, unit, l.x, l.y, pa.moveTo(l)));
 						waitForPacket = true;
 						selectedField = null;
 					} else selectedField = l;

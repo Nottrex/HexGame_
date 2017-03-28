@@ -1,7 +1,9 @@
 package client.window.view;
 
+import client.AnimationAction;
 import client.Controller;
 import client.KeyBindings;
+import client.animationActions.AnimationActionUnitMove;
 import client.audio.AudioHandler;
 import client.audio.AudioPlayer;
 import client.components.ImageButton;
@@ -240,6 +242,7 @@ public class ViewGame extends View {
 		drawing = true;
 		audioPlayer.updateVolume();
 		controller.updateAnimationActions();
+		AnimationAction currentAnimation = controller.getAnimationAction();
 
 		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -269,7 +272,17 @@ public class ViewGame extends View {
 				double py = (u.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
 				double px = (u.getX())*wx - (u.getY())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
 
+				if (currentAnimation != null && currentAnimation instanceof AnimationActionUnitMove) {
+					AnimationActionUnitMove animation = (AnimationActionUnitMove) currentAnimation;
+
+					if (animation.getUnit() == u) {
+						py = (u.getY() + animation.getCurrentDirection().getYMovement()*animation.interpolation())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
+						px = (u.getX() + animation.getCurrentDirection().getXMovement()*animation.interpolation())*wx - (u.getY() + animation.getCurrentDirection().getYMovement()*animation.interpolation())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
+					}
+				}
+
 				g.drawImage(TextureHandler.getImagePng("units_" + ut.toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), (int) px, (int) py, (int) w, (int) h, null);
+
 			}
 
 			Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
