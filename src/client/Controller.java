@@ -1,5 +1,7 @@
 package client;
 
+import client.animationActions.AnimationActionRoundFinish;
+import client.animationActions.AnimationActionUnitMove;
 import game.Game;
 import game.map.GameMap;
 import game.Location;
@@ -12,9 +14,12 @@ import game.util.PossibleActions;
 import networking.client.Client;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientInfo;
+import networking.gamePackets.gamePackets.PacketRoundFinished;
+import networking.gamePackets.gamePackets.PacketUnitMoved;
 import networking.gamePackets.preGamePackets.PacketGameBegin;
 import networking.packets.Packet;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +33,10 @@ public class Controller implements ClientListener {
 	public PossibleActions pa = null;
 
 	private ClientListener viewPacketListener;
+
+	private boolean waitForPacket = false;
+	private List<AnimationAction> animationActions = new ArrayList<>();
+	private long animationActionStart;
 
 	public void stopConnection() {
 		game = null;
@@ -49,6 +58,33 @@ public class Controller implements ClientListener {
 
 	}
 
+	public void updateAnimationActions() {
+		long time = System.currentTimeMillis();
+		if (!animationActions.isEmpty()) {
+			if (time - animationActionStart >= animationActions.get(0).getTotalTime()) {
+				animationActionFinished();
+			} else {
+				animationActions.get(0).update(time - animationActionStart);
+			}
+		}
+
+	}
+
+	private void animationActionFinished() {
+		animationActions.get(0).finish();
+		animationActions.remove(0);
+		if (!animationActions.isEmpty()) animationActionStart = System.currentTimeMillis();
+	}
+
+	private void addAnimationAction(AnimationAction aa) {
+		selectedField = null;
+		animationActions.add(aa);
+
+		if (animationActions.size() == 1) {
+			animationActionStart = System.currentTimeMillis();
+		}
+	}
+
 	public void sendPacket(Packet packet) {
 		if (client != null) client.sendPacket(packet);
 	}
@@ -58,7 +94,13 @@ public class Controller implements ClientListener {
 	}
 
 	public void onMouseClick(Location l) {
-		if (game == null) return;
+		if (waitForPacket || game == null) return;
+
+		if (!animationActions.isEmpty()) {
+			animationActions.get(0).finish();
+			animationActions.remove(0);
+			return;
+		}
 
 		GameMap m = game.getMap();
 		if (selectedField == null) {
@@ -69,30 +111,31 @@ public class Controller implements ClientListener {
 				Optional<Unit> u = m.getUnitAt(selectedField);
 				Optional<Unit> u2 = m.getUnitAt(l);
 
-				if (u.isPresent() && userName.equals(game.getPlayerTurn())) {
+				if (u.isPresent() && userName.equals(game.getPlayerTurn()) && u.get().getPlayer() == game.getPlayers().get(userName)) {
 					Unit unit = u.get();
+
 					pa = ActionUtil.getPossibleActions(game, unit);
 
 					if (u2.isPresent() && pa.canAttack().contains(l)) {
 						List<Direction> movement = pa.moveToToAttack(l);
 
-						Location a = selectedField;
-						for (Direction d: movement) {
-							a = d.applyMovement(a);
+						if (!movement.isEmpty()) {
+							Location a = selectedField;
+							for (Direction d: movement) {
+								a = d.applyMovement(a);
+							}
+
+							client.sendPacket(new PacketUnitMoved(userName, unit, a.x, a.y, movement));
+
+							waitForPacket = true;
+							selectedField = null;
 						}
 
-						unit.setX(a.x);
-						unit.setY(a.y);
 
 						//TODO: ATTACK UNITS?
-
-						unit.setState(UnitState.INACTIVE);
-						selectedField = null;
 					} else if (pa.canMoveTo().contains(l)) {
-						unit.setX(l.x);
-						unit.setY(l.y);
-
-						unit.setState(UnitState.MOVED);
+						client.sendPacket(new PacketUnitMoved(userName, unit, l.x, l.y, pa.moveTo(selectedField)));
+						waitForPacket = true;
 						selectedField = null;
 					} else selectedField = l;
 				} else selectedField = l;
@@ -107,8 +150,10 @@ public class Controller implements ClientListener {
 
 	public void onKeyType(int keyCode) {
 		if (keyCode == KeyBindings.KEY_NEXT_PLAYER) {
-			game.nextPlayer();
-			selectedField = null;
+			if (game.getPlayerTurn().equals(userName)) {
+				client.sendPacket(new PacketRoundFinished(userName));
+				waitForPacket = true;
+			}
 		}
 	}
 
@@ -118,6 +163,18 @@ public class Controller implements ClientListener {
 
 	@Override
 	public void onReceivePacket(Packet p) {
+		if (p instanceof PacketRoundFinished) {
+			PacketRoundFinished packet = (PacketRoundFinished) p;
+			waitForPacket = false;
+			addAnimationAction(new AnimationActionRoundFinish(game));
+		}
+
+		if (p instanceof PacketUnitMoved) {
+			PacketUnitMoved packet = (PacketUnitMoved) p;
+			waitForPacket = false;
+			addAnimationAction(new AnimationActionUnitMove(game, game.getMap().getUnitAt(packet.getUnit().getX(), packet.getUnit().getY()).get(), packet.getTargetX(), packet.getTargetY(), packet.getDirections()));
+		}
+
 		if (p instanceof PacketGameBegin) {
 			PacketGameBegin packet = (PacketGameBegin) p;
 			game = packet.getGame();

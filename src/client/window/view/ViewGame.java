@@ -239,6 +239,7 @@ public class ViewGame extends View {
 		if (stop || audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || controller.game.getMap() == null || cam == null) return;
 		drawing = true;
 		audioPlayer.updateVolume();
+		controller.updateAnimationActions();
 
 		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_INT_ARGB);
 

@@ -2,11 +2,13 @@ package game;
 
 import game.enums.PlayerColor;
 import game.enums.UnitState;
+import game.enums.UnitType;
 import game.map.GameMap;
 import game.map.MapGenerator;
 import game.map.presets.HexPreset;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class Game {
 	public static final String VERSION = "0.2";
@@ -34,6 +36,7 @@ public class Game {
 	public Game(int width, int height, Map<String, PlayerColor> players) {
 		this.map = new GameMap(new MapGenerator(new HexPreset(width, height)));
 		this.players = players;
+		playerAmount = players.keySet().size();
 	}
 
 	public void nextRound() {

@@ -1,10 +1,13 @@
 package server;
 
 import game.Game;
+import game.Unit;
 import game.enums.PlayerColor;
 import networking.ServerState;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
+import networking.gamePackets.gamePackets.PacketRoundFinished;
+import networking.gamePackets.gamePackets.PacketUnitMoved;
 import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
 import networking.server.Server;
@@ -13,6 +16,7 @@ import networking.server.ServerListener;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ServerMain implements ServerListener {
@@ -126,9 +130,40 @@ public class ServerMain implements ServerListener {
 	}
 
 	public void onReceivePacket(Socket s, Packet p) {
+		if (p instanceof PacketUnitMoved) {
+			PacketUnitMoved packet = (PacketUnitMoved) p;
+
+			if (serverState == ServerState.INGAME && players.containsKey(s) && packet.getPlayer().equals(players.get(s)) && game.getPlayerTurn().equals(packet.getPlayer()) && packet.getUnit().getPlayer() == playerColor.get(players.get(s))) {
+				Optional<Unit> u = game.getMap().getUnitAt(packet.getUnit().getX(), packet.getUnit().getY());
+				if (u.isPresent()) {
+					Unit unit = u.get();
+					System.out.printf("%s moved Unit from %d / %d to %d / %d\n", packet.getPlayer(), unit.getX(), unit.getY(), packet.getTargetX(), packet.getTargetY());
+					unit.moveTo(packet.getTargetX(), packet.getTargetY());
+
+					players.keySet().stream()
+							.forEach(s2 -> server.sendPacket(s2, packet));
+				}
+			} else {
+				server.sendPacket(s, new PacketClientKicked("Hacker!"));
+			}
+		}
+
+		if (p instanceof PacketRoundFinished) {
+			PacketRoundFinished packet = (PacketRoundFinished) p;
+
+			if (serverState == ServerState.INGAME && players.containsKey(s) && packet.getPlayer().equals(players.get(s)) && game.getPlayerTurn().equals(packet.getPlayer())) {
+				System.out.printf("%s finished his round\n", packet.getPlayer());
+				game.nextPlayer();
+				players.keySet().stream()
+						.forEach(s2 -> server.sendPacket(s2, packet));
+			} else {
+				server.sendPacket(s, new PacketClientKicked("Hacker!"));
+			}
+		}
+
 		if (p instanceof PacketPlayerReady) {
 			PacketPlayerReady packet = (PacketPlayerReady) p;
-			if (!players.containsKey(s)) return;
+			if (serverState != ServerState.WAITING_FOR_PLAYERS || !players.containsKey(s)) return;
 
 			if (players.get(s).equals(packet.getPlayer())) {
 				System.out.println("PlayerReady: " + packet.getPlayer() + " " + packet.isReady());
@@ -146,7 +181,7 @@ public class ServerMain implements ServerListener {
 
 		if (p instanceof PacketPlayerPickColor) {
 			PacketPlayerPickColor packet = (PacketPlayerPickColor) p;
-			if (!players.containsKey(s)) return;
+			if (serverState != ServerState.WAITING_FOR_PLAYERS || !players.containsKey(s)) return;
 
 			if (players.get(s).equals(packet.getPlayer())) {
 
