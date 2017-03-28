@@ -337,7 +337,7 @@ public class ViewGame extends View {
 
 		GameMap m = controller.game.getMap();
 
-		int maxSize = (int) Math.min((long) (GUIConstants.MAX_HEAP_FILL*Runtime.getRuntime().maxMemory()/4), (long)Integer.MAX_VALUE);
+		int maxSize = (int) Math.min((long) (GUIConstants.MAX_HEAP_FILL*Runtime.getRuntime().freeMemory()/4), (long)Integer.MAX_VALUE);
 
 		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * GUIConstants.HEX_TILE_XY_RATIO * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), GUIConstants.HEX_TILE_WIDTH_MAX));
 
@@ -501,7 +501,7 @@ public class ViewGame extends View {
 	@Override
 	public void stop() {
 		stop = true;
-		while (drawing) try {Thread.sleep(1);} catch(Exception e) {};
+		while (drawing) try {Thread.sleep(1);} catch(Exception e) {}
 		window.removeMouseWheelListener(mouseListener);
 		window.removeMouseMotionListener(mouseListener);
 		window.removeMouseListener(mouseListener);
@@ -513,6 +513,7 @@ public class ViewGame extends View {
 	}
 
 	private void loadResources() {
+
 		for (Field f: Field.values()) {
 			if (f != Field.VOID) {
 				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());

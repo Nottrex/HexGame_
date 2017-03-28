@@ -25,8 +25,8 @@ public class ViewServerConnect extends View {
 		buttonConnect = new JButton("Connect");
 		buttonBackToMainMenu = new JButton("Back to Main Menu");
 		textFieldName = new JTextField("[NAME]");
-		textFieldHostName = new JTextField("[HostName]");
-		textFieldPort = new JTextField("[PORT]");
+		textFieldHostName = new JTextField("localhost");
+		textFieldPort = new JTextField("25565");
 
 		window.getPanel().add(textFieldName);
 		window.getPanel().add(textFieldHostName);

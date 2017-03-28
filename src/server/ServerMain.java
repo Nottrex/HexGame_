@@ -117,7 +117,7 @@ public class ServerMain implements ServerListener {
 			} while (f);
 		}
 
-		game = new Game(51, 51, playerColor);
+		game = new Game(251, 251, playerColor);
 
 		System.out.println("StartGame");
 
