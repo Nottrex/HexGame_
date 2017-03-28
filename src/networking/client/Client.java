@@ -82,7 +82,7 @@ public class Client implements Runnable {
 				int i = is.read(data);
 				
 				for (; i < amount; i++) {
-					data[i] = (byte) (is.read()-128);
+					data[i] = (byte) is.read();
 				}
 				try {
 					onReceivePacket(PacketHandler.getPacket(packetID).getConstructor(byte[].class).newInstance(data));

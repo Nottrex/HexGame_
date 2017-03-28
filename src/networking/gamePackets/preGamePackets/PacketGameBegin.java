@@ -1,5 +1,6 @@
 package networking.gamePackets.preGamePackets;
 
+import game.Game;
 import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
@@ -16,20 +17,20 @@ import java.util.List;
 import java.util.Map;
 
 public class PacketGameBegin implements Packet {
-	private GameMap map;
+	private Game game;
 
-	private Map<String, PlayerColor> players;
-
-	public PacketGameBegin(GameMap map, Map<String, PlayerColor> players) {
-		this.map = map;
-		this.players = players;
+	public PacketGameBegin(Game game) {
+		this.game = game;
 	}
 
 	public PacketGameBegin(byte[] data) {
 		PacketDecrypter pd = new PacketDecrypter(data);
 
+		int round = pd.readInt();
+		int playerTurnID = pd.readInt();
+
 		int playerAmount = pd.readInt();
-		players = new HashMap<>();
+		HashMap<String, PlayerColor> players = new HashMap<>();
 		for (int i = 0; i < playerAmount; i++) {
 			String name = pd.readString();
 			PlayerColor color = PlayerColor.values()[pd.readByte()];
@@ -56,12 +57,19 @@ public class PacketGameBegin implements Packet {
 			units.add(new Unit(player, type, state, x, y));
 		}
 
-		map = new GameMap(fieldArray, units);
+		GameMap map = new GameMap(fieldArray, units);
+
+		game = new Game(map, players, round, playerTurnID);
 	}
 
 	@Override
 	public byte[] getData() {
 		PacketBuilder pb = new PacketBuilder();
+
+		pb.addInt(game.getRound());
+		pb.addInt(game.getPlayerTurnID());
+
+		Map<String, PlayerColor> players = game.getPlayers();
 
 		pb.addInt(players.size());
 
@@ -69,6 +77,8 @@ public class PacketGameBegin implements Packet {
 			pb.addString(s);
 			pb.addByte((byte) players.get(s).ordinal());
 		}
+
+		GameMap map = game.getMap();
 
 		pb.addInt(map.getWidth());
 		pb.addInt(map.getHeight());
@@ -90,11 +100,7 @@ public class PacketGameBegin implements Packet {
 		return pb.build();
 	}
 
-	public GameMap getMap() {
-		return map;
-	}
-
-	public Map<String, PlayerColor> getPlayers() {
-		return players;
+	public Game getGame() {
+		return game;
 	}
 }

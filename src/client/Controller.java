@@ -120,7 +120,7 @@ public class Controller implements ClientListener {
 	public void onReceivePacket(Packet p) {
 		if (p instanceof PacketGameBegin) {
 			PacketGameBegin packet = (PacketGameBegin) p;
-			game = new Game(packet.getMap(), packet.getPlayers());
+			game = packet.getGame();
 		}
 
 		if (viewPacketListener != null) viewPacketListener.onReceivePacket(p);

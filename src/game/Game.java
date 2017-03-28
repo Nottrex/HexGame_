@@ -18,6 +18,13 @@ public class Game {
 	private int round;
 	private int playerTurn;
 
+	public Game(GameMap map, Map<String, PlayerColor> players, int round, int playerTurn) {
+		this(map, players);
+
+		this.round = round;
+		this.playerTurn = playerTurn-1;
+	}
+
 	public Game(GameMap map, Map<String, PlayerColor> players) {
 		this.map = map;
 		playerAmount = players.keySet().size();
