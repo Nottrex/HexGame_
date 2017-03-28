@@ -121,8 +121,7 @@ public class ServerMain implements ServerListener {
 
 		System.out.println("StartGame");
 
-		PacketGameBegin packet2 = new PacketGameBegin(game.getMap(), playerColor);
-		players.keySet().stream().forEach(s -> server.sendPacket(s, packet2));
+		players.keySet().stream().forEach(s -> server.sendPacket(s, new PacketGameBegin(game.getMap(), playerColor)));
 	}
 
 	public void onReceivePacket(Socket s, Packet p) {
