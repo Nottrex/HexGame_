@@ -2,6 +2,8 @@ package networking.packets;
 
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
+import networking.gamePackets.gamePackets.PacketRoundFinished;
+import networking.gamePackets.gamePackets.PacketUnitMoved;
 import networking.gamePackets.preGamePackets.*;
 
 public class PacketHandler {
@@ -12,13 +14,16 @@ public class PacketHandler {
 		addPacket(PacketClientInfo.class);
 		addPacket(PacketClientKicked.class);
 
+		addPacket(PacketPlayerReady.class);
+		addPacket(PacketPlayerPickColor.class);
+
 		addPacket(PacketAllPlayersReady.class);
 		addPacket(PacketGameBegin.class);
 		addPacket(PacketPlayerQuit.class);
 		addPacket(PacketPlayerJoined.class);
 
-		addPacket(PacketPlayerReady.class);
-		addPacket(PacketPlayerPickColor.class);
+		addPacket(PacketUnitMoved.class);
+		addPacket(PacketRoundFinished.class);
 	}
 
 	@SuppressWarnings("unchecked")

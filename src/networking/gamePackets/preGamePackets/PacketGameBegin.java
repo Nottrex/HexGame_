@@ -7,6 +7,8 @@ import game.enums.PlayerColor;
 import game.enums.UnitState;
 import game.enums.UnitType;
 import game.map.GameMap;
+import networking.gamePackets.util.PacketBuilderUtil;
+import networking.gamePackets.util.PacketDecrypterUtil;
 import networking.packets.Packet;
 import networking.packets.PacketBuilder;
 import networking.packets.PacketDecrypter;
@@ -49,12 +51,7 @@ public class PacketGameBegin implements Packet {
 		int unitAmount = pd.readInt();
 		List<Unit> units = new ArrayList<>();
 		for (int i = 0; i < unitAmount; i++) {
-			int x = pd.readInt();
-			int y = pd.readInt();
-			UnitState state = UnitState.values()[pd.readByte()];
-			PlayerColor player = PlayerColor.values()[pd.readByte()];
-			UnitType type = UnitType.values()[pd.readByte()];
-			units.add(new Unit(player, type, state, x, y));
+			units.add(PacketDecrypterUtil.getUnit(pd));
 		}
 
 		GameMap map = new GameMap(fieldArray, units);
@@ -90,11 +87,7 @@ public class PacketGameBegin implements Packet {
 
 		pb.addInt(map.getUnits().size());
 		for (Unit u: map.getUnits()) {
-			pb.addInt(u.getX());
-			pb.addInt(u.getY());
-			pb.addByte((byte) u.getState().ordinal());
-			pb.addByte((byte) u.getPlayer().ordinal());
-			pb.addByte((byte) u.getType().ordinal());
+			PacketBuilderUtil.addUnit(pb, u);
 		}
 
 		return pb.build();
