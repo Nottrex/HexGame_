@@ -1,49 +1,44 @@
 package client.window.view;
 
 import client.Controller;
-import client.window.GUIConstants;
+import client.components.TextButton;
 import client.window.View;
 import client.window.Window;
-import game.Location;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 public class ViewMainMenu extends View {
 
 	private Window window;
 	private Controller controller;
 
-	private JPanel drawCanvas;
+	private TextButton button_quit, button_start;
 
-	private Map<Location, Color> drawOvers;
-	private Color startColor;
-	private Color startColorCopy;
-	private Color interpolationColor;
+	private JPanel panel;
+	private DynamicBackground background;
 
-	private static final long COLOR_SWAP_TIME = 10000;
-	private long lastUpdate = 0L;
-	private long lastSwap = 0L;
+	public ViewMainMenu() {
 
-	private Random r;
+	}
 
 	@Override
 	public void init(Window window, Controller controller) {
 		this.window = window;
 		this.controller = controller;
 
-		drawOvers = new HashMap<>();
+		background = new DynamicBackground();
 
-		drawCanvas = window.getPanel();
+		panel = window.getPanel();
 
-		r = new Random();
-		startColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
-		startColorCopy = new Color(startColor.getRGB());
-		interpolationColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
+		panel.setLayout(new FlowLayout());
+
+		button_quit = new TextButton("Quit Game", e -> System.exit(0));
+		button_start = new TextButton("Start", e -> window.updateView(new ViewServerConnect()));
+
+		panel.add(button_start);
+		panel.add(button_quit);
 	}
 
 	@Override
@@ -53,81 +48,18 @@ public class ViewMainMenu extends View {
 
 	@Override
 	public void draw() {
-		update();
+		BufferedImage buffer = background.draw(panel.getWidth(), panel.getHeight());
 
-		BufferedImage buffer = new BufferedImage(drawCanvas.getWidth(), drawCanvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = buffer.getGraphics();
 
-		g.setColor(startColor);
-		g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-
-		for(Location l: drawOvers.keySet()) {
-			Color c = drawOvers.get(l);
-			drawHexField(l.x, l.y, g, new Color(c.getRed()/255.0f, c.getGreen()/255.0f, c.getBlue()/255.0f, 0.2f));
+		for (Component component: panel.getComponents()) {
+			g.translate(component.getX(), component.getY());
+			component.update(g);
+			g.translate(-component.getX(), -component.getY());
 		}
 
-		drawCanvas.getGraphics().drawImage(buffer, 0, 0, null);
+		panel.getGraphics().drawImage(buffer, 0, 0, null);
 	}
 
-	private void update() {
-		long currentTime = System.currentTimeMillis();
 
-		if(currentTime - lastUpdate >= 150) {
-
-			int w = drawCanvas.getWidth();
-			int h = drawCanvas.getHeight();
-
-			for(int x = -1; x < w/120 + 15; x++){
-				for(int y = -1; y < h/140 + 18; y++){
-					if(!drawOvers.containsKey(new Location(x, y))){
-						int gr = r.nextInt(255);
-						drawOvers.put(new Location(x, y), new Color(gr, gr, gr));
-					}
-				}
-			}
-
-			for(Location l: drawOvers.keySet()) {
-				if(r.nextInt(10) < 3) {
-					int mode = r.nextInt(3);
-						if(mode == 0) {
-							drawOvers.put(l, brighter(drawOvers.get(l)));
-						}
-						else if(mode == 1) drawOvers.put(l, darker(drawOvers.get(l)));
-				}
-			}
-
-			lastUpdate = currentTime;
-		}
-
-		if(currentTime - lastSwap >= COLOR_SWAP_TIME) {
-			startColor = interpolationColor;
-			startColorCopy = new Color(startColor.getRGB());
-			interpolationColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
-			lastSwap = currentTime;
-		}else {
-			double faktor = (double)(currentTime - lastSwap) / (double)COLOR_SWAP_TIME;
-
-			int red = (int) (faktor * interpolationColor.getRed() + startColorCopy.getRed()*(1-faktor));
-			int green = (int) (faktor * interpolationColor.getGreen() + startColorCopy.getGreen()*(1-faktor));
-			int blue = (int) (faktor * interpolationColor.getBlue() + startColorCopy.getBlue()*(1-faktor));
-			startColor = new Color(red, green, blue);
-		}
-
-	}
-
-	private Color darker(Color c) {
-		return new Color(Math.max(c.getRed() - 10, 0), Math.max(c.getGreen() - 10, 0), Math.max(c.getBlue() - 10, 0));
-	}
-
-	private Color brighter(Color c) {
-		return new Color(Math.min(c.getRed() + 10, 255), Math.min(c.getGreen() + 10, 255), Math.min(c.getBlue() + 10, 255));
-	}
-
-	private void drawHexField(int x, int y, Graphics g, Color c) {
-		double py = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*140;
-		double px = (x)*120 - (y)*60;
-
-		g.setColor(c);
-		g.fillPolygon(GUIConstants.HEX_TILE((int)px, (int)py));
-	}
 }
