@@ -16,4 +16,8 @@ public class GUIConstants {
 	public static final double MAX_HEAP_FILL				= 0.75;
   
 	public static final double ARROW_SIZE 					= 0.5;
+
+	public static Polygon HEX_TILE(int x, int y) {
+		return new Polygon(new int[]{x, x + 60, x + 120, x + 120, x + 60, x}, new int[]{y + 35, y, y + 35, y + 105, y + 140, y + 105}, 6);
+	}
 }
