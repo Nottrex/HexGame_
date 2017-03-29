@@ -30,13 +30,11 @@ public class ImageButton extends JComponent {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				entered = true;
-				repaint();
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
 				entered = false;
-				repaint();
 			}
 		});
 	}

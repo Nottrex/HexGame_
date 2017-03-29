@@ -29,13 +29,11 @@ public class TextButton extends JComponent {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				repaint();
 				entered = true;
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				repaint();
 				entered = false;
 			}
 		});
@@ -45,7 +43,6 @@ public class TextButton extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
 		Graphics2D g2 = (Graphics2D) g;
 
 		int x = 0, y = 0, width = getWidth(), height = getHeight();
