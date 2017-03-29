@@ -22,8 +22,12 @@ public class ViewMainMenu extends View {
 
 	private Map<Location, Color> drawOvers;
 	private Color startColor;
+	private Color startColorCopy;
+	private Color interpolationColor;
 
-	private Long lastUpdate = 0L;
+	private static final long COLOR_SWAP_TIME = 10000;
+	private long lastUpdate = 0L;
+	private long lastSwap = 0L;
 
 	private Random r;
 
@@ -38,6 +42,8 @@ public class ViewMainMenu extends View {
 
 		r = new Random();
 		startColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
+		startColorCopy = new Color(startColor.getRGB());
+		interpolationColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
 	}
 
 	@Override
@@ -64,7 +70,7 @@ public class ViewMainMenu extends View {
 	}
 
 	private void update() {
-		Long currentTime = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
 
 		if(currentTime - lastUpdate >= 150) {
 
@@ -92,6 +98,21 @@ public class ViewMainMenu extends View {
 
 			lastUpdate = currentTime;
 		}
+
+		if(currentTime - lastSwap >= COLOR_SWAP_TIME) {
+			startColor = interpolationColor;
+			startColorCopy = new Color(startColor.getRGB());
+			interpolationColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
+			lastSwap = currentTime;
+		}else {
+			double faktor = (double)(currentTime - lastSwap) / (double)COLOR_SWAP_TIME;
+
+			int red = (int) (faktor * interpolationColor.getRed() + startColorCopy.getRed()*(1-faktor));
+			int green = (int) (faktor * interpolationColor.getGreen() + startColorCopy.getGreen()*(1-faktor));
+			int blue = (int) (faktor * interpolationColor.getBlue() + startColorCopy.getBlue()*(1-faktor));
+			startColor = new Color(red, green, blue);
+		}
+
 	}
 
 	private Color darker(Color c) {
