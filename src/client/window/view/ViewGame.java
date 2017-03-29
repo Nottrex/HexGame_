@@ -149,7 +149,7 @@ public class ViewGame extends View {
 		window.getPanel().add(bottom, BorderLayout.PAGE_END);
 		window.getPanel().updateUI();
 
-		audioPlayer = new AudioPlayer("MD", Clip.LOOP_CONTINUOUSLY);
+		audioPlayer = new AudioPlayer("EP", Clip.LOOP_CONTINUOUSLY);
 		audioPlayer.start();
 
 		redrawMap();
@@ -564,6 +564,5 @@ public class ViewGame extends View {
 		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
 
 		AudioHandler.loadMusicWav("EP", "music/EP");
-		AudioHandler.loadMusicWav("MD", "music/MD");
 	}
 }
