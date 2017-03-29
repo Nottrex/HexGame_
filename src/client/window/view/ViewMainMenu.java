@@ -37,9 +37,7 @@ public class ViewMainMenu extends View {
 		drawCanvas = window.getPanel();
 
 		r = new Random();
-		startColor = new Color(r.nextInt());
-
-
+		startColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
 	}
 
 	@Override
@@ -97,11 +95,11 @@ public class ViewMainMenu extends View {
 	}
 
 	private Color darker(Color c) {
-		return new Color(Math.max(c.getRed() - 20, 0), Math.max(c.getGreen() - 20, 0), Math.max(c.getBlue() - 20, 0));
+		return new Color(Math.max(c.getRed() - 10, 0), Math.max(c.getGreen() - 10, 0), Math.max(c.getBlue() - 10, 0));
 	}
 
 	private Color brighter(Color c) {
-		return new Color(Math.min(c.getRed() + 20, 255), Math.min(c.getGreen() + 20, 255), Math.min(c.getBlue() + 20, 255));
+		return new Color(Math.min(c.getRed() + 10, 255), Math.min(c.getGreen() + 10, 255), Math.min(c.getBlue() + 10, 255));
 	}
 
 	private void drawHexField(int x, int y, Graphics g, Color c) {
