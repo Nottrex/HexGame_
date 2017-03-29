@@ -52,6 +52,10 @@ public class DynamicBackground {
 		return buffer;
 	}
 
+	public Color getCurrentColor() {
+		return startColor;
+	}
+
 	private void update() {
 		long currentTime = System.currentTimeMillis();
 

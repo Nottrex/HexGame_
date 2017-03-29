@@ -2,10 +2,12 @@ package client;
 
 import client.window.Window;
 
+import javax.swing.*;
+
 public class Main {
 
     public static void main(String[] args) {
-        new Window();
+        SwingUtilities.invokeLater(() -> new Window());
     }
 
 }

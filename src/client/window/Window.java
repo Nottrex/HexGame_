@@ -26,8 +26,9 @@ public class Window extends JFrame implements Runnable {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		initComponents();
+		panel.setIgnoreRepaint(true);
 
-		setVisible(true);
+
 		setVisible(true);
 
 		addWindowListener(new WindowAdapter() {
@@ -60,7 +61,7 @@ public class Window extends JFrame implements Runnable {
 				view.draw();
 			} else {
 				try {
-					Thread.sleep(250);
+					Thread.sleep(1);
 				} catch (Exception e) {}
 
 			}
@@ -83,7 +84,7 @@ public class Window extends JFrame implements Runnable {
 		this.view = newView;
 		panel.removeAll();
 		newView.init(this, controller);
-		panel.updateUI();
+		panel.doLayout();
 	}
 
 	private void initComponents() {
