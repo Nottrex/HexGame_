@@ -1,5 +1,7 @@
 package client.components;
 
+import client.window.GUIConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,7 +24,7 @@ public class ImageTextLabel extends JComponent {
 
 		String text = content.getText();
 
-		Font font = g.getFont().deriveFont(getHeight()*0.5f);
+		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f);
 		g.setFont(font);
 
 		double fWidth = g.getFontMetrics(font).getStringBounds(text, g).getWidth();

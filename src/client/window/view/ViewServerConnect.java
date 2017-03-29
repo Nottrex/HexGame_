@@ -1,6 +1,7 @@
 package client.window.view;
 
 import client.Controller;
+import client.components.TextButton;
 import client.window.View;
 import client.window.Window;
 
@@ -12,7 +13,7 @@ public class ViewServerConnect extends View {
 	private Window window;
 	private Controller controller;
 
-	private JButton buttonConnect, buttonBackToMainMenu;
+	private TextButton buttonConnect, buttonBackToMainMenu;
 	private JTextField textFieldName, textFieldHostName, textFieldPort;
 
 	@Override
@@ -22,8 +23,8 @@ public class ViewServerConnect extends View {
 
 		window.getPanel().setLayout(new FlowLayout());
 
-		buttonConnect = new JButton("Connect");
-		buttonBackToMainMenu = new JButton("Back to Main Menu");
+		buttonConnect = new TextButton("Connect", e -> window.updateView(new ViewGameSetup(textFieldName.getText(), textFieldHostName.getText(), Integer.valueOf(textFieldPort.getText()))));
+		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu()));
 		textFieldName = new JTextField("[NAME]");
 		textFieldHostName = new JTextField("localhost");
 		textFieldPort = new JTextField("25565");
@@ -33,8 +34,5 @@ public class ViewServerConnect extends View {
 		window.getPanel().add(textFieldPort);
 		window.getPanel().add(buttonConnect);
 		window.getPanel().add(buttonBackToMainMenu);
-
-		buttonBackToMainMenu.addActionListener(e -> window.updateView(new ViewMainMenu()));
-		buttonConnect.addActionListener(e -> window.updateView(new ViewGameSetup(textFieldName.getText(), textFieldHostName.getText(), Integer.valueOf(textFieldPort.getText()))));
 	}
 }

@@ -1,5 +1,7 @@
 package client.components;
 
+import client.window.GUIConstants;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,7 +21,7 @@ public class TextLabel extends JComponent {
 
 		String text = content.getText();
 
-		Font font = g.getFont().deriveFont(getHeight()*0.5f);
+		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f);
 		g.setFont(font);
 
 		g.drawString(text, 0, getHeight()/2);
