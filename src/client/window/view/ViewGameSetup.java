@@ -11,6 +11,7 @@ import networking.packets.Packet;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	private JButton button_backToServerConnect, button_toggleReady, button_toggleColor;
 
 	private DynamicBackground background;
+	private boolean started = false;
 
 	public ViewGameSetup(String userName, String hostName, int port) {
 		this.userName = userName;
@@ -78,8 +80,36 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		window.getPanel().add(info, BorderLayout.CENTER);
 
+		if(background == null) background = new DynamicBackground();
+		started = true;
+
 		controller.setViewPacketListener(this);
 		controller.connect(userName, hostName, port);
+
+	}
+
+	@Override
+	public boolean autoDraw() {
+		return true;
+	}
+
+	@Override
+	public void draw() {
+		if (!started) return;
+
+		JPanel panel = window.getPanel();
+
+		BufferedImage buffer = background.draw(panel.getWidth(), panel.getHeight());
+
+		Graphics g = buffer.getGraphics();
+
+		for (Component component: panel.getComponents()) {
+			g.translate(component.getX(), component.getY());
+			component.update(g);
+			g.translate(-component.getX(), -component.getY());
+		}
+
+		panel.getGraphics().drawImage(buffer, 0, 0, null);
 	}
 
 	private void updateInfo() {
@@ -141,7 +171,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	public void onLeave() {
 		if (window.isCurrentView(this)) {
 			controller.stopConnection();
-			window.updateView(new ViewErrorScreen("Connection lost!"));
+			window.updateView(new ViewErrorScreen(background, "Connection lost!"));
 		}
 	}
 }

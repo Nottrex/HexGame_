@@ -19,6 +19,8 @@ public class ViewMainMenu extends View {
 	private JPanel panel;
 	private DynamicBackground background;
 
+	private boolean started = false;
+
 	public ViewMainMenu() {
 
 	}
@@ -43,6 +45,8 @@ public class ViewMainMenu extends View {
 
 		panel.add(button_start);
 		panel.add(button_quit);
+
+		started = true;
 	}
 
 	@Override
@@ -52,6 +56,8 @@ public class ViewMainMenu extends View {
 
 	@Override
 	public void draw() {
+		if (!started) return;
+
 		BufferedImage buffer = background.draw(panel.getWidth(), panel.getHeight());
 
 		Graphics g = buffer.getGraphics();

@@ -19,6 +19,7 @@ public class ViewErrorScreen extends View {
 
 	private JPanel panel;
 	private DynamicBackground background;
+	private boolean started = false;
 
 	public ViewErrorScreen(String error) {
 		this.error = error;
@@ -45,6 +46,8 @@ public class ViewErrorScreen extends View {
 		window.getPanel().add(buttonBackToMainMenu);
 
 		buttonBackToMainMenu.addActionListener(e -> window.updateView(new ViewMainMenu(background)));
+
+		started = true;
 	}
 
 	@Override
@@ -54,6 +57,8 @@ public class ViewErrorScreen extends View {
 
 	@Override
 	public void draw() {
+		if (!started) return;
+
 		BufferedImage buffer = background.draw(panel.getWidth(), panel.getHeight());
 
 		Graphics g = buffer.getGraphics();

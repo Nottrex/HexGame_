@@ -19,6 +19,7 @@ public class ViewServerConnect extends View {
 
 	private JPanel panel;
 	private DynamicBackground background;
+	private boolean started = false;
 
 	public ViewServerConnect(DynamicBackground background) {
 		this.background = background;
@@ -44,6 +45,8 @@ public class ViewServerConnect extends View {
 		window.getPanel().add(textFieldPort);
 		window.getPanel().add(buttonConnect);
 		window.getPanel().add(buttonBackToMainMenu);
+
+		started = true;
 	}
 
 	@Override
@@ -53,6 +56,8 @@ public class ViewServerConnect extends View {
 
 	@Override
 	public void draw() {
+		if (!started) return;
+
 		BufferedImage buffer = background.draw(panel.getWidth(), panel.getHeight());
 
 		Graphics g = buffer.getGraphics();
