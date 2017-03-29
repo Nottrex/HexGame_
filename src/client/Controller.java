@@ -155,14 +155,12 @@ public class Controller implements ClientListener {
 	public void onKeyType(int keyCode) {
 		if (keyCode == KeyBindings.KEY_NEXT_PLAYER) {
 			if (game.getPlayerTurn().equals(userName)) {
+				while (!animationActions.isEmpty())
+					animationActionFinished();
 				client.sendPacket(new PacketRoundFinished(userName));
 				waitForPacket = true;
 			}
 		}
-	}
-
-	public String getUserName() {
-		return userName;
 	}
 
 	@Override
