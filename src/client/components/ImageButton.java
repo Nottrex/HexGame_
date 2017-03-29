@@ -1,5 +1,7 @@
 package client.components;
 
+import client.window.GUIConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,11 +30,13 @@ public class ImageButton extends JComponent {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				entered = true;
+				repaint();
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
 				entered = false;
+				repaint();
 			}
 		});
 	}
@@ -43,7 +47,7 @@ public class ImageButton extends JComponent {
 		super.paintComponent(g);
 
 		if (entered) {
-			g.drawImage(image, getWidth()/20, getHeight()/20, (getWidth()*18)/20, (getHeight()*18)/20, null);
+			g.drawImage(image, (int) (getWidth()*(1 - GUIConstants.BUTTON_HOVER_SIZE)/2), (int) (getHeight()*(1 - GUIConstants.BUTTON_HOVER_SIZE)/2), (int) (getWidth() * GUIConstants.BUTTON_HOVER_SIZE), (int) (getHeight() * GUIConstants.BUTTON_HOVER_SIZE), null);
 		} else {
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		}

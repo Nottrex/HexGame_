@@ -15,6 +15,7 @@ public class AnimationActionUnitMove extends AnimationAction {
 	private int targetX, targetY;
 	private List<Direction> movements;
 	private boolean finish = false;
+	private int z;
 
 	public AnimationActionUnitMove(Game game, Unit unit, int targetX, int targetY, List<Direction> movements) {
 		super(game);
@@ -23,22 +24,26 @@ public class AnimationActionUnitMove extends AnimationAction {
 		this.targetX = targetX;
 		this.targetY = targetY;
 		this.movements = movements;
+
+		z = TILE_TIME*movements.size();
 	}
 
 	@Override
 	public long getTotalTime() {
-		return TILE_TIME*movements.size();
+		return z;
 	}
 
-	private int lastTime = 0;
+	private double last = 0;
 	@Override
 	public void update(long currentTime) {
-		for (int i = lastTime/TILE_TIME; i < currentTime/TILE_TIME; i++) {
+		double current = getDistance(currentTime);
+
+		for (int i = (int)(last/TILE_TIME); i < (int) (current/TILE_TIME); i++) {
 			Location newField = movements.get(i).applyMovement(new Location(unit.getX(), unit.getY()));
 			unit.setX(newField.x);
 			unit.setY(newField.y);
 		}
-		lastTime = (int) currentTime;
+		last = current;
 	}
 
 	public Unit getUnit() {
@@ -46,12 +51,15 @@ public class AnimationActionUnitMove extends AnimationAction {
 	}
 
 	public Direction getCurrentDirection() {
-		return movements.get(lastTime/TILE_TIME);
+		return movements.get((int) (last/TILE_TIME));
 	}
 
 	public double interpolation() {
-		double linear = ((lastTime - (lastTime/TILE_TIME)*TILE_TIME)*1.0)/TILE_TIME;
-		return finish ? 0 : (-2*linear*linear*linear + 3*linear*linear);
+		return finish ? 0 : ((last - ((int)(last/TILE_TIME))*TILE_TIME)*1.0)/TILE_TIME;
+	}
+
+	public double getDistance(double time) {
+		return (-2.0/(z*z))*time*time*time + (3.0/z)*time*time;
 	}
 
 	@Override
