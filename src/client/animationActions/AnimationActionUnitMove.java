@@ -50,7 +50,8 @@ public class AnimationActionUnitMove extends AnimationAction {
 	}
 
 	public double interpolation() {
-		return finish ? 0 : ((lastTime - (lastTime/TILE_TIME)*TILE_TIME)*1.0)/TILE_TIME;
+		double linear = ((lastTime - (lastTime/TILE_TIME)*TILE_TIME)*1.0)/TILE_TIME;
+		return finish ? 0 : (-2*linear*linear*linear + 3*linear*linear);
 	}
 
 	@Override

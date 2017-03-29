@@ -19,6 +19,10 @@ import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
+import networking.client.ClientListener;
+import networking.gamePackets.clientPackets.PacketClientKicked;
+import networking.gamePackets.preGamePackets.*;
+import networking.packets.Packet;
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
@@ -27,7 +31,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
-public class ViewGame extends View {
+public class ViewGame extends View implements ClientListener {
 
 	private boolean stop = true;
 
@@ -60,6 +64,7 @@ public class ViewGame extends View {
 	public void init(Window window, Controller controller) {
 		this.window = window;
 		this.controller = controller;
+		controller.setViewPacketListener(this);
 
 		cam = new Camera();
 
@@ -564,5 +569,22 @@ public class ViewGame extends View {
 		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
 
 		AudioHandler.loadMusicWav("EP", "music/EP");
+	}
+
+
+	@Override
+	public void onReceivePacket(Packet p) {
+		if (p instanceof PacketClientKicked) {
+			controller.stopConnection();
+			window.updateView(new ViewErrorScreen(((PacketClientKicked) p).getReason()));
+		}
+	}
+
+	@Override
+	public void onLeave() {
+		if (window.isCurrentView(this)) {
+			controller.stopConnection();
+			window.updateView(new ViewErrorScreen("Connection lost!"));
+		}
 	}
 }
