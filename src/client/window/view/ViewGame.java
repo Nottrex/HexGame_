@@ -357,9 +357,9 @@ public class ViewGame extends View implements ClientListener {
 		GameMap m = controller.game.getMap();
 
 		int maxSize = (int) Math.min((long) (GUIConstants.MAX_HEAP_FILL*Runtime.getRuntime().freeMemory()/4), (long)Integer.MAX_VALUE);
-
 		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * GUIConstants.HEX_TILE_XY_RATIO * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), GUIConstants.HEX_TILE_WIDTH_MAX));
 
+		System.out.printf("%f, %d / %d", width, Runtime.getRuntime().freeMemory(), Runtime.getRuntime().maxMemory());
 		double height = width* GUIConstants.HEX_TILE_XY_RATIO;
 
 		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
