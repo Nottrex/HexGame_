@@ -32,7 +32,6 @@ public class ViewMainMenu extends View {
 		this.window = window;
 		this.controller = controller;
 
-		r = new Random();
 		drawOvers = new HashMap<>();
 
 		drawCanvas = window.getPanel();
@@ -69,31 +68,40 @@ public class ViewMainMenu extends View {
 	private void update() {
 		Long currentTime = System.currentTimeMillis();
 
-		if(currentTime - lastUpdate >= 500) {
-
-			System.out.println("UPDA");
+		if(currentTime - lastUpdate >= 150) {
 
 			int w = drawCanvas.getWidth();
 			int h = drawCanvas.getHeight();
 
-			for(int x = -1; x < w/120; x++){
-				for(int y = -1; y < h/140; y++){
-					if(!drawOvers.containsKey(new Location(x, y))) drawOvers.put(new Location(x, y), Color.GRAY);
+			for(int x = -1; x < w/120 + 15; x++){
+				for(int y = -1; y < h/140 + 18; y++){
+					if(!drawOvers.containsKey(new Location(x, y))){
+						int gr = r.nextInt(255);
+						drawOvers.put(new Location(x, y), new Color(gr, gr, gr));
+					}
 				}
 			}
 
 			for(Location l: drawOvers.keySet()) {
 				if(r.nextInt(10) < 3) {
 					int mode = r.nextInt(3);
-					for(int i = 0; i < r.nextInt(5); i++) {
-						if(mode == 0) drawOvers.get(l).brighter();
-						else if(mode == 1) drawOvers.get(l).darker();
-					}
+						if(mode == 0) {
+							drawOvers.put(l, brighter(drawOvers.get(l)));
+						}
+						else if(mode == 1) drawOvers.put(l, darker(drawOvers.get(l)));
 				}
 			}
 
 			lastUpdate = currentTime;
 		}
+	}
+
+	private Color darker(Color c) {
+		return new Color(Math.max(c.getRed() - 20, 0), Math.max(c.getGreen() - 20, 0), Math.max(c.getBlue() - 20, 0));
+	}
+
+	private Color brighter(Color c) {
+		return new Color(Math.min(c.getRed() + 20, 255), Math.min(c.getGreen() + 20, 255), Math.min(c.getBlue() + 20, 255));
 	}
 
 	private void drawHexField(int x, int y, Graphics g, Color c) {
