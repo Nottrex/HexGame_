@@ -23,19 +23,23 @@ public class ViewMainMenu extends View {
 
 	}
 
+	public ViewMainMenu(DynamicBackground background) {
+		this.background = background;
+	}
+
 	@Override
 	public void init(Window window, Controller controller) {
 		this.window = window;
 		this.controller = controller;
 
-		background = new DynamicBackground();
+		if(background == null) background = new DynamicBackground();
 
 		panel = window.getPanel();
 
 		panel.setLayout(new FlowLayout());
 
 		button_quit = new TextButton("Quit Game", e -> System.exit(0));
-		button_start = new TextButton("Start", e -> window.updateView(new ViewServerConnect()));
+		button_start = new TextButton("Start", e -> window.updateView(new ViewServerConnect(background)));
 
 		panel.add(button_start);
 		panel.add(button_quit);

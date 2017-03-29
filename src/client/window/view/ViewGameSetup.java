@@ -29,11 +29,23 @@ public class ViewGameSetup extends View implements ClientListener {
 	private JTextArea info;
 	private JButton button_backToServerConnect, button_toggleReady, button_toggleColor;
 
+	private DynamicBackground background;
+
 	public ViewGameSetup(String userName, String hostName, int port) {
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
 
+		this.ready = new HashMap<>();
+		this.color = new HashMap<>();
+	}
+
+	public ViewGameSetup(DynamicBackground background, String userName, String hostName, int port) {
+		this.userName = userName;
+		this.hostName = hostName;
+		this.port = port;
+
+		this.background = background;
 		this.ready = new HashMap<>();
 		this.color = new HashMap<>();
 	}
@@ -44,7 +56,7 @@ public class ViewGameSetup extends View implements ClientListener {
 		this.controller = controller;
 
 		button_backToServerConnect = new JButton("Quit");
-		button_backToServerConnect.addActionListener(e -> {controller.stopConnection(); window.updateView(new ViewServerConnect());});
+		button_backToServerConnect.addActionListener(e -> {controller.stopConnection(); window.updateView(new ViewServerConnect(background));});
 
 		button_toggleReady = new JButton("Toggle Ready");
 		button_toggleReady.addActionListener(e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
@@ -87,7 +99,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	public void onReceivePacket(Packet p) {
 		if (p instanceof PacketClientKicked) {
 			controller.stopConnection();
-			window.updateView(new ViewErrorScreen(((PacketClientKicked) p).getReason()));
+			window.updateView(new ViewErrorScreen(background, ((PacketClientKicked) p).getReason()));
 		}
 
 		if (p instanceof PacketPlayerJoined) {
