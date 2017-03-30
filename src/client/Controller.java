@@ -111,6 +111,11 @@ public class Controller implements ClientListener {
 			if (game.getMap().getFieldAt(l).isAccessible())
 				selectedField = l;
 		} else {
+			if (l.equals(selectedField)) {
+				selectedField = null;
+				return;
+			}
+
 			if (game.getMap().getFieldAt(l).isAccessible()) {
 				Optional<Unit> u = m.getUnitAt(selectedField);
 				Optional<Unit> u2 = m.getUnitAt(l);
