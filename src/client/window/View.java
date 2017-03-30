@@ -16,4 +16,8 @@ public abstract class View {
 	public void stop() {
 
 	}
+
+	public void changeSize() {
+
+	}
 }

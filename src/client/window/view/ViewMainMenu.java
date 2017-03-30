@@ -38,7 +38,7 @@ public class ViewMainMenu extends View {
 
 		panel = window.getPanel();
 
-		panel.setLayout(new FlowLayout());
+		panel.setLayout(null);
 
 		button_quit = new TextButton("Quit Game", e -> System.exit(0));
 		button_start = new TextButton("Start", e -> window.updateView(new ViewServerConnect(background)));
@@ -46,7 +46,21 @@ public class ViewMainMenu extends View {
 		panel.add(button_start);
 		panel.add(button_quit);
 
+		changeSize();
+
 		started = true;
+	}
+
+	@Override
+	public void changeSize() {
+		int width = window.getPanel().getWidth();
+		int height = window.getPanel().getHeight();
+
+		int buttonHeight = height/8;
+		int buttonWidth = buttonHeight*5;
+
+		button_start.setBounds((width-buttonWidth)/2, (height-buttonHeight)/2, buttonWidth, buttonHeight);
+		button_quit.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
 	}
 
 	@Override

@@ -28,6 +28,12 @@ public class Window extends JFrame implements Runnable {
 		initComponents();
 		panel.setIgnoreRepaint(true);
 
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				if (view != null) view.changeSize();
+			}
+		});
 
 		setVisible(true);
 

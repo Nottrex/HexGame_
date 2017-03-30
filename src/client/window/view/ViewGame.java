@@ -37,7 +37,6 @@ public class ViewGame extends View implements ClientListener {
 
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
-	private ComponentListener componentListener;
 
 	private Camera cam;
 	private Window window;
@@ -80,22 +79,6 @@ public class ViewGame extends View implements ClientListener {
 		window.addMouseMotionListener(mouseListener);
 		window.addMouseListener(mouseListener);
 		window.addKeyListener(keyListener);
-
-		componentListener = new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				int widthDifference = width - window.getWidth();
-				int heightDifference = height - window.getHeight();
-
-				if(widthDifference == 0 && heightDifference == 0) return;
-				cam.tx += (widthDifference * cam.tzoom / 2);
-				cam.ty += (heightDifference * cam.tzoom / 2);
-
-				width = window.getWidth();
-				height = window.getHeight();
-			}
-		};
-		window.addComponentListener(componentListener);
 
 		bottom = new JPanel(null);
 		bottom.setPreferredSize(new Dimension(800, 100));
@@ -162,6 +145,19 @@ public class ViewGame extends View implements ClientListener {
 		centerCamera();
 
 		stop = false;
+	}
+
+	@Override
+	public void changeSize() {
+			int widthDifference = width - window.getWidth();
+			int heightDifference = height - window.getHeight();
+
+			if(widthDifference == 0 && heightDifference == 0) return;
+			cam.tx += (widthDifference * cam.tzoom / 2);
+			cam.ty += (heightDifference * cam.tzoom / 2);
+
+			width = window.getWidth();
+			height = window.getHeight();
 	}
 
 	public JPanel getCenter() {
@@ -525,7 +521,6 @@ public class ViewGame extends View implements ClientListener {
 		window.removeMouseMotionListener(mouseListener);
 		window.removeMouseListener(mouseListener);
 		window.removeKeyListener(keyListener);
-		window.removeComponentListener(componentListener);
 		audioPlayer.stop();
 		controller.stopConnection();
 

@@ -59,7 +59,7 @@ public class DynamicBackground {
 	private void update() {
 		long currentTime = System.currentTimeMillis();
 
-		while(currentTime - lastUpdate >= 25) {
+		while(currentTime - lastUpdate >= 75) {
 
 			for(int x = -1; x < w/120 + 15; x++){
 				for(int y = -1; y < h/140 + 18; y++){
@@ -80,7 +80,7 @@ public class DynamicBackground {
 				}
 			}
 
-			lastUpdate += 25;
+			lastUpdate += 75;
 		}
 
 		if(currentTime - lastSwap >= COLOR_SWAP_TIME) {
@@ -100,11 +100,11 @@ public class DynamicBackground {
 	}
 
 	private Color darker(Color c) {
-		return new Color(Math.max(c.getRed() - 2, 0), Math.max(c.getGreen() - 2, 0), Math.max(c.getBlue() - 2, 0));
+		return new Color(Math.max(c.getRed() - 5, 0), Math.max(c.getGreen() - 5, 0), Math.max(c.getBlue() - 5, 0));
 	}
 
 	private Color brighter(Color c) {
-		return new Color(Math.min(c.getRed() + 2, 255), Math.min(c.getGreen() + 2, 255), Math.min(c.getBlue() + 2, 255));
+		return new Color(Math.min(c.getRed() + 5, 255), Math.min(c.getGreen() + 5, 255), Math.min(c.getBlue() + 5, 255));
 	}
 
 	private void drawHexField(int x, int y, Graphics g, Color c) {
