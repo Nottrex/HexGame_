@@ -40,13 +40,13 @@ public class ViewServerConnect extends View {
 		textFieldHostName = new JTextField("localhost");
 		textFieldPort = new JTextField("25565");
 
+		changeSize();
+
 		window.getPanel().add(textFieldName);
 		window.getPanel().add(textFieldHostName);
 		window.getPanel().add(textFieldPort);
 		window.getPanel().add(buttonConnect);
 		window.getPanel().add(buttonBackToMainMenu);
-
-		changeSize();
 
 		started = true;
 

@@ -74,6 +74,8 @@ public class ViewGameSetup extends View implements ClientListener {
 		JPanel panel2 = new JPanel(new FlowLayout());
 		window.getPanel().add(panel2, BorderLayout.PAGE_END);
 
+		changeSize();
+
 		panel2.add(button_backToServerConnect);
 		panel2.add(button_toggleReady);
 		panel2.add(button_toggleColor);

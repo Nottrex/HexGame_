@@ -25,7 +25,6 @@ public class Window extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		initComponents();
-		panel.setIgnoreRepaint(true);
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -56,15 +55,17 @@ public class Window extends JFrame {
 	}
 
 	public void updateView(View newView) {
-		panel.removeAll();
 		if (this.view != null) this.view.stop();
 		this.view = newView;
+		panel.removeAll();
+
 		newView.init(this, controller);
 		if (panel.getLayout() != null) panel.doLayout();
 	}
 
 	private void initComponents() {
 		panel = new JPanel(new BorderLayout());
+		panel.setIgnoreRepaint(true);
 		this.setContentPane(panel);
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();

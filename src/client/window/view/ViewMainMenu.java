@@ -43,10 +43,10 @@ public class ViewMainMenu extends View {
 		button_quit = new TextButton("Quit Game", e -> System.exit(0));
 		button_start = new TextButton("Start", e -> window.updateView(new ViewServerConnect(background)));
 
+		changeSize();
+
 		panel.add(button_start);
 		panel.add(button_quit);
-
-		changeSize();
 
 		started = true;
 

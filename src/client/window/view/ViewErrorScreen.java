@@ -44,10 +44,10 @@ public class ViewErrorScreen extends View {
 		labelError = new TextLabel(() -> error, true);
 		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
 
+		changeSize();
+
 		window.getPanel().add(labelError);
 		window.getPanel().add(buttonBackToMainMenu);
-
-		changeSize();
 
 		started = true;
 
