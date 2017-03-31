@@ -5,6 +5,8 @@ import game.Location;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -39,7 +41,7 @@ public class DynamicBackground {
 		update();
 
 		BufferedImage buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics g = buffer.getGraphics();
+		Graphics2D g = (Graphics2D) buffer.getGraphics();
 
 		g.setColor(startColor);
 		g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());

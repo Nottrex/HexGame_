@@ -49,6 +49,15 @@ public class ViewMainMenu extends View {
 		changeSize();
 
 		started = true;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (started) {
+					draw();
+				}
+			}
+		}).start();
 	}
 
 	@Override
@@ -63,12 +72,6 @@ public class ViewMainMenu extends View {
 		button_quit.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
 	}
 
-	@Override
-	public boolean autoDraw() {
-		return true;
-	}
-
-	@Override
 	public void draw() {
 		if (!started) return;
 
@@ -85,5 +88,8 @@ public class ViewMainMenu extends View {
 		panel.getGraphics().drawImage(buffer, 0, 0, null);
 	}
 
-
+	@Override
+	public void stop() {
+		started = false;
+	}
 }

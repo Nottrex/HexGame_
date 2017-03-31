@@ -8,13 +8,12 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class Window extends JFrame implements Runnable {
+public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//Window stuff
 	private JPanel panel;
 
-	private int fps = 0;
 	private boolean stop = false;
 
 	private Controller controller;
@@ -43,13 +42,8 @@ public class Window extends JFrame implements Runnable {
 			}
 		});
 
-		new Thread(this).start();
 		controller = new Controller();
 		updateView(new ViewMainMenu());
-	}
-
-	public int getFPS() {
-		return fps;
 	}
 
 
@@ -57,38 +51,14 @@ public class Window extends JFrame implements Runnable {
 		return panel;
 	}
 
-	@Override
-	public void run() {
-		int i = 0;
-		long t = System.currentTimeMillis();
-		while (!stop) {
-			i++;
-			if (view != null && view.autoDraw()) {
-				view.draw();
-			} else {
-				try {
-					Thread.sleep(1);
-				} catch (Exception e) {}
-
-			}
-
-			if (System.currentTimeMillis()-t > 500) {
-				long t2 = System.currentTimeMillis();
-				fps = (int) (i / ((t2-t)/1000.0));
-				t = t2;
-				i = 0;
-			}
-		}
-	}
-
 	public boolean isCurrentView(View view) {
 		return this.view == view;
 	}
 
 	public void updateView(View newView) {
+		panel.removeAll();
 		if (this.view != null) this.view.stop();
 		this.view = newView;
-		panel.removeAll();
 		newView.init(this, controller);
 		if (panel.getLayout() != null) panel.doLayout();
 	}

@@ -50,6 +50,15 @@ public class ViewErrorScreen extends View {
 		changeSize();
 
 		started = true;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (started) {
+					draw();
+				}
+			}
+		}).start();
 	}
 
 	@Override
@@ -65,12 +74,7 @@ public class ViewErrorScreen extends View {
 		buttonBackToMainMenu.setBounds((width-componentWidth)/2, (height+componentHeight)/2, componentWidth, componentHeight);
 	}
 
-	@Override
-	public boolean autoDraw() {
-		return true;
-	}
 
-	@Override
 	public void draw() {
 		if (!started) return;
 
@@ -85,5 +89,10 @@ public class ViewErrorScreen extends View {
 		}
 
 		panel.getGraphics().drawImage(buffer, 0, 0, null);
+	}
+
+	@Override
+	public void stop() {
+		started = false;
 	}
 }

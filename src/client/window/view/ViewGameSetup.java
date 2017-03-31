@@ -83,17 +83,19 @@ public class ViewGameSetup extends View implements ClientListener {
 		if(background == null) background = new DynamicBackground();
 		started = true;
 
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (started) {
+					draw();
+				}
+			}
+		}).start();
+
 		controller.setViewPacketListener(this);
 		controller.connect(userName, hostName, port);
 
 	}
-
-	@Override
-	public boolean autoDraw() {
-		return true;
-	}
-
-	@Override
 	public void draw() {
 		if (!started) return;
 
@@ -173,5 +175,10 @@ public class ViewGameSetup extends View implements ClientListener {
 			controller.stopConnection();
 			window.updateView(new ViewErrorScreen(background, "Connection lost!"));
 		}
+	}
+
+	@Override
+	public void stop() {
+		started = false;
 	}
 }

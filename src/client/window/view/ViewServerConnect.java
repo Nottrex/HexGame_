@@ -49,6 +49,15 @@ public class ViewServerConnect extends View {
 		changeSize();
 
 		started = true;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (started) {
+					draw();
+				}
+			}
+		}).start();
 	}
 
 	@Override
@@ -66,12 +75,6 @@ public class ViewServerConnect extends View {
 		buttonBackToMainMenu.setBounds((width-elementWidth)/2, (height+5*elementHeight)/2, elementWidth, elementHeight);
 	}
 
-	@Override
-	public boolean autoDraw() {
-		return true;
-	}
-
-	@Override
 	public void draw() {
 		if (!started) return;
 
@@ -86,5 +89,10 @@ public class ViewServerConnect extends View {
 		}
 
 		panel.getGraphics().drawImage(buffer, 0, 0, null);
+	}
+
+	@Override
+	public void stop() {
+		started = false;
 	}
 }

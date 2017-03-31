@@ -35,6 +35,8 @@ public class ViewGame extends View implements ClientListener {
 
 	private boolean stop = true;
 
+	private int fps = 0;
+
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
 
@@ -92,7 +94,7 @@ public class ViewGame extends View implements ClientListener {
 		button_centerCamera = new ImageButton(TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
 		button_backToMainMenu = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> window.updateView(new ViewMainMenu()));
-		fpsLabel = new TextLabel(() -> ("FPS: " + window.getFPS()), false);
+		fpsLabel = new TextLabel(() -> ("FPS: " + fps), false);
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
 			public BufferedImage getImage() {
@@ -145,6 +147,25 @@ public class ViewGame extends View implements ClientListener {
 		centerCamera();
 
 		stop = false;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int i = 0;
+				long t = System.currentTimeMillis();
+				while (!stop) {
+					i++;
+					draw();
+
+					if (System.currentTimeMillis()-t > 500) {
+						long t2 = System.currentTimeMillis();
+						fps = (int) (i / ((t2-t)/1000.0));
+						t = t2;
+						i = 0;
+					}
+				}
+			}
+		}).start();
 	}
 
 	@Override
@@ -166,11 +187,6 @@ public class ViewGame extends View implements ClientListener {
 
 	public Window getWindow() {
 		return window;
-	}
-
-	@Override
-	public boolean autoDraw() {
-		return true;
 	}
 
 	private void centerCamera() {
@@ -237,7 +253,6 @@ public class ViewGame extends View implements ClientListener {
 	}
 
 	private boolean drawing = false;
-	@Override
 	public void draw() {
 		if (stop || audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || controller.game.getMap() == null || cam == null) return;
 		drawing = true;
