@@ -5,8 +5,6 @@ import game.Location;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
