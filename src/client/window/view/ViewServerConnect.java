@@ -32,7 +32,7 @@ public class ViewServerConnect extends View {
 
 		panel = window.getPanel();
 		if(background == null) background = new DynamicBackground();
-		window.getPanel().setLayout(new FlowLayout());
+		window.getPanel().setLayout(null);
 
 		buttonConnect = new TextButton("Connect", e -> window.updateView(new ViewGameSetup(background, textFieldName.getText(), textFieldHostName.getText(), Integer.valueOf(textFieldPort.getText()))));
 		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
@@ -46,7 +46,24 @@ public class ViewServerConnect extends View {
 		window.getPanel().add(buttonConnect);
 		window.getPanel().add(buttonBackToMainMenu);
 
+		changeSize();
+
 		started = true;
+	}
+
+	@Override
+	public void changeSize() {
+		int width = window.getPanel().getWidth();
+		int height = window.getPanel().getHeight();
+
+		int elementHeight = height/10;
+		int elementWidth  = elementHeight*5;
+
+		textFieldName.setBounds((width-elementWidth)/2, (height-5*elementHeight)/2, elementWidth, elementHeight);
+		textFieldHostName.setBounds((width-elementWidth)/2, (height-3*elementHeight)/2, elementWidth, elementHeight);
+		textFieldPort.setBounds((width-elementWidth)/2, (height-elementHeight)/2, elementWidth, elementHeight);
+		buttonConnect.setBounds((width-elementWidth)/2, (height+2*elementHeight)/2, elementWidth, elementHeight);
+		buttonBackToMainMenu.setBounds((width-elementWidth)/2, (height+5*elementHeight)/2, elementWidth, elementHeight);
 	}
 
 	@Override

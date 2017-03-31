@@ -1,6 +1,8 @@
 package client.window.view;
 
 import client.Controller;
+import client.components.TextButton;
+import client.components.TextLabel;
 import client.window.View;
 import client.window.Window;
 
@@ -14,8 +16,8 @@ public class ViewErrorScreen extends View {
 	private Controller controller;
 
 	private String error;
-	private JLabel labelError;
-	private JButton buttonBackToMainMenu;
+	private TextLabel labelError;
+	private TextButton buttonBackToMainMenu;
 
 	private JPanel panel;
 	private DynamicBackground background;
@@ -35,19 +37,32 @@ public class ViewErrorScreen extends View {
 		this.controller = controller;
 
 		panel = window.getPanel();
-		panel.setLayout(new FlowLayout());
+		panel.setLayout(null);
 
 		if(background == null) background = new DynamicBackground();
 
-		labelError = new JLabel(error);
-		buttonBackToMainMenu = new JButton("Back to Main Menu");
+		labelError = new TextLabel(() -> error, true);
+		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
 
 		window.getPanel().add(labelError);
 		window.getPanel().add(buttonBackToMainMenu);
 
-		buttonBackToMainMenu.addActionListener(e -> window.updateView(new ViewMainMenu(background)));
+		changeSize();
 
 		started = true;
+	}
+
+	@Override
+	public void changeSize() {
+		int width = window.getWidth();
+		int height = window.getHeight();
+
+
+		int componentHeight = height/8;
+		int componentWidth = componentHeight * 5;
+
+		labelError.setBounds((width-componentWidth)/2, (height-componentHeight)/2, componentWidth, componentHeight);
+		buttonBackToMainMenu.setBounds((width-componentWidth)/2, (height+componentHeight)/2, componentWidth, componentHeight);
 	}
 
 	@Override

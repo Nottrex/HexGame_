@@ -90,7 +90,7 @@ public class Window extends JFrame implements Runnable {
 		this.view = newView;
 		panel.removeAll();
 		newView.init(this, controller);
-		panel.doLayout();
+		if (panel.getLayout() != null) panel.doLayout();
 	}
 
 	private void initComponents() {

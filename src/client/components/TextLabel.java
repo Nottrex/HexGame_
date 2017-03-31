@@ -8,9 +8,11 @@ import java.awt.*;
 public class TextLabel extends JComponent {
 
 	private Text content;
+	private boolean centerText;
 
-	public TextLabel(Text content) {
+	public TextLabel(Text content, boolean centerText) {
 		this.content = content;
+		this.centerText = centerText;
 	}
 
 	@Override
@@ -24,7 +26,10 @@ public class TextLabel extends JComponent {
 		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f);
 		g.setFont(font);
 
-		g.drawString(text, 0, getHeight()/2);
+		int fWidth = getWidth();
+		if (centerText) fWidth = (int) g.getFontMetrics(font).getStringBounds(text, g).getWidth();
+
+		g.drawString(text, (getWidth()-fWidth)/2, getHeight()/2);
 	}
 
 	public void setContent(Text content) {
