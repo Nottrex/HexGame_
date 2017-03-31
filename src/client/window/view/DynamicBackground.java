@@ -11,12 +11,17 @@ import java.util.Random;
 
 public class DynamicBackground {
 	private Map<Location, Color> drawOvers;
-	private Color startColor;
+	private Map<Location, Color> targetColors;
+	private Map<Location, Long>	 interpolationStart;
+	private Map<Location, Long>  interpolationTime;
 	private Color startColorCopy;
 	private Color interpolationColor;
 
 	private static final long COLOR_SWAP_TIME = 10000;
-	private long lastUpdate = 0L;
+	private static final int MAX_COLOR_DISTANCE_BACKGROUND	= 128;
+	private static final int MIN_SWAP_TIME	= 1000;
+	private static final int MAX_SWAP_TIME = 5000;
+	private static final int MAX_COLOR_BRIGHTNESS = 175;
 	private long lastSwap = 0L;
 
 	private Random r;
@@ -25,12 +30,13 @@ public class DynamicBackground {
 
 	public DynamicBackground() {
 		drawOvers = new HashMap<>();
+		targetColors = new HashMap<>();
+		interpolationStart = new HashMap<>();
+		interpolationTime = new HashMap<>();
 
 		r = new Random();
-		startColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
-		startColorCopy = new Color(startColor.getRGB());
-		interpolationColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
-		lastUpdate = System.currentTimeMillis();
+		startColorCopy = new Color(r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS));
+		interpolationColor = new Color(r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS));
 	}
 
 	public BufferedImage draw(int width, int height) {
@@ -41,70 +47,72 @@ public class DynamicBackground {
 		BufferedImage buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) buffer.getGraphics();
 
-		g.setColor(startColor);
+		long currentTime = System.currentTimeMillis();
+
+		g.setColor(interpolateColor(startColorCopy, interpolationColor, (1.0*(currentTime-lastSwap)) / COLOR_SWAP_TIME));
 		g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 
 		for(Location l: drawOvers.keySet()) {
-			Color c = drawOvers.get(l);
+			Color c = interpolateColor(drawOvers.get(l), targetColors.get(l), (1.0*(currentTime-interpolationStart.get(l)))/interpolationTime.get(l));
 			drawHexField(l.x, l.y, g, new Color(c.getRed()/255.0f, c.getGreen()/255.0f, c.getBlue()/255.0f, 0.2f));
 		}
 
 		return buffer;
 	}
 
-	public Color getCurrentColor() {
-		return startColor;
-	}
-
 	private void update() {
 		long currentTime = System.currentTimeMillis();
 
-		while(currentTime - lastUpdate >= 75) {
+		for(int x = -1; x < w/120 + 15; x++){
+			for(int y = -1; y < h/140 + 18; y++){
+				if(!drawOvers.containsKey(new Location(x, y))){
+					int gr = r.nextInt(255);
+					Location l = new Location(x, y);
+					drawOvers.put(l, new Color(gr, gr, gr));
 
-			for(int x = -1; x < w/120 + 15; x++){
-				for(int y = -1; y < h/140 + 18; y++){
-					if(!drawOvers.containsKey(new Location(x, y))){
-						int gr = r.nextInt(255);
-						drawOvers.put(new Location(x, y), new Color(gr, gr, gr));
-					}
+					int gr2 = gr+(r.nextInt(2*MAX_COLOR_DISTANCE_BACKGROUND+1)-MAX_COLOR_DISTANCE_BACKGROUND);
+
+					if (gr2 < 0) gr2 = 0;
+					if (gr2 > 254) gr2 = 254;
+					targetColors.put(l, new Color(gr2, gr2, gr2));
+
+					interpolationStart.put(l, currentTime);
+					interpolationTime.put(l, (long) (r.nextInt((MAX_SWAP_TIME-MIN_SWAP_TIME))+MIN_SWAP_TIME));
 				}
 			}
+		}
 
-			for(Location l: drawOvers.keySet()) {
-				if(r.nextInt(10) < 3) {
-					int mode = r.nextInt(3);
-					if(mode == 0) {
-						drawOvers.put(l, brighter(drawOvers.get(l)));
-					}
-					else if(mode == 1) drawOvers.put(l, darker(drawOvers.get(l)));
-				}
+		for (Location l: drawOvers.keySet()) {
+			if (currentTime - interpolationStart.get(l) > interpolationTime.get(l)) {
+				int gr = drawOvers.get(l).getRed();
+
+				drawOvers.put(l, targetColors.get(l));
+
+				int gr2 = gr+(r.nextInt(2*MAX_COLOR_DISTANCE_BACKGROUND+1)-MAX_COLOR_DISTANCE_BACKGROUND);
+
+				if (gr2 < 0) gr2 = 0;
+				if (gr2 > 254) gr2 = 254;
+				targetColors.put(l, new Color(gr2, gr2, gr2));
+
+				interpolationStart.put(l, currentTime);
+				interpolationTime.put(l, (long) (r.nextInt((MAX_SWAP_TIME-MIN_SWAP_TIME))+MIN_SWAP_TIME));
 			}
-
-			lastUpdate += 75;
 		}
 
 		if(currentTime - lastSwap >= COLOR_SWAP_TIME) {
-			startColor = interpolationColor;
-			startColorCopy = new Color(startColor.getRGB());
-			interpolationColor = new Color(r.nextInt(150), r.nextInt(150), r.nextInt(150));
+			startColorCopy = interpolationColor;
+			interpolationColor = new Color(r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS));
 			lastSwap = currentTime;
-		}else {
-			double faktor = (double)(currentTime - lastSwap) / (double)COLOR_SWAP_TIME;
-
-			int red = (int) (faktor * interpolationColor.getRed() + startColorCopy.getRed()*(1-faktor));
-			int green = (int) (faktor * interpolationColor.getGreen() + startColorCopy.getGreen()*(1-faktor));
-			int blue = (int) (faktor * interpolationColor.getBlue() + startColorCopy.getBlue()*(1-faktor));
-			startColor = new Color(red, green, blue);
 		}
-
 	}
 
-	private Color darker(Color c) {
-		return new Color(Math.max(c.getRed() - 5, 0), Math.max(c.getGreen() - 5, 0), Math.max(c.getBlue() - 5, 0));
-	}
-
-	private Color brighter(Color c) {
-		return new Color(Math.min(c.getRed() + 5, 255), Math.min(c.getGreen() + 5, 255), Math.min(c.getBlue() + 5, 255));
+	private Color interpolateColor(Color start, Color end, double d) {
+		if (d < 0) d = 0;
+		if (d > 1) d = 1;
+		int red = (int) (d * end.getRed() + start.getRed()*(1-d));
+		int green = (int) (d * end.getGreen() + start.getGreen()*(1-d));
+		int blue = (int) (d * end.getBlue() + start.getBlue()*(1-d));
+		return new Color(red, green, blue);
 	}
 
 	private void drawHexField(int x, int y, Graphics g, Color c) {
