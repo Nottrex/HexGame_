@@ -119,6 +119,7 @@ public class DynamicBackground {
 	private Color interpolateColor(Color start, Color end, double d) {
 		if (d < 0) d = 0;
 		if (d > 1) d = 1;
+		d = -2*d*d*d+3*d*d;
 		int red = (int) (d * end.getRed() + start.getRed()*(1-d));
 		int green = (int) (d * end.getGreen() + start.getGreen()*(1-d));
 		int blue = (int) (d * end.getBlue() + start.getBlue()*(1-d));
