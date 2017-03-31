@@ -1,6 +1,7 @@
 package client.window.view;
 
 import client.Controller;
+import client.components.CustomTextField;
 import client.components.TextButton;
 import client.window.View;
 import client.window.Window;
@@ -15,7 +16,7 @@ public class ViewServerConnect extends View {
 	private Controller controller;
 
 	private TextButton buttonConnect, buttonBackToMainMenu;
-	private JTextField textFieldName, textFieldHostName, textFieldPort;
+	private CustomTextField textFieldName, textFieldHostName, textFieldPort;
 
 	private JPanel panel;
 	private DynamicBackground background;
@@ -36,9 +37,9 @@ public class ViewServerConnect extends View {
 
 		buttonConnect = new TextButton("Connect", e -> window.updateView(new ViewGameSetup(background, textFieldName.getText(), textFieldHostName.getText(), Integer.valueOf(textFieldPort.getText()))));
 		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
-		textFieldName = new JTextField("[NAME]");
-		textFieldHostName = new JTextField("localhost");
-		textFieldPort = new JTextField("25565");
+		textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_EVERYTHING);
+		textFieldHostName = new CustomTextField("Hostname", CustomTextField.KEY_RESTRICT_EVERYTHING);
+		textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
 
 		changeSize();
 
