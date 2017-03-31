@@ -5,6 +5,8 @@ import game.Location;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -19,9 +21,9 @@ public class DynamicBackground {
 
 	private static final long COLOR_SWAP_TIME = 10000;
 	private static final int MAX_COLOR_DISTANCE_BACKGROUND	= 128;
-	private static final int MIN_SWAP_TIME	= 1000;
-	private static final int MAX_SWAP_TIME = 5000;
-	private static final int MAX_COLOR_BRIGHTNESS = 175;
+	private static final int MIN_SWAP_TIME	= 3000;
+	private static final int MAX_SWAP_TIME = 6000;
+	private static final int MAX_COLOR_BRIGHTNESS = 150;
 	private long lastSwap = 0L;
 
 	private Random r;
@@ -56,8 +58,16 @@ public class DynamicBackground {
 			Color c = interpolateColor(drawOvers.get(l), targetColors.get(l), (1.0*(currentTime-interpolationStart.get(l)))/interpolationTime.get(l));
 			drawHexField(l.x, l.y, g, new Color(c.getRed()/255.0f, c.getGreen()/255.0f, c.getBlue()/255.0f, 0.2f));
 		}
+		BufferedImage buffer2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-		return buffer;
+		float data[] = { 0.0625f, 0.125f, 0.0625f, 0.125f, 0.25f, 0.125f,
+				0.0625f, 0.125f, 0.0625f };
+		Kernel kernel = new Kernel(3, 3, data);
+		ConvolveOp convolve = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP,
+				null);
+		convolve.filter(buffer, buffer2);
+
+		return buffer2;
 	}
 
 	private void update() {
