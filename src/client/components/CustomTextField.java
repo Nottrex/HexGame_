@@ -10,6 +10,8 @@ public class CustomTextField extends JComponent {
 	public static int BLINK_TIME = 1000;
 
 	public static KeyRestrict KEY_RESTRICT_ONLY_DIGITS = c -> Character.isDigit(c);
+	public static KeyRestrict KEY_RESTRICT_NORMAL = c -> Character.isDigit(c) || Character.isAlphabetic(c);
+	public static KeyRestrict KEY_RESTRICT_NORMAL_OR_DOT = c -> Character.isDigit(c) || Character.isAlphabetic(c) || c == '.';
 	public static KeyRestrict KEY_RESTRICT_EVERYTHING = c -> true;
 
 	private String text;
