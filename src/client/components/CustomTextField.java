@@ -35,7 +35,6 @@ public class CustomTextField extends JComponent {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				System.out.println(e.getKeyChar());
 				if (e.getKeyChar() == '\b') {
 					if (text.length() > 0) {
 						text = text.substring(0, text.length()-1);
@@ -78,7 +77,7 @@ public class CustomTextField extends JComponent {
 		g2.setColor(GUIConstants.BUTTON_COLOR);
 		g2.setStroke(new BasicStroke(GUIConstants.BUTTON_LINE_WIDTH));
 
-		g2.drawLine(0, (4*this.getHeight())/5, getWidth(), (4*this.getHeight())/5);
+		g2.drawLine(0, (7*this.getHeight())/10, getWidth(), (7*this.getHeight())/10);
 
 		if (hasFocus() && ((System.currentTimeMillis()-time_start)/BLINK_TIME)%2 == 0) {
 			g2.drawLine(fWidth-rightMove + font.getSize()/4, 0, fWidth-rightMove+font.getSize()/4, (3*this.getHeight())/5);
