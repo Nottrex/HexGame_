@@ -283,7 +283,7 @@ public class ViewGame extends View implements ClientListener {
 			for (Unit u: m.getUnits()) {
 				UnitType ut = u.getType();
 				double w = wx*ut.getSize();
-				double h = wy*ut.getSize();
+				double h = w*GUIConstants.UNIT_XY_RATIO;
 
 				double py = (u.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
 				double px = (u.getX())*wx - (u.getY())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
@@ -459,7 +459,7 @@ public class ViewGame extends View implements ClientListener {
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90), null);
+				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
 				g.drawString(u.getType().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
@@ -484,7 +484,7 @@ public class ViewGame extends View implements ClientListener {
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90), null);
+				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
 				g.drawString(u.getType().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
