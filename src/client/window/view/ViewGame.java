@@ -98,12 +98,12 @@ public class ViewGame extends View implements ClientListener {
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
 			public BufferedImage getImage() {
-				return TextureHandler.getImagePng("bar_" + controller.game.getPlayerColor().toString().toLowerCase());
+				return TextureHandler.getImagePng(controller.game == null ? "" : "bar_" + controller.game.getPlayerColor().toString().toLowerCase());
 			}
 
 			@Override
 			public String getText() {
-				return String.format("Round %d   %d / %d   %s   %s", controller.game.getRound(), controller.game.getPlayerTurnID(), controller.game.getPlayerAmount(), controller.game.getPlayerTurn(), controller.game
+				return String.format("Round %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" : controller.game
 				.getPlayerColor().getDisplayName());
 			}
 		});
