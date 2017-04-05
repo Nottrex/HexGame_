@@ -1,5 +1,9 @@
 package game.enums;
 
+/**
+ * Different types an {@link game.Unit} can have
+ * Determines its stats
+ */
 public enum UnitType {
 	TANK("Tank", 0.75, 5, 1, 2, false, false, true);
 	

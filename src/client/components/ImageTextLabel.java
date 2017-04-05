@@ -35,6 +35,9 @@ public class ImageTextLabel extends JComponent {
 		this.content = content;
 	}
 
+	/*
+		Used to not call setContent()
+	 */
 	public interface ImageText {
 		BufferedImage getImage();
 		String getText();

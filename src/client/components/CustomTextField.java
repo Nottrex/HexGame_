@@ -91,14 +91,25 @@ public class CustomTextField extends JComponent {
 
 	}
 
+	/**
+	 * Changes the shown text
+	 * @param text that should be shown
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 
+	/**
+	 *
+	 * @return user input on that textfield
+	 */
 	public String getText() {
 		return text;
 	}
 
+	/*
+	 * Determines allowed key inputs
+	 */
 	public interface KeyRestrict {
 		boolean isAllowed(char c);
 	}

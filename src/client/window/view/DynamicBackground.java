@@ -41,6 +41,12 @@ public class DynamicBackground {
 		interpolationColor = new Color(r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS));
 	}
 
+	/**
+	 * Draws the background
+	 * @param width of the image
+	 * @param height of the image
+	 * @return the finished background image
+	 */
 	public BufferedImage draw(int width, int height) {
 		this.w = width;
 		this.h = height;
@@ -70,6 +76,9 @@ public class DynamicBackground {
 		return buffer2;
 	}
 
+	/**
+	 * Calculates all new colors of the hexagons and the background color
+	 */
 	private void update() {
 		long currentTime = System.currentTimeMillis();
 
@@ -116,6 +125,13 @@ public class DynamicBackground {
 		}
 	}
 
+	/**
+	 *
+	 * @param start Color at the start on the interpolation
+	 * @param end Wanted Color
+	 * @param d Last time in relation to total time of one interpolation zyklus
+	 * @return The interpolated color
+	 */
 	private Color interpolateColor(Color start, Color end, double d) {
 		if (d < 0) d = 0;
 		if (d > 1) d = 1;
@@ -126,6 +142,13 @@ public class DynamicBackground {
 		return new Color(red, green, blue);
 	}
 
+	/**
+	 * Draws a hexagon on a position
+	 * @param x position of the hexagon
+	 * @param y position of the hexagon
+	 * @param g Graphics used for drawing
+	 * @param c Color of the hexagon
+	 */
 	private void drawHexField(int x, int y, Graphics g, Color c) {
 		double py = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*140;
 		double px = (x)*120 - (y)*60;

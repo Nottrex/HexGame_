@@ -3,6 +3,10 @@ package client.animationActions;
 import client.AnimationAction;
 import game.Game;
 
+/*
+	We need it later => Animation on round end
+ */
+
 public class AnimationActionRoundFinish extends AnimationAction {
 	public AnimationActionRoundFinish(Game game) {
 		super(game);

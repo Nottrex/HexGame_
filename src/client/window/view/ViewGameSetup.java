@@ -98,6 +98,10 @@ public class ViewGameSetup extends View implements ClientListener {
 		controller.connect(userName, hostName, port);
 
 	}
+
+	/**
+	 * Draws this screen
+	 */
 	public void draw() {
 		if (!started) return;
 
@@ -116,6 +120,9 @@ public class ViewGameSetup extends View implements ClientListener {
 		panel.getGraphics().drawImage(buffer, 0, 0, null);
 	}
 
+	/**
+	 * Updates player overwiew
+	 */
 	private void updateInfo() {
 		String info = "";
 		for (String player: ready.keySet()) {
@@ -124,6 +131,9 @@ public class ViewGameSetup extends View implements ClientListener {
 		this.info.setText(info);
 	}
 
+	/**
+	 * Turns buttons off when all player are ready
+	 */
 	private void onAllPlayersReady() {
 		button_toggleReady.setEnabled(false);
 		button_toggleColor.setEnabled(false);

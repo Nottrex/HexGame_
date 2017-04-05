@@ -72,6 +72,9 @@ public class ViewMainMenu extends View {
 		button_quit.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
 	}
 
+	/**
+	 * Draws this screen
+	 */
 	public void draw() {
 		if (!started) return;
 

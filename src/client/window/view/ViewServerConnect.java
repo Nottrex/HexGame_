@@ -87,6 +87,9 @@ public class ViewServerConnect extends View {
 		buttonBackToMainMenu.setBounds((width-elementWidth)/2, (height+5*elementHeight)/2, elementWidth, elementHeight);
 	}
 
+	/**
+	 * Draws this screen
+	 */
 	public void draw() {
 		if (!started) return;
 

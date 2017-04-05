@@ -1,6 +1,7 @@
 package client.window;
 
 import client.window.view.ViewGame;
+import javafx.scene.input.KeyCode;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -15,6 +16,11 @@ public class KeyInputListener extends KeyAdapter {
 		this.game = game;
 	}
 
+	/**
+	 *
+	 * @param i {@link KeyEvent KeyCode} of a char
+	 * @return whether the related button is pressed or not
+	 */
 	private boolean isPressed(int i) {
 		return pressed.containsKey(i) ? pressed.get(i) : false;
 	}

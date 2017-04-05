@@ -51,6 +51,10 @@ public class ImageButton extends JComponent {
 		}
 	}
 
+	/**
+	 * Changes the shown image
+	 * @param image that should be shown
+	 */
 	public void setImage(BufferedImage image) {
 		this.image = image;
 	}

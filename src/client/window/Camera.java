@@ -14,6 +14,9 @@ public class Camera {
 		ty = y;
 	}
 
+	/**
+	 * Takes t-Values and put it to the inUse values
+	 */
 	public void update() {
 		zoom = tzoom;
 		x = tx;

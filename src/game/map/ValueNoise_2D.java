@@ -24,9 +24,11 @@ public class ValueNoise_2D {
 		
 		heightMap = new float[width][width];
 	}
-	
+
+	/**
+	 * Calculates a smooth heightmap
+	 */
 	public void calculate(){
-		
 		Random r = new Random();
 
 		int currentFrequenzyX = startFrequenzyX;
@@ -66,6 +68,9 @@ public class ValueNoise_2D {
 		normalize();
 	}
 
+	/**
+	 * Maps all values to 0-1
+	 */
 	private void normalize(){
 		float min = Float.MAX_VALUE;
 		float max = Float.MIN_VALUE;
@@ -85,7 +90,14 @@ public class ValueNoise_2D {
 			}
 		}
 	}
-	
+
+	/**
+	 * Method for calculating values between each other
+	 * @param a
+	 * @param b
+	 * @param t
+	 * @return
+	 */
 	private float interpolate(float a, float b, float t){
 		double ft = (1 - Math.cos(t * Math.PI))/2;
 		return (float) (a * (1 - ft) + b * ft);
@@ -104,6 +116,8 @@ public class ValueNoise_2D {
 			return realMap;
 		}
 	}
+
+	//For customizing
 
 	public void setOctaves(int octaves) {
 		this.octaves = octaves;

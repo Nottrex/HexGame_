@@ -50,10 +50,19 @@ public class Window extends JFrame {
 		return panel;
 	}
 
+	/**
+	 *
+	 * @param view to check
+	 * @return if view is current {@link View}
+	 */
 	public boolean isCurrentView(View view) {
 		return this.view == view;
 	}
 
+	/**
+	 * Switches current {@link View} to a new one
+	 * @param newView
+	 */
 	public void updateView(View newView) {
 		if (this.view != null) this.view.stop();
 		this.view = newView;
@@ -63,6 +72,10 @@ public class Window extends JFrame {
 		if (panel.getLayout() != null) panel.doLayout();
 	}
 
+	/**
+	 * Called on start
+	 * Prepares window
+	 */
 	private void initComponents() {
 		panel = new JPanel(new BorderLayout());
 		panel.setIgnoreRepaint(true);

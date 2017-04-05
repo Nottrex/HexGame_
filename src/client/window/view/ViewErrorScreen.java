@@ -74,7 +74,9 @@ public class ViewErrorScreen extends View {
 		buttonBackToMainMenu.setBounds((width-componentWidth)/2, (height+componentHeight)/2, componentWidth, componentHeight);
 	}
 
-
+	/**
+	 * Draws this screen
+	 */
 	public void draw() {
 		if (!started) return;
 

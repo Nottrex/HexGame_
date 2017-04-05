@@ -65,6 +65,9 @@ public class AudioPlayer {
         });
     }
 
+    /**
+     * Starts current {@link Clip} from its beginning
+     */
     public void start() {
         currentClip.start();
 
@@ -72,23 +75,36 @@ public class AudioPlayer {
         forcedStop = false;
     }
 
+    /**
+     * Stops current {@link Clip}. Current position is not safed.
+     */
     public void stop() {
         pausedFrame = 0;
         forcedStop = true;
         currentClip.stop();
     }
 
+    /**
+     * Stops current {@link Clip}. It will resume where it stopped.
+     */
     public void pause() {
         pausedFrame = currentClip.getFramePosition();
         forcedStop = true;
         currentClip.stop();
     }
 
+    /**
+     * Plays current {@link Clip} at the position where it stopped.
+     */
     public void resume() {
         currentClip.setFramePosition(pausedFrame);
         start();
     }
 
+    /**
+     * Plays a {@link Clip} once
+     * @param audioName to get AudioFile from {@link AudioHandler}
+     */
     public void playAudio(String audioName) {
         Clip c = AudioHandler.getMusicWav(audioName);
         setVolume(c, AudioConstants.EFFECT_VOLUME);
@@ -108,6 +124,11 @@ public class AudioPlayer {
         });
     }
 
+    /**
+     * Loops a {@link Clip} multiple times
+     * @param audioName to get AudioFile from {@link AudioHandler}
+     * @param loop Number of loops
+     */
     public void loopAudio(String audioName, int loop) {
         Clip c = AudioHandler.getMusicWav(audioName);
         setVolume(c, AudioConstants.EFFECT_VOLUME);
@@ -125,20 +146,37 @@ public class AudioPlayer {
         });
     }
 
+    /**
+     * Adds a {@link Clip} to the playing queue
+     * @param audioName to get AudioFile from {@link AudioHandler}
+     */
     public void addMusic(String audioName) {
         addMusic(audioName, 1);
     }
 
+    /**
+     * Adds a {@link Clip} to the playing queue to be played multiple times
+     * @param audioName to get AudioFile from {@link AudioHandler}
+     * @param loop Number of loops
+     */
     public void addMusic(String audioName, int loop) {
         queue.add(AudioHandler.getMusicWav(audioName));
         loops.add(loop);
     }
 
+    /**
+     * Sets the volume of a {@link Clip} to the given value
+     * @param c Clip which volume should be updated
+     * @param volume the new volume
+     */
     private void setVolume(Clip c, int volume) {
         FloatControl fc = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
         fc.setValue(volume);
     }
 
+    /**
+     * Updates volume for the current music {@link Clip} and all effects
+     */
     public void updateVolume() {
         setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
         for(Clip c: removeBuffer) {

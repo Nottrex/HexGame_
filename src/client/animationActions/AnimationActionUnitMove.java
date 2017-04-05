@@ -46,18 +46,34 @@ public class AnimationActionUnitMove extends AnimationAction {
 		last = current;
 	}
 
+	/**
+	 *
+	 * @return Unit used for the animation
+	 */
 	public Unit getUnit() {
 		return unit;
 	}
 
+	/**
+	 *
+	 * @return Direction in which the Unit is moving
+	 */
 	public Direction getCurrentDirection() {
 		return movements.get((int) (last/TILE_TIME));
 	}
 
+	/**
+	 * Simple interpolation method to calculate values between two timestamps
+	 * @return
+	 */
 	public double interpolation() {
 		return finish ? 0 : ((last - ((int)(last/TILE_TIME))*TILE_TIME)*1.0)/TILE_TIME;
 	}
 
+	/** Converts time to current distance
+	 * @param time current time after animation start
+	 * @return current distance
+	 */
 	public double getDistance(double time) {
 		return (-2.0/(z*z))*time*time*time + (3.0/z)*time*time;
 	}

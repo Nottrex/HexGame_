@@ -44,7 +44,7 @@ public class TextButton extends JComponent {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		int x = 0, y = 0, width = getWidth(), height = getHeight();
 		if (entered) {
 			x = (int) (width*(1- GUIConstants.BUTTON_HOVER_SIZE)/2);
@@ -69,6 +69,10 @@ public class TextButton extends JComponent {
 		g2.drawString(text, (int) ((width-fWidth)/2) + x, height*3/4+y);
 	}
 
+	/**
+	 * Changes text on button
+	 * @param text that should be displayed on the button
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}

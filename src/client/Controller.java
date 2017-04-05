@@ -38,6 +38,9 @@ public class Controller implements ClientListener {
 	private List<AnimationAction> animationActions = new ArrayList<>();
 	private long animationActionStart;
 
+	/**
+	 * Disconnects from server
+	 */
 	public void stopConnection() {
 		game = null;
 		if (client != null) client.close();
@@ -45,6 +48,12 @@ public class Controller implements ClientListener {
 		viewPacketListener = null;
 	}
 
+	/**
+	 * Connects to server
+	 * @param userName you want to use
+	 * @param hostName IP from the server
+	 * @param port that is forwarded and used in the server
+	 */
 	public void connect(String userName, String hostName, int port) {
 		if (client != null) client.close();
 
@@ -58,11 +67,17 @@ public class Controller implements ClientListener {
 
 	}
 
+	/**
+	 * @return first animation to play
+	 */
 	public AnimationAction getAnimationAction() {
 		if (animationActions.isEmpty()) return null;
 		return animationActions.get(0);
 	}
 
+	/**
+	 * Updates current {@link AnimationAction animation}
+	 */
 	public void updateAnimationActions() {
 		long time = System.currentTimeMillis();
 		if (!animationActions.isEmpty()) {
@@ -75,12 +90,20 @@ public class Controller implements ClientListener {
 
 	}
 
+	/**
+	 * Ends current {@link AnimationAction animation} and
+	 * put the next one on its position
+	 */
 	private void animationActionFinished() {
 		animationActions.get(0).finish();
 		animationActions.remove(0);
 		if (!animationActions.isEmpty()) animationActionStart = System.currentTimeMillis();
 	}
 
+	/**
+	 * Adds a new {@link AnimationAction animation} to the queue
+	 * @param aa animation to add
+ 	 */
 	private void addAnimationAction(AnimationAction aa) {
 		selectedField = null;
 		animationActions.add(aa);
@@ -98,6 +121,10 @@ public class Controller implements ClientListener {
 		this.viewPacketListener = clientListener;
 	}
 
+	/**
+	 * Called when user clicks on a position
+	 * @param l Clicked position
+	 */
 	public void onMouseClick(Location l) {
 		if (waitForPacket || game == null) return;
 
@@ -157,6 +184,10 @@ public class Controller implements ClientListener {
 		}
 	}
 
+	/**
+	 * Called when user types a key
+	 * @param keyCode of the pressed keys
+	 */
 	public void onKeyType(int keyCode) {
 		if (keyCode == KeyBindings.KEY_NEXT_PLAYER) {
 			if (game.getPlayerTurn().equals(userName)) {

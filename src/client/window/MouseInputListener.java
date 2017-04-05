@@ -102,10 +102,16 @@ public class MouseInputListener extends MouseAdapter {
 		}
 	}
 
+	/**
+	 * @return x value of the position from the mouse
+	 */
 	public int getMouseX() {
 		return mouseX;
 	}
 
+	/**
+	 * @return y value of the position from the mouse
+	 */
 	public int getMouseY() {
 		return mouseY;
 	}

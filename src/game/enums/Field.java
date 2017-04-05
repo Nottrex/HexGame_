@@ -2,7 +2,6 @@ package game.enums;
 
 /**
  * The type of one Hexagon
- * 
  */
 public enum Field {
 	WATER("Water", 1, true, true),

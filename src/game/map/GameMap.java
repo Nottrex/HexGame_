@@ -62,12 +62,22 @@ public class GameMap {
 		return units.stream().filter(u -> u.getX() == x && u.getY() == y).findAny();
 	}
 
+	/**
+	 *
+	 * @param player
+	 * @return all {@link Unit} of a player
+	 */
 	public List<Unit> playerUnits(PlayerColor player) {
 		return units.stream()
 				.filter(u -> u.getPlayer() == player)
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 *
+	 * @param player
+	 * @return all active {@link Unit} of a player
+	 */
 	public List<Unit> activePlayerUnits(PlayerColor player) {
 		return units.stream()
 				.filter(u -> u.getPlayer() == player)
@@ -87,10 +97,6 @@ public class GameMap {
 		return height;
 	}
 
-	public String save() {
-		return null;
-	}
-	
 	public GameMap(String data) {
 		
 	}

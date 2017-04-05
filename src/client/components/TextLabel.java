@@ -36,6 +36,9 @@ public class TextLabel extends JComponent {
 		this.content = content;
 	}
 
+	/*
+		Used to not call setContent()
+	 */
 	public interface Text {
 		String getText();
 	}
