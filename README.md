@@ -1,6 +1,6 @@
 # HexGame
 
-HexGame in Java
+This is going to be a tactical game on a hexmap which is written in Java.
 
 ToDo List:
   
