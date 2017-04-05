@@ -6,6 +6,10 @@ ToDo List:
   
 	https://trello.com/b/PjcflNYq/hexgame
 
+Polls:
+
+	https://phoenixofforce.typeform.com/to/xIZfNj
+
 Graphics by Kenney:
 
 	http://kenney.nl/assets/hexagon-pack
