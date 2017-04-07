@@ -23,6 +23,7 @@ import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
+import server.ServerMain;
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
@@ -43,6 +44,7 @@ public class ViewGame extends View implements ClientListener {
 	private Camera cam;
 	private Window window;
 	private Controller controller;
+	private ServerMain server;
 
 	private JPanel bottom;
 	private JPanel center;
@@ -60,6 +62,10 @@ public class ViewGame extends View implements ClientListener {
 	private boolean musicOn = true;
 
 	private int width, height;
+
+	public ViewGame(ServerMain server) {
+		this.server = server;
+	}
 
 	@Override
 	public void init(Window window, Controller controller) {
@@ -93,7 +99,7 @@ public class ViewGame extends View implements ClientListener {
 		button_musicOn = new ImageButton(TextureHandler.getImagePng("button_musicOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_MUSIC));
 		button_centerCamera = new ImageButton(TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
-		button_backToMainMenu = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> window.updateView(new ViewMainMenu()));
+		button_backToMainMenu = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> {onLeave(); if(server != null) server.stop(); window.updateView(new ViewMainMenu());});
 		fpsLabel = new TextLabel(() -> ("FPS: " + fps), false);
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override

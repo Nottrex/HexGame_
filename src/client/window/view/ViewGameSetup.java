@@ -8,6 +8,7 @@ import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
+import server.ServerMain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +34,8 @@ public class ViewGameSetup extends View implements ClientListener {
 	private DynamicBackground background;
 	private boolean started = false;
 
+	private ServerMain server;
+
 	public ViewGameSetup(String userName, String hostName, int port) {
 		this.userName = userName;
 		this.hostName = hostName;
@@ -42,7 +45,8 @@ public class ViewGameSetup extends View implements ClientListener {
 		this.color = new HashMap<>();
 	}
 
-	public ViewGameSetup(DynamicBackground background, String userName, String hostName, int port) {
+	public ViewGameSetup(ServerMain server, DynamicBackground background, String userName, String hostName, int port) {
+		this.server = server;
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
@@ -58,7 +62,7 @@ public class ViewGameSetup extends View implements ClientListener {
 		this.controller = controller;
 
 		button_backToServerConnect = new JButton("Quit");
-		button_backToServerConnect.addActionListener(e -> {controller.stopConnection(); window.updateView(new ViewServerConnect(background));});
+		button_backToServerConnect.addActionListener(e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
 
 		button_toggleReady = new JButton("Toggle Ready");
 		button_toggleReady.addActionListener(e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
@@ -177,7 +181,7 @@ public class ViewGameSetup extends View implements ClientListener {
 		}
 
 		if (p instanceof PacketGameBegin) {
-			window.updateView(new ViewGame());
+			window.updateView(new ViewGame(server));
 		}
 	}
 
