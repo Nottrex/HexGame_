@@ -66,6 +66,16 @@ public class ServerMain implements ServerListener {
 		}).start();
 	}
 
+	public ServerMain(int port) {
+		serverState = ServerState.WAITING_FOR_PLAYERS;
+
+		players = new HashMap<>();
+		playerReady = new HashMap<>();
+		playerColor = new HashMap<>();
+
+		server = new Server(port, this);
+	}
+
 	public void playerQuit(String player) {
 		Socket s = getPlayerSocket(player);
 
@@ -240,6 +250,11 @@ public class ServerMain implements ServerListener {
 		if (players.containsKey(s)) {
 			playerQuit(players.get(s));
 		}
+	}
+
+	public void stop() {
+		for(Socket s: players.keySet()) server.kickClient(s);
+		server.close();
 	}
 
 	public void onClientJoin(Socket s) {

@@ -45,7 +45,7 @@ public class ViewServerConnect extends View {
 				port = Integer.valueOf(textFieldPort.getText());
 			} catch (Exception e2) {}
 
-			window.updateView(new ViewGameSetup(background, textFieldName.getText(), textFieldHostName.getText(), port));
+			window.updateView(new ViewGameSetup(null, background, textFieldName.getText(), textFieldHostName.getText(), port));
 		});
 		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
 		textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);

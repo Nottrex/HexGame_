@@ -14,7 +14,7 @@ public class ViewMainMenu extends View {
 	private Window window;
 	private Controller controller;
 
-	private TextButton button_quit, button_start;
+	private TextButton button_quit, button_start, button_create;
 
 	private JPanel panel;
 	private DynamicBackground background;
@@ -41,12 +41,14 @@ public class ViewMainMenu extends View {
 		panel.setLayout(null);
 
 		button_quit = new TextButton("Quit Game", e -> System.exit(0));
-		button_start = new TextButton("Start", e -> window.updateView(new ViewServerConnect(background)));
+		button_start = new TextButton("Join Game", e -> window.updateView(new ViewServerConnect(background)));
+		button_create = new TextButton("Create Game", e -> window.updateView(new ViewServerCreate(background)));
 
 		changeSize();
 
 		panel.add(button_start);
 		panel.add(button_quit);
+		panel.add(button_create);
 
 		started = true;
 
@@ -68,8 +70,9 @@ public class ViewMainMenu extends View {
 		int buttonHeight = height/8;
 		int buttonWidth = buttonHeight*5;
 
-		button_start.setBounds((width-buttonWidth)/2, (height-buttonHeight)/2, buttonWidth, buttonHeight);
-		button_quit.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
+		button_create.setBounds((width-buttonWidth)/2, (height-buttonHeight)/2, buttonWidth, buttonHeight);
+		button_start.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
+		button_quit.setBounds((width-buttonWidth)/2, (height+5*buttonHeight)/2, buttonWidth, buttonHeight);
 	}
 
 	/**
