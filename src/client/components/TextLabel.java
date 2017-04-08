@@ -33,7 +33,7 @@ public class TextLabel extends JComponent {
 
 		for(int i = 0; i <  lines; i++) {
 			String toDraw = text.split("\n")[i];
-			g.drawString(toDraw, getX(), getY() + fHeight + ((i * getHeight())/lines)); //TODO: Fix positioning
+			g.drawString(toDraw, (getWidth()-fWidth)/2, getY() + fHeight + ((i * getHeight())/lines)); //TODO: Fix positioning
 		}
 	}
 
