@@ -24,7 +24,7 @@ public class TextLabel extends JComponent {
 		String text = content.getText();
 		int lines = text.split("\n").length;
 
-		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f / lines);
+		Font font = GUIConstants.FONT.deriveFont(Math.min(getHeight()*0.375f / lines, getHeight()*0.25f));
 		g.setFont(font);
 
 		int fWidth = getWidth();
@@ -33,7 +33,7 @@ public class TextLabel extends JComponent {
 
 		for(int i = 0; i <  lines; i++) {
 			String toDraw = text.split("\n")[i];
-			g.drawString(toDraw, (getWidth()-fWidth)/2, getY() + fHeight + ((i * getHeight())/lines)); //TODO: Fix positioning
+			g.drawString(toDraw, (getWidth()-fWidth)/2, getY() + fHeight*(i + 1));
 		}
 	}
 
