@@ -1,6 +1,8 @@
 package client.window.view;
 
 import client.Controller;
+import client.components.TextButton;
+import client.components.TextLabel;
 import client.window.View;
 import client.window.Window;
 import game.enums.PlayerColor;
@@ -28,8 +30,9 @@ public class ViewGameSetup extends View implements ClientListener {
 	private Map<String, Boolean> ready;
 	private Map<String, PlayerColor> color;
 
-	private JTextArea info;
-	private JButton button_backToServerConnect, button_toggleReady, button_toggleColor;
+	private String displayInfo;
+	private TextLabel info;
+	private TextButton button_backToServerConnect, button_toggleReady, button_toggleColor;
 
 	private DynamicBackground background;
 	private boolean started = false;
@@ -61,30 +64,26 @@ public class ViewGameSetup extends View implements ClientListener {
 		this.window = window;
 		this.controller = controller;
 
-		button_backToServerConnect = new JButton("Quit");
-		button_backToServerConnect.addActionListener(e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
+		displayInfo = "";
 
-		button_toggleReady = new JButton("Toggle Ready");
-		button_toggleReady.addActionListener(e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
+		button_backToServerConnect = new TextButton("Quit", e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
+		button_toggleReady = new TextButton("Toggle Ready", e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
+		button_toggleColor = new TextButton("Toggle Color", (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
 
-		button_toggleColor = new JButton("Toggle Color");
-		button_toggleColor.addActionListener(e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length])));
-
-		info = new JTextArea();
-		info.setEditable(false);
-
-		window.getPanel().setLayout(new BorderLayout());
-
-		JPanel panel2 = new JPanel(new FlowLayout());
-		window.getPanel().add(panel2, BorderLayout.PAGE_END);
+		info = new TextLabel(new TextLabel.Text() {
+			@Override
+			public String getText() {
+				return displayInfo;
+			}
+		}, false);
 
 		changeSize();
 
-		panel2.add(button_backToServerConnect);
-		panel2.add(button_toggleReady);
-		panel2.add(button_toggleColor);
+		window.getPanel().add(button_backToServerConnect);
+		window.getPanel().add(button_toggleReady);
+		window.getPanel().add(button_toggleColor);
 
-		window.getPanel().add(info, BorderLayout.CENTER);
+		window.getPanel().add(info);
 
 		if(background == null) background = new DynamicBackground();
 		started = true;
@@ -101,6 +100,20 @@ public class ViewGameSetup extends View implements ClientListener {
 		controller.setViewPacketListener(this);
 		controller.connect(userName, hostName, port);
 
+	}
+
+	@Override
+	public void changeSize() {
+		int width = window.getPanel().getWidth();
+		int height = window.getPanel().getHeight();
+
+		int elementHeight = height/10;
+		int elementWidth  = elementHeight*5;
+
+		info.setBounds(0, 0, width, elementHeight * 2);
+		button_backToServerConnect.setBounds((width-elementWidth/2 - 5), (height-elementHeight/2 - 5), elementWidth / 2, elementHeight / 2);
+		button_toggleReady.setBounds((width-elementWidth)/2, (height-elementHeight)/2, elementWidth, elementHeight);
+		button_toggleColor.setBounds((width-elementWidth)/2, (height+2*elementHeight)/2, elementWidth, elementHeight);
 	}
 
 	/**
@@ -132,7 +145,8 @@ public class ViewGameSetup extends View implements ClientListener {
 		for (String player: ready.keySet()) {
 			info += String.format("%s%s - %s - %b\n", player.equals(userName) ? "->" : "", player, color.get(player).getDisplayName(), ready.get(player));
 		}
-		this.info.setText(info);
+
+		displayInfo = info;
 	}
 
 	/**
