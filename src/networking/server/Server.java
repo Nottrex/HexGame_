@@ -97,7 +97,9 @@ public class Server implements Runnable {
 	//PRIVATE
 	
 	private void onReceivePacket(Socket s, int packetID, Packet packet) {
-		if (listener != null) listener.onReceivePacket(s, packet);
+		if (listener != null) {
+			new Thread(() -> listener.onReceivePacket(s, packet)).start();
+		}
 	}
 	
 	private void onClientLeave(Socket s) {

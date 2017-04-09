@@ -1,9 +1,7 @@
-package client.window.view;
+package client.window.view.game;
 
-import client.AnimationAction;
 import client.Controller;
 import client.KeyBindings;
-import client.animationActions.AnimationActionUnitMove;
 import client.audio.AudioHandler;
 import client.audio.AudioPlayer;
 import client.components.ImageButton;
@@ -11,6 +9,14 @@ import client.components.ImageTextLabel;
 import client.components.TextLabel;
 import client.window.*;
 import client.window.Window;
+import client.window.view.ViewErrorScreen;
+import client.window.view.ViewMainMenu;
+import client.window.view.game.gameView.GameView;
+import client.window.view.game.KeyInputListener;
+import client.window.view.game.MouseInputListener;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLJPanel;
 import game.Location;
 import game.Unit;
 import game.enums.Direction;
@@ -18,10 +24,8 @@ import game.enums.Field;
 import game.enums.PlayerColor;
 import game.enums.UnitType;
 import game.map.GameMap;
-import game.util.ActionUtil;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
-import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
 import server.ServerMain;
 
@@ -36,8 +40,6 @@ public class ViewGame extends View implements ClientListener {
 
 	private boolean stop = true;
 
-	private int fps = 0;
-
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
 
@@ -47,7 +49,8 @@ public class ViewGame extends View implements ClientListener {
 	private ServerMain server;
 
 	private JPanel bottom;
-	private JPanel center;
+	private GameView center;
+	private GameView gameView;
 
 	private ImageButton button_audioOn;
 	private ImageButton button_musicOn;
@@ -83,16 +86,19 @@ public class ViewGame extends View implements ClientListener {
 		width = window.getWidth();
 		height = window.getHeight();
 
-		window.addMouseWheelListener(mouseListener);
-		window.addMouseMotionListener(mouseListener);
-		window.addMouseListener(mouseListener);
-		window.addKeyListener(keyListener);
+		GLProfile glprofile = GLProfile.getDefault();
+		GLCapabilities glcapabilities = new GLCapabilities( glprofile );
+		center = new GameView(glcapabilities, controller, cam);
+
+		center.addMouseWheelListener(mouseListener);
+		center.addMouseMotionListener(mouseListener);
+		center.addMouseListener(mouseListener);
+		center.addKeyListener(keyListener);
 
 		bottom = new JPanel(null);
 		bottom.setPreferredSize(new Dimension(800, 100));
 		bottom.setBackground(GUIConstants.COLOR_INFOBAR_BACKGROUND);
 
-		center = new JPanel(null);
 
 		center.setBackground(GUIConstants.COLOR_GAME_BACKGROUND);
 		button_audioOn = new ImageButton(TextureHandler.getImagePng("button_audioOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_AUDIO));
@@ -100,7 +106,7 @@ public class ViewGame extends View implements ClientListener {
 		button_centerCamera = new ImageButton(TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
 		button_backToMainMenu = new ImageButton(TextureHandler.getImagePng("button_endTurn"), e -> {onLeave(); if(server != null) server.stop(); window.updateView(new ViewMainMenu());});
-		fpsLabel = new TextLabel(() -> ("FPS: " + fps), false);
+		fpsLabel = new TextLabel(() -> ("FPS: " + center.animator.getFPS()), false);
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
 			public BufferedImage getImage() {
@@ -124,10 +130,11 @@ public class ViewGame extends View implements ClientListener {
 		center.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				int height = (center.getHeight() + center.getWidth()) / 2;
+				int height = center.getHeight();
 				int width = center.getWidth();
-				int buttonHeight = height / 80 + 23;
-				int barHeight = height / 80 + 23;
+				int height2 = (height+width)/2;
+				int buttonHeight = height2 / 80 + 23;
+				int barHeight = height2 / 80 + 23;
 
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
 				button_musicOn.setBounds(width - buttonHeight*2 - 5*2, 5, buttonHeight, buttonHeight);
@@ -148,30 +155,13 @@ public class ViewGame extends View implements ClientListener {
 		audioPlayer = new AudioPlayer("EP", Clip.LOOP_CONTINUOUSLY);
 		audioPlayer.start();
 
-		redrawMap();
-
 		centerCamera();
 
 		stop = false;
+	}
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				int i = 0;
-				long t = System.currentTimeMillis();
-				while (!stop) {
-					i++;
-					draw();
-
-					if (System.currentTimeMillis()-t > 500) {
-						long t2 = System.currentTimeMillis();
-						fps = (int) (i / ((t2-t)/1000.0));
-						t = t2;
-						i = 0;
-					}
-				}
-			}
-		}).start();
+	public GLJPanel getCenter() {
+		return center;
 	}
 
 	@Override
@@ -187,21 +177,13 @@ public class ViewGame extends View implements ClientListener {
 			height = window.getHeight();
 	}
 
-	public JPanel getCenter() {
-		return center;
-	}
-
-	public Window getWindow() {
-		return window;
-	}
-
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
 
-		cam.tzoom = (m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight();
+		cam.tzoom = (float)((m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight());
 
-		cam.ty = (GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO - 20*cam.tzoom;
-		cam.tx = 0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4);
+		//cam.ty = (float)((GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO - 20*cam.tzoom);
+		//cam.tx = (float)(0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4));
 	}
 
 	public void onMouseClick(int x, int y) {
@@ -210,8 +192,8 @@ public class ViewGame extends View implements ClientListener {
 
 
 	public void onMouseDrag(int dx, int dy) {
-		cam.tx -= (cam.zoom*dx);
-		cam.ty -= (cam.zoom*dy);
+		cam.tx -= (dx*cam.zoom);
+		cam.ty -= (dy*cam.zoom);
 	}
 
 	public void onKeyType(int keyCode) {
@@ -247,17 +229,17 @@ public class ViewGame extends View implements ClientListener {
 	public void onMouseWheel(double d) {
 		double a = 1;
 		if (d < 0) {
-			a = 1 / GUIConstants.ZOOM;
-		}
-		if (d > 0) {
 			a = GUIConstants.ZOOM;
 		}
+		if (d > 0) {
+			a = 1 / GUIConstants.ZOOM;
+		}
 
-		cam.tx -= (mouseListener.getMouseX())*cam.tzoom * (a-1);
-		cam.ty -= (mouseListener.getMouseY())*cam.tzoom * (a-1);
+		//cam.tx -= (mouseListener.getMouseX())*cam.tzoom * (a-1);
+		//cam.ty -= (mouseListener.getMouseY())*cam.tzoom * (a-1);
 		cam.tzoom *= a;
 	}
-
+	/*
 	private boolean drawing = false;
 	public void draw() {
 		if (stop || audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || controller.game.getMap() == null || cam == null) return;
@@ -363,36 +345,9 @@ public class ViewGame extends View implements ClientListener {
 			g.translate(-c.getX(), -c.getY());
 		}
 
-		center.getGraphics().drawImage(buffer, 0, 0, null);
+		//center.getGraphics().drawImage(buffer, 0, 0, null);
 		drawing = false;
-	}
-
-	private BufferedImage mapBuffer;
-	private void redrawMap() {
-		if (controller == null || controller.game == null) return;
-
-		GameMap m = controller.game.getMap();
-
-		int maxSize = (int) Math.min((long) (GUIConstants.MAX_HEAP_FILL*Runtime.getRuntime().freeMemory()/4), (long)Integer.MAX_VALUE);
-		double width = Math.floor(Math.min(Math.sqrt(maxSize / ((m.getWidth() + (int)Math.ceil(m.getHeight()/2.0)) * GUIConstants.HEX_TILE_XY_RATIO * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1))), GUIConstants.HEX_TILE_WIDTH_MAX));
-
-		System.out.printf("%f, %d / %d", width, Runtime.getRuntime().freeMemory(), Runtime.getRuntime().maxMemory());
-		double height = width* GUIConstants.HEX_TILE_XY_RATIO;
-
-		mapBuffer = new BufferedImage((int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), BufferedImage.TYPE_INT_ARGB);
-		Graphics g = mapBuffer.getGraphics();
-
-		g.setColor(new Color(0, 0, 0, 0));
-		g.fillRect(0, 0, (int) (width * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (height * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)));
-
-		for (int x = 0; x < m.getWidth(); x++) {
-			for (int y = 0; y < m.getHeight(); y++) {
-				if (m.getFieldAt(x, y) == Field.VOID) continue;
-
-				drawHexField(x+(int)Math.ceil(m.getHeight()/2.0), y, g, TextureHandler.getImagePng("field_" + m.getFieldAt(x, y).toString().toLowerCase()), width, height);
-			}
-		}
-	}
+	}*/
 
 	private void drawHexField(int x, int y, Graphics g, BufferedImage img, double wx, double wy) {
 		double py = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy;
@@ -537,12 +492,12 @@ public class ViewGame extends View implements ClientListener {
 	@Override
 	public void stop() {
 		stop = true;
-		while (drawing) try {Thread.sleep(1);} catch(Exception e) {}
-		window.removeMouseWheelListener(mouseListener);
-		window.removeMouseMotionListener(mouseListener);
-		window.removeMouseListener(mouseListener);
-		window.removeKeyListener(keyListener);
-		audioPlayer.stop();
+		center.destroy();
+		center.removeMouseWheelListener(mouseListener);
+		center.removeMouseMotionListener(mouseListener);
+		center.removeMouseListener(mouseListener);
+		center.removeKeyListener(keyListener);
+		if (audioPlayer != null) audioPlayer.stop();
 		controller.stopConnection();
 
 	}

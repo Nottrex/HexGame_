@@ -21,6 +21,7 @@ public class TextureHandler {
 			textures_png.put(textureName, ImageIO.read(ClassLoader.getSystemResource("res/textures/" + fileName + ".png")));
 		} catch (IOException e) {
 			System.err.println("Error loading texture: " + textureName);
+			System.exit(-1);
 		}
 	}
 

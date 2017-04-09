@@ -64,7 +64,7 @@ public class Client implements Runnable {
 	//Private
 	
 	private void onReceivePacket(Packet packet) {
-		listener.onReceivePacket(packet);
+		new Thread(() -> listener.onReceivePacket(packet)).start();
 	}
 
 	private void onLeave() {
@@ -89,7 +89,7 @@ public class Client implements Runnable {
 				} catch (InstantiationException	| IllegalAccessException | IllegalArgumentException	| InvocationTargetException	| NoSuchMethodException | SecurityException e) {
 					System.err.println("Error parsing packet: " + packetID);
 					e.printStackTrace();
-				}				
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

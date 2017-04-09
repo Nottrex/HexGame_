@@ -1,6 +1,6 @@
-package client.window;
+package client.window.view.game;
 
-import client.window.view.ViewGame;
+import client.window.GUIConstants;
 
 import java.awt.event.*;
 
@@ -37,8 +37,8 @@ public class MouseInputListener extends MouseAdapter {
 		}
 
 		//Update mouse move
-		int x = e.getX() - game.getWindow().getInsets().left;
-		int y = e.getY() - game.getWindow().getInsets().top;
+		int x = e.getX();
+		int y = e.getY();
 		if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
 			mouseX = x-game.getCenter().getX();
 			mouseY = y-game.getCenter().getY();
@@ -50,8 +50,8 @@ public class MouseInputListener extends MouseAdapter {
 	public void mouseMoved(MouseEvent e) {
 		if (game.getCenter() == null) return;
 
-		int x = e.getX() - game.getWindow().getInsets().left;
-		int y = e.getY() - game.getWindow().getInsets().top;
+		int x = e.getX();
+		int y = e.getY();
 		if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
 			mouseX = x-game.getCenter().getX();
 			mouseY = y-game.getCenter().getY();
@@ -63,8 +63,8 @@ public class MouseInputListener extends MouseAdapter {
 	public void mouseClicked(MouseEvent e) {
 		if (game.getCenter() == null) return;
 
-		int x = e.getX() - game.getWindow().getInsets().left;
-		int y = e.getY() - game.getWindow().getInsets().top;
+		int x = e.getX();
+		int y = e.getY();
 		if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
 			game.onMouseClick(x - game.getCenter().getX(), y - game.getCenter().getY());
 		}
@@ -74,8 +74,8 @@ public class MouseInputListener extends MouseAdapter {
 	public void mousePressed(MouseEvent e) {
 		if (game.getCenter() == null) return;
 
-		int x = e.getX() - game.getWindow().getInsets().left;
-		int y = e.getY() - game.getWindow().getInsets().top;
+		int x = e.getX();
+		int y = e.getY();
 		if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
 			mousePressedInGame = true;
 			lastX = e.getX();
@@ -90,8 +90,8 @@ public class MouseInputListener extends MouseAdapter {
 		//When the cam was moved less then "MAXIMUM_DRAG_DISTANCE_FOR_CLICK" then it should still count as a click
 		if (mousePressedInGame && totalDistanceDragged > 0) {
 			if (totalDistanceDragged <= GUIConstants.MAXIMUM_DRAG_DISTANCE_FOR_CLICK) {
-				int x = e.getX() - game.getWindow().getInsets().left;
-				int y = e.getY() - game.getWindow().getInsets().top;
+				int x = e.getX();
+				int y = e.getY();
 				if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
 					game.onMouseClick(x - game.getCenter().getX(), y - game.getCenter().getY());
 				}

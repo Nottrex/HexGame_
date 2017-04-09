@@ -190,6 +190,7 @@ public class Controller implements ClientListener {
 	 */
 	public void onKeyType(int keyCode) {
 		if (keyCode == KeyBindings.KEY_NEXT_PLAYER) {
+			while (waitForPacket) try {Thread.sleep(1);} catch (Exception e){};
 			if (game.getPlayerTurn().equals(userName)) {
 				while (!animationActions.isEmpty())
 					animationActionFinished();

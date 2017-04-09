@@ -1,7 +1,4 @@
-package client.window;
-
-import client.window.view.ViewGame;
-import javafx.scene.input.KeyCode;
+package client.window.view.game;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
