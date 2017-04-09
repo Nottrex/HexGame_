@@ -169,7 +169,7 @@ public class AudioPlayer {
      * @param c Clip which volume should be updated
      * @param volume the new volume
      */
-    private void setVolume(Clip c, int volume) {
+    private void setVolume(Clip c, float volume) {
         FloatControl fc = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
         fc.setValue(volume);
     }
