@@ -11,7 +11,7 @@ public enum Field {
 	DIRT("Dirt", 1, false, true),
 	DIRT_ROCK("Dirt-rock", 3, false, true),
 	SAND("Sand", 2, false, true),
-	MARS("Mars", 1, false, true),
+	SNOW("Snow", 2, false, true),
 	STONE("Stone", 1, false, true),
 	VOID("Void", 999999999, false, false);
 
