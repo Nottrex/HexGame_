@@ -13,16 +13,12 @@ Polls:
 Graphics by Kenney:
 
 	http://kenney.nl/assets/hexagon-pack
-
 	http://kenney.nl/assets/sci-fi-rts
-
 	http://kenney.nl/assets/ui-pack
-
 	http://kenney.nl/assets/ui-pack-space-expansion
-
 	http://kenney.nl/assets/game-icons
-
 	http://kenney.nl/assets/game-icons-expansion
+	http://kenney.nl/assets/holiday-pack-2016
 	
 Music from Jukedeck - create your own at:
 		
