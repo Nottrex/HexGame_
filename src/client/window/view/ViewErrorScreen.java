@@ -41,8 +41,8 @@ public class ViewErrorScreen extends View {
 
 		if(background == null) background = new DynamicBackground();
 
-		labelError = new TextLabel(() -> error, true);
 		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
+		labelError = new TextLabel(() -> error, true);
 
 		changeSize();
 
@@ -70,8 +70,8 @@ public class ViewErrorScreen extends View {
 		int componentHeight = height/8;
 		int componentWidth = componentHeight * 5;
 
-		labelError.setBounds((width-componentWidth)/2, (height-componentHeight)/2, componentWidth, componentHeight);
 		buttonBackToMainMenu.setBounds((width-componentWidth)/2, (height+componentHeight)/2, componentWidth, componentHeight);
+		labelError.setBounds((width-componentWidth)/2, (height-componentHeight)/2, componentWidth, componentHeight);
 	}
 
 	/**

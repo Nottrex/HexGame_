@@ -29,11 +29,13 @@ public class TextLabel extends JComponent {
 
 		int fWidth = getWidth();
 		int fHeight = g.getFontMetrics(font).getHeight();
-		if (centerText) fWidth = (int) g.getFontMetrics(font).getStringBounds(text, g).getWidth();
 
 		for(int i = 0; i <  lines; i++) {
 			String toDraw = text.split("\n")[i];
-			g.drawString(toDraw, (getWidth()-fWidth)/2, getY() + fHeight*(i + 1));
+			if (centerText) fWidth = (int) g.getFontMetrics(font).getStringBounds(toDraw, g).getWidth();
+			int y = fHeight*(i + 1);
+			int x = (getWidth()-fWidth)/2;
+			g.drawString(toDraw, x, y);
 		}
 	}
 
