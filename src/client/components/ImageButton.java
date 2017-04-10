@@ -1,6 +1,8 @@
 package client.components;
 
 import client.window.GUIConstants;
+import client.window.Window;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +17,7 @@ public class ImageButton extends JComponent {
 
 	private boolean entered = false;
 
-	public ImageButton(BufferedImage image, ActionListener actionListener) {
+	public ImageButton(Window w, BufferedImage image, ActionListener actionListener) {
 		this.image = image;
 
 		this.addMouseListener(new MouseAdapter() {
@@ -23,6 +25,7 @@ public class ImageButton extends JComponent {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (entered) {
+					w.getPlayer().playAudio("Click");
 					actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
 				}
 			}

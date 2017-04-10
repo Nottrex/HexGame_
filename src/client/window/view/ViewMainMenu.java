@@ -40,9 +40,9 @@ public class ViewMainMenu extends View {
 
 		panel.setLayout(null);
 
-		button_quit = new TextButton("Quit Game", e -> System.exit(0));
-		button_start = new TextButton("Join Game", e -> window.updateView(new ViewServerConnect(background)));
-		button_create = new TextButton("Create Game", e -> window.updateView(new ViewServerCreate(background)));
+		button_quit = new TextButton(window, "Quit Game", e -> System.exit(0));
+		button_start = new TextButton(window, "Join Game", e -> window.updateView(new ViewServerConnect(background)));
+		button_create = new TextButton(window, "Create Game", e -> window.updateView(new ViewServerCreate(background)));
 
 		changeSize();
 

@@ -1,6 +1,8 @@
 package client.components;
 
+import client.audio.AudioPlayer;
 import client.window.GUIConstants;
+import client.window.Window;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +16,7 @@ public class TextButton extends JComponent {
 
 	private boolean entered = false;
 
-	public TextButton(String text, ActionListener actionListener) {
+	public TextButton(Window w, String text, ActionListener actionListener) {
 		this.text = text;
 		this.setPreferredSize(new Dimension(300, 50));
 
@@ -23,6 +25,7 @@ public class TextButton extends JComponent {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (entered) {
+					w.getPlayer().playAudio("Click");
 					actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
 				}
 			}

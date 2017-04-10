@@ -35,7 +35,7 @@ public class ViewServerConnect extends View {
 		if(background == null) background = new DynamicBackground();
 		window.getPanel().setLayout(null);
 
-		buttonConnect = new TextButton("Connect", e ->
+		buttonConnect = new TextButton(window, "Connect", e ->
 		{
 			if (textFieldName.getText().isEmpty()) return;
 
@@ -47,7 +47,7 @@ public class ViewServerConnect extends View {
 
 			window.updateView(new ViewGameSetup(null, background, textFieldName.getText(), textFieldHostName.getText(), port));
 		});
-		buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
+		buttonBackToMainMenu = new TextButton(window, "Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
 		textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
 		textFieldHostName = new CustomTextField("Hostname", CustomTextField.KEY_RESTRICT_NORMAL_OR_DOT);
 		textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
