@@ -24,6 +24,8 @@ public class GUIConstants {
   
 	public static final Font FONT							= new Font("Arial", Font.BOLD, 12);
 
+	public static Object VALUE_ANTIALIASING 				= RenderingHints.VALUE_ANTIALIAS_ON;
+
 	public static final double BUTTON_HOVER_SIZE			= 0.9;
 	public static final int BUTTON_LINE_WIDTH				= 5;
 	public static final Color BUTTON_COLOR					= Color.WHITE;

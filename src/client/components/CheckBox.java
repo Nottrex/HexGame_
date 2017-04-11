@@ -19,11 +19,17 @@ public class CheckBox extends JComponent {
     private boolean entered = false;
     private boolean activated = false;
 
-
-
     public CheckBox(Window w, ActionListener actionListener) {
-        this.addMouseListener(new MouseAdapter() {
+        this(w, false, actionListener);
+    }
 
+    public CheckBox(Window w, boolean checked, ActionListener actionListener) {
+        this.activated = checked;
+
+        if(!activated) setImage(null);
+        else setImage(TextureHandler.getImagePng("Check"));
+
+        this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (entered) {
@@ -49,7 +55,6 @@ public class CheckBox extends JComponent {
         });
     }
 
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -70,5 +75,9 @@ public class CheckBox extends JComponent {
      */
     private void setImage(BufferedImage image) {
         this.image = image;
+    }
+
+    public boolean isChecked() {
+        return activated;
     }
 }

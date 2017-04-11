@@ -4,6 +4,7 @@ import client.Controller;
 import client.components.CheckBox;
 import client.components.TextButton;
 import client.components.TextLabel;
+import client.window.GUIConstants;
 import client.window.TextureHandler;
 import client.window.View;
 import client.window.Window;
@@ -23,6 +24,8 @@ public class ViewOptions extends View {
     /*
         private Slider volumeMusic, volumeEffects;
      */
+
+    private Object newAntialiasing;
 
     private boolean started = false;
 
@@ -53,9 +56,15 @@ public class ViewOptions extends View {
 
         TextureHandler.loadImagePng("Check", "ui/buttons/checkmark");
 
-        button_accept = new TextButton(window, "Accept", e -> window.updateView(new ViewMainMenu(background)));
+        button_accept = new TextButton(window, "Accept", e -> {
+            window.updateView(new ViewMainMenu(background));
+            if(newAntialiasing != null) GUIConstants.VALUE_ANTIALIASING = newAntialiasing;
+        });
         button_cancel = new TextButton(window, "Cancel", e -> window.updateView(new ViewMainMenu(background)));
-        box_antialising = new CheckBox(window, e -> {});
+        box_antialising = new CheckBox(window, GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
+            if(box_antialising.isChecked()) newAntialiasing = RenderingHints.VALUE_ANTIALIAS_ON;
+            else newAntialiasing = RenderingHints.VALUE_ANTIALIAS_OFF;
+        });
         text_antialiasing = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {

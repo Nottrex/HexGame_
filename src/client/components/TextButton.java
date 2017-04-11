@@ -47,7 +47,7 @@ public class TextButton extends JComponent {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, GUIConstants.VALUE_ANTIALIASING);
 
 		int x = 0, y = 0, width = getWidth(), height = getHeight();
 		if (entered) {
