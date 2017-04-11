@@ -1,7 +1,9 @@
 package client.window.view;
 
 import client.Controller;
+import client.components.ImageButton;
 import client.components.TextButton;
+import client.window.TextureHandler;
 import client.window.View;
 import client.window.Window;
 
@@ -15,6 +17,7 @@ public class ViewMainMenu extends View {
 	private Controller controller;
 
 	private TextButton button_quit, button_start, button_create;
+	private ImageButton button_options;
 
 	private JPanel panel;
 	private DynamicBackground background;
@@ -40,15 +43,19 @@ public class ViewMainMenu extends View {
 
 		panel.setLayout(null);
 
+		TextureHandler.loadImagePng("Options", "ui/buttons/options");
+
 		button_quit = new TextButton(window, "Quit Game", e -> System.exit(0));
 		button_start = new TextButton(window, "Join Game", e -> window.updateView(new ViewServerConnect(background)));
 		button_create = new TextButton(window, "Create Game", e -> window.updateView(new ViewServerCreate(background)));
+		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewServerCreate(background)));
 
 		changeSize();
 
 		panel.add(button_start);
 		panel.add(button_quit);
 		panel.add(button_create);
+		panel.add(button_options);
 
 		started = true;
 
@@ -73,6 +80,7 @@ public class ViewMainMenu extends View {
 		button_create.setBounds((width-buttonWidth)/2, (height-buttonHeight)/2, buttonWidth, buttonHeight);
 		button_start.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
 		button_quit.setBounds((width-buttonWidth)/2, (height+5*buttonHeight)/2, buttonWidth, buttonHeight);
+		button_options.setBounds(5, 5, 2*buttonHeight/3, 2*buttonHeight/3);
 	}
 
 	/**
