@@ -66,7 +66,6 @@ public class ViewErrorScreen extends View {
 		int width = window.getWidth();
 		int height = window.getHeight();
 
-
 		int componentHeight = height/8;
 		int componentWidth = componentHeight * 5;
 

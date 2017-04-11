@@ -48,7 +48,7 @@ public class ViewMainMenu extends View {
 		button_quit = new TextButton(window, "Quit Game", e -> System.exit(0));
 		button_start = new TextButton(window, "Join Game", e -> window.updateView(new ViewServerConnect(background)));
 		button_create = new TextButton(window, "Create Game", e -> window.updateView(new ViewServerCreate(background)));
-		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewServerCreate(background)));
+		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewOptions(window, background)));
 
 		changeSize();
 
