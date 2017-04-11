@@ -4,21 +4,20 @@ import client.window.GUIConstants;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 
 public class HorizontalSlider extends JComponent {
 
     private double value;
 
-    public HorizontalSlider(double startValue) {
-        this.value = startValue;
+    public HorizontalSlider(double startValue, ActionListener actionListener) {
+        this.value = Math.max(Math.min(startValue, 1.0d), 0.0d);
 
         this.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 value = Math.max(Math.min((double)e.getX() / (double) getWidth(), 1.0d), 0.0d);
+                actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
 
@@ -26,6 +25,7 @@ public class HorizontalSlider extends JComponent {
             @Override
             public void mouseReleased(MouseEvent e) {
                 value = Math.max(Math.min((double)e.getX() / (double) getWidth(), 1.0d), 0.0d);
+                actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
             }
         });
     }

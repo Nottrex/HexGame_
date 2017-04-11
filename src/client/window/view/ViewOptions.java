@@ -1,6 +1,7 @@
 package client.window.view;
 
 import client.Controller;
+import client.audio.AudioConstants;
 import client.components.CheckBox;
 import client.components.HorizontalSlider;
 import client.components.TextButton;
@@ -25,12 +26,13 @@ public class ViewOptions extends View {
     private CheckBox box_antialising;
     private TextLabel text_antialiasing;
 
-    private HorizontalSlider volume;
+    private HorizontalSlider volumeMusic;
+    private float newMusicVolume;
+    private TextLabel text_volumeMusic;
 
-    /*
-        private Slider volumeMusic, volumeEffects;
-     */
-
+    private HorizontalSlider volumeEffects;
+    private float newEffectsVolume;
+    private TextLabel text_volumeEffects;
 
     private boolean started = false;
 
@@ -58,14 +60,20 @@ public class ViewOptions extends View {
 
     @Override
     public void init(Window window, Controller controller) {
+        newMusicVolume = AudioConstants.MUSIC_VOLUME;
+        newEffectsVolume = AudioConstants.EFFECT_VOLUME;
 
         TextureHandler.loadImagePng("Check", "ui/buttons/checkmark");
 
         button_accept = new TextButton(window, "Accept", e -> {
             window.updateView(new ViewMainMenu(background));
             if(newAntialiasing != null) GUIConstants.VALUE_ANTIALIASING = newAntialiasing;
+
+            AudioConstants.EFFECT_VOLUME = newMusicVolume;
+            AudioConstants.MUSIC_VOLUME = newMusicVolume;
         });
         button_cancel = new TextButton(window, "Cancel", e -> window.updateView(new ViewMainMenu(background)));
+
 
         box_antialising = new CheckBox(window, GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
             if(box_antialising.isChecked()) newAntialiasing = RenderingHints.VALUE_ANTIALIAS_ON;
@@ -79,13 +87,42 @@ public class ViewOptions extends View {
             }
         }, false);
 
-        volume = new HorizontalSlider(0.0d);
+
+        text_volumeMusic = new TextLabel(new TextLabel.Text() {
+            @Override
+            public String getText() {
+                return "Music Volume";
+            }
+        }, false);
+        volumeMusic = new HorizontalSlider( (AudioConstants.MUSIC_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
+
+            float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
+            newMusicVolume =(float)(musicDistance* volumeMusic.getValue() + AudioConstants.MIN_VOLUME);
+        });
+
+        text_volumeEffects = new TextLabel(new TextLabel.Text() {
+            @Override
+            public String getText() {
+                return "Effects Volume";
+            }
+        }, false);
+        volumeEffects = new HorizontalSlider( (AudioConstants.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
+
+            float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
+            newEffectsVolume =(float)(musicDistance* volumeMusic.getValue() + AudioConstants.MIN_VOLUME);
+        });
 
         window.getPanel().add(button_accept);
         window.getPanel().add(button_cancel);
+
         window.getPanel().add(box_antialising);
         window.getPanel().add(text_antialiasing);
-        window.getPanel().add(volume);
+
+        window.getPanel().add(volumeMusic);
+        window.getPanel().add(text_volumeMusic);
+
+        window.getPanel().add(volumeEffects);
+        window.getPanel().add(text_volumeEffects);
 
         changeSize();
 
@@ -111,9 +148,15 @@ public class ViewOptions extends View {
 
         box_antialising.setBounds(5, 5, componentHeight, componentHeight);
         text_antialiasing.setBounds(10 + componentHeight, componentHeight/2 - 5, componentWidth, componentHeight);
+
         button_accept.setBounds(width/2 - componentWidth - 5, height - 2*componentHeight, componentWidth, componentHeight);
         button_cancel.setBounds(width/2 + 5, height - 2*componentHeight, componentWidth, componentHeight);
-        volume.setBounds(5, 10 + componentHeight, componentWidth, componentHeight/2);
+
+        text_volumeMusic.setBounds(10 + componentWidth, 10+componentHeight, componentWidth/2, componentHeight);
+        volumeMusic.setBounds(5, 10 + componentHeight, componentWidth, componentHeight/2);
+
+        text_volumeEffects.setBounds((int)(2.5f*componentWidth+20), 10+componentHeight, componentWidth/2, componentHeight);
+        volumeEffects.setBounds((int)(1.5f*componentWidth + 15), 10 + componentHeight, componentWidth, componentHeight/2);
     }
 
     @Override
