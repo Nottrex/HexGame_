@@ -1,7 +1,10 @@
 package client.window.view;
 
 import client.Controller;
+import client.components.CheckBox;
 import client.components.TextButton;
+import client.components.TextLabel;
+import client.window.TextureHandler;
 import client.window.View;
 import client.window.Window;
 
@@ -15,9 +18,10 @@ public class ViewOptions extends View {
     private DynamicBackground background;
 
     private TextButton button_accept, button_cancel;
+    private CheckBox box_antialising;
+    private TextLabel text_antialiasing;
     /*
         private Slider volumeMusic, volumeEffects;
-        private CheckBox antialiasing;
      */
 
     private boolean started = false;
@@ -47,11 +51,22 @@ public class ViewOptions extends View {
     @Override
     public void init(Window window, Controller controller) {
 
+        TextureHandler.loadImagePng("Check", "ui/buttons/checkmark");
+
         button_accept = new TextButton(window, "Accept", e -> window.updateView(new ViewMainMenu(background)));
         button_cancel = new TextButton(window, "Cancel", e -> window.updateView(new ViewMainMenu(background)));
+        box_antialising = new CheckBox(window, e -> {});
+        text_antialiasing = new TextLabel(new TextLabel.Text() {
+            @Override
+            public String getText() {
+                return "Use AntiAliasing";
+            }
+        }, false);
 
         window.getPanel().add(button_accept);
         window.getPanel().add(button_cancel);
+        window.getPanel().add(box_antialising);
+        window.getPanel().add(text_antialiasing);
 
         changeSize();
 
@@ -75,6 +90,8 @@ public class ViewOptions extends View {
         int componentHeight = height/12;
         int componentWidth = componentHeight * 5;
 
+        box_antialising.setBounds(5, 5, componentHeight, componentHeight);
+        text_antialiasing.setBounds(10 + componentHeight, componentHeight/2 - 5, componentWidth, componentHeight);
         button_accept.setBounds(width/2 - componentWidth - 5, height - 2*componentHeight, componentWidth, componentHeight);
         button_cancel.setBounds(width/2 + 5, height - 2*componentHeight, componentWidth, componentHeight);
     }
