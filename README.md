@@ -13,6 +13,7 @@ Polls:
 Used Libs:
 
 	SnakeYaml: https://bitbucket.org/asomov/snakeyaml
+	Jogl: https://jogamp.org
 
 Graphics by Kenney:
 
