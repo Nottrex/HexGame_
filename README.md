@@ -10,6 +10,10 @@ Polls:
 
 	https://phoenixofforce.typeform.com/to/xIZfNj
 
+Used Libs:
+
+	SnakeYaml: https://bitbucket.org/asomov/snakeyaml
+
 Graphics by Kenney:
 
 	http://kenney.nl/assets/hexagon-pack
