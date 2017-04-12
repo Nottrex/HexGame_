@@ -17,9 +17,12 @@ public class Camera {
 	/**
 	 * Takes t-Values and put it to the inUse values
 	 */
-	public void update() {
+	public boolean update() {
+		boolean b = (zoom!=tzoom) || (x!=tx) || (y!=ty);
+
 		zoom = tzoom;
 		x = tx;
 		y = ty;
+		return b;
 	}
 }

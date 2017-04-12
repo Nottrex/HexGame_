@@ -12,6 +12,7 @@ public class StaticShader extends ShaderProgramm{
 	}
 
 	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, locationLocation, cameraLocation, projectionLocation;
+	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
@@ -21,6 +22,13 @@ public class StaticShader extends ShaderProgramm{
 		hexHeight2Location = getUniformLocation(gl, "hexHeight2");
 		cameraLocation = getUniformLocation(gl, "cameraMatrix");
 		projectionLocation = getUniformLocation(gl, "projectionMatrix");
+
+		texXLocation = getUniformLocation(gl, "texX");
+		texYLocation = getUniformLocation(gl, "texY");
+		texTWLocation = getUniformLocation(gl, "texTW");
+		texTHLocation = getUniformLocation(gl, "texTH");
+		texHLocation = getUniformLocation(gl, "texH");
+		texWLocation = getUniformLocation(gl, "texW");
 	}
 
 	public void setTexture(GL2 gl, int tex) {
@@ -49,6 +57,18 @@ public class StaticShader extends ShaderProgramm{
 
 	public void setProjectionMatrix(GL2 gl, float[] projectionMatrix) {
 		setUniformMat4(gl, projectionLocation, projectionMatrix);
+	}
+
+	public void setTextureSheetBounds(GL2 gl, int x, int y, int width, int height) {
+		setUniform1i(gl, texXLocation, x);
+		setUniform1i(gl, texYLocation, y);
+		setUniform1i(gl, texWLocation, width);
+		setUniform1i(gl, texHLocation, height);
+	}
+
+	public void setTextureTotalBounds(GL2 gl, int texTW, int texTH) {
+		setUniform1i(gl, texTWLocation, texTW);
+		setUniform1i(gl, texTHLocation, texTH);
 	}
 
 	@Override

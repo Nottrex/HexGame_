@@ -350,12 +350,6 @@ public class ViewGame extends View implements ClientListener {
 		drawing = false;
 	}*/
 
-	private void drawHexField(int x, int y, Graphics g, BufferedImage img, double wx, double wy) {
-		double py = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy;
-		double px = (x)*wx - (y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO);
-		g.drawImage(img, (int) px, (int) py, (int) wx +2, (int) wy +2, null);
-	}
-
 	private void drawMovementArrow(int x, int y, Graphics g, Direction d, double wx, double wy) {
 		double centerY1 = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy + wy/2;
 		double centerX1 = (x)*wx - (y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
@@ -505,11 +499,7 @@ public class ViewGame extends View implements ClientListener {
 
 	private void loadResources() {
 
-		for (Field f: Field.values()) {
-			if (f != Field.VOID) {
-				TextureHandler.loadImagePng("field_" + f.toString().toLowerCase(), "field/" + f.toString().toLowerCase());
-			}
-		}
+		TextureHandler.loadImagePngSpriteSheet("field", "fields/fields");
 
 		for (UnitType ut: UnitType.values()) {
 			for (PlayerColor pc: PlayerColor.values()) {
