@@ -1,6 +1,7 @@
 package client.window;
 
 import client.Controller;
+import client.Options;
 import client.audio.AudioHandler;
 import client.audio.AudioPlayer;
 import client.window.view.ViewMainMenu;
@@ -41,6 +42,7 @@ public class Window extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				Options.save();
 			}
 		});
 

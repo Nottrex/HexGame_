@@ -69,7 +69,7 @@ public class ViewOptions extends View {
             window.updateView(new ViewMainMenu(background));
             if(newAntialiasing != null) GUIConstants.VALUE_ANTIALIASING = newAntialiasing;
 
-            AudioConstants.EFFECT_VOLUME = newMusicVolume;
+            AudioConstants.EFFECT_VOLUME = newEffectsVolume;
             AudioConstants.MUSIC_VOLUME = newMusicVolume;
         });
         button_cancel = new TextButton(window, "Cancel", e -> window.updateView(new ViewMainMenu(background)));
@@ -109,7 +109,7 @@ public class ViewOptions extends View {
         volumeEffects = new HorizontalSlider( (AudioConstants.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
 
             float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
-            newEffectsVolume =(float)(musicDistance* volumeMusic.getValue() + AudioConstants.MIN_VOLUME);
+            newEffectsVolume =(float)(musicDistance* volumeEffects.getValue() + AudioConstants.MIN_VOLUME);
         });
 
         window.getPanel().add(button_accept);
