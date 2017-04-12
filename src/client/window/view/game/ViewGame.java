@@ -50,7 +50,6 @@ public class ViewGame extends View implements ClientListener {
 
 	private JPanel bottom;
 	private GameView center;
-	private GameView gameView;
 
 	private ImageButton button_audioOn;
 	private ImageButton button_musicOn;
@@ -170,8 +169,6 @@ public class ViewGame extends View implements ClientListener {
 			int heightDifference = height - window.getHeight();
 
 			if(widthDifference == 0 && heightDifference == 0) return;
-			cam.tx += (widthDifference * cam.tzoom / 2);
-			cam.ty += (heightDifference * cam.tzoom / 2);
 
 			width = window.getWidth();
 			height = window.getHeight();
@@ -187,13 +184,19 @@ public class ViewGame extends View implements ClientListener {
 	}
 
 	public void onMouseClick(int x, int y) {
+		center.screenPositionToWorldPosition(x, y);
 		controller.onMouseClick(getHexFieldPosition(x, y));
 	}
 
 
 	public void onMouseDrag(int dx, int dy) {
-		cam.tx -= (dx*cam.zoom);
-		cam.ty -= (dy*cam.zoom);
+		float[] zero = center.screenPositionToWorldPosition(0, 0);
+		float[] one = center.screenPositionToWorldPosition(1, 1);
+
+		dy = -dy;
+
+		cam.tx -= (dx*(-one[0]+zero[0]));
+		cam.ty -= (dy*(-one[1]+zero[1]));
 	}
 
 	public void onKeyType(int keyCode) {
@@ -235,8 +238,6 @@ public class ViewGame extends View implements ClientListener {
 			a = 1 / GUIConstants.ZOOM;
 		}
 
-		//cam.tx -= (mouseListener.getMouseX())*cam.tzoom * (a-1);
-		//cam.ty -= (mouseListener.getMouseY())*cam.tzoom * (a-1);
 		cam.tzoom *= a;
 	}
 	/*

@@ -55,8 +55,8 @@ public abstract class ShaderProgramm {
 		gl.glUniform1i(location, i);
 	}
 
-	protected void setUniformMat4(GL2 gl, int location, Matrix4 v) {
-		gl.glUniformMatrix4fv(location, 1, false, v.getMatrix(), 0);
+	protected void setUniformMat4(GL2 gl, int location, float[] v) {
+		gl.glUniformMatrix4fv(location, 1, false, v, 0);
 	}
 
 	protected int getUniformLocation(GL2 gl, String name) {

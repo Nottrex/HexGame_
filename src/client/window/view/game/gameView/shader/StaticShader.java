@@ -11,13 +11,14 @@ public class StaticShader extends ShaderProgramm{
 		super(gl, VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	private int texLocation, hexWidthLocation, hexHeightLocation, locationLocation, cameraLocation, projectionLocation;
+	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, locationLocation, cameraLocation, projectionLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
 		hexWidthLocation = getUniformLocation(gl, "hexWidth");
 		hexHeightLocation = getUniformLocation(gl, "hexHeight");
 		locationLocation = getUniformLocation(gl, "location");
+		hexHeight2Location = getUniformLocation(gl, "hexHeight2");
 		cameraLocation = getUniformLocation(gl, "cameraMatrix");
 		projectionLocation = getUniformLocation(gl, "projectionMatrix");
 	}
@@ -30,6 +31,10 @@ public class StaticShader extends ShaderProgramm{
 		setUniform1f(gl, hexWidthLocation, width);
 	}
 
+	public void setHexHeight2(GL2 gl, float height2) {
+		setUniform1f(gl, hexHeight2Location, height2);
+	}
+
 	public void setHexHeight(GL2 gl, float height) {
 		setUniform1f(gl, hexHeightLocation, height);
 	}
@@ -38,11 +43,11 @@ public class StaticShader extends ShaderProgramm{
 		setUniform2f(gl, locationLocation, locationX, locationY);
 	}
 
-	public void setCamera(GL2 gl, Matrix4 camera) {
+	public void setCamera(GL2 gl, float[] camera) {
 		setUniformMat4(gl, cameraLocation, camera);
 	}
 
-	public void setProjectionMatrix(GL2 gl, Matrix4 projectionMatrix) {
+	public void setProjectionMatrix(GL2 gl, float[] projectionMatrix) {
 		setUniformMat4(gl, projectionLocation, projectionMatrix);
 	}
 
