@@ -1,6 +1,7 @@
 package client.window.view;
 
 import client.Controller;
+import client.Options;
 import client.components.ImageButton;
 import client.components.TextButton;
 import client.window.TextureHandler;
@@ -45,7 +46,10 @@ public class ViewMainMenu extends View {
 
 		TextureHandler.loadImagePng("Options", "ui/buttons/options");
 
-		button_quit = new TextButton(window, "Quit Game", e -> System.exit(0));
+		button_quit = new TextButton(window, "Quit Game", e -> {
+			Options.save();
+			System.exit(0);
+		});
 		button_start = new TextButton(window, "Join Game", e -> window.updateView(new ViewServerConnect(background)));
 		button_create = new TextButton(window, "Create Game", e -> window.updateView(new ViewServerCreate(background)));
 		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewOptions(window, background)));

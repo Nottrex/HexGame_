@@ -30,4 +30,7 @@ public class GUIConstants {
 	public static final int CORNER_RADIUS					= 30;
 
 	public static Object VALUE_ANTIALIASING 				= RenderingHints.VALUE_ANTIALIAS_ON;
+	public static String LAST_USERNAME						= null;
+	public static String LAST_IP							= null;
+	public static String LAST_PORT							= null;
 }

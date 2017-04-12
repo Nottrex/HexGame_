@@ -28,8 +28,14 @@ public class Options {
         Map<String, Boolean> guiData = new HashMap<>();
         guiData.put("AA", GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON));
 
+        Map<String, String> inputData = new HashMap<>();
+        inputData.put("Username", GUIConstants.LAST_USERNAME);
+        inputData.put("IP", GUIConstants.LAST_IP);
+        inputData.put("Port", GUIConstants.LAST_PORT);
+
         data.put("Audio", audioData);
         data.put("Graphics", guiData);
+        data.put("Inputs", inputData);
 
         try {
             yaml.dump(data, new FileWriter(DATA_FILE));
@@ -53,6 +59,13 @@ public class Options {
 
                 Map<String, Boolean> guiData = (Map<String, Boolean>)data.get("Graphics");
                 GUIConstants.VALUE_ANTIALIASING = guiData.get("AA")? RenderingHints.VALUE_ANTIALIAS_ON: RenderingHints.VALUE_ANTIALIAS_OFF;
+
+                Map<String, String> inputData = (Map<String, String>) data.get("Inputs");
+                if(inputData != null) {
+                    GUIConstants.LAST_PORT = inputData.get("Port");
+                    GUIConstants.LAST_USERNAME = inputData.get("Username");
+                    GUIConstants.LAST_IP = inputData.get("IP");
+                }
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
