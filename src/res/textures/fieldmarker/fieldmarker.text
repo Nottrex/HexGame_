@@ -1,0 +1,14 @@
+13
+lightBlack 0 0 120 140
+lightBlue 120 0 120 140
+lightGreen 240 0 120 140
+lightRed 360 0 120 140
+lightWhite 480 0 120 140
+lightYellow 600 0 120 140
+normalBlack 720 0 120 140
+normalBlue 840 0 120 140
+normalGreen 0 140 120 140
+normalRed 120 140 120 140
+normalWhite 240 140 120 140
+normalYellow 360 140 120 140
+select 480 140 120 140

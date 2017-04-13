@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Options {
 
-    private static final File DATA_FILE = new File("options.yml");
+    private static final File DATA_FILE = new File("res/files/options/options.yml");
 
     public static void save() {
         DumperOptions op = new DumperOptions();

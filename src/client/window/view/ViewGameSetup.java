@@ -5,6 +5,7 @@ import client.components.TextButton;
 import client.components.TextLabel;
 import client.window.View;
 import client.window.Window;
+import client.window.view.game.ViewGame;
 import game.enums.PlayerColor;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
@@ -39,11 +40,13 @@ public class ViewGameSetup extends View implements ClientListener {
 
 	private ServerMain server;
 
-	public ViewGameSetup(String userName, String hostName, int port) {
+	public ViewGameSetup(DynamicBackground background, String userName, String hostName, int port) {
+		this.server = null;
 		this.userName = userName;
 		this.hostName = hostName;
 		this.port = port;
 
+		this.background = background;
 		this.ready = new HashMap<>();
 		this.color = new HashMap<>();
 	}
@@ -140,7 +143,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	/**
 	 * Updates player overwiew
 	 */
-	private void updateInfo() {
+	private synchronized void updateInfo() {
 		String info = "";
 		for (String player: ready.keySet()) {
 			info += String.format("%s%s - %s - %b\n", player.equals(userName) ? "->" : "", player, color.get(player).getDisplayName(), ready.get(player));
@@ -158,7 +161,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	}
 
 	@Override
-	public void onReceivePacket(Packet p) {
+	public synchronized void onReceivePacket(Packet p) {
 		if (p instanceof PacketClientKicked) {
 			controller.stopConnection();
 			window.updateView(new ViewErrorScreen(background, ((PacketClientKicked) p).getReason()));

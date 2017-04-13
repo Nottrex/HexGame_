@@ -1,12 +1,12 @@
 package client.window;
 
 public class Camera {
-	public double zoom, x, y;
+	public float zoom, x, y;
 
-	public double tzoom, tx, ty;
+	public float tzoom, tx, ty;
 
 	public Camera() {
-		zoom = 1;
+		zoom = 3;
 		x = 0;
 		y = 0;
 		tzoom = zoom;
@@ -17,9 +17,12 @@ public class Camera {
 	/**
 	 * Takes t-Values and put it to the inUse values
 	 */
-	public void update() {
+	public boolean update() {
+		boolean b = (zoom!=tzoom) || (x!=tx) || (y!=ty);
+
 		zoom = tzoom;
 		x = tx;
 		y = ty;
+		return b;
 	}
 }
