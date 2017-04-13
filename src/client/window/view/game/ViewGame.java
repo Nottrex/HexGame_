@@ -12,17 +12,13 @@ import client.window.Window;
 import client.window.view.ViewErrorScreen;
 import client.window.view.ViewMainMenu;
 import client.window.view.game.gameView.GameView;
-import client.window.view.game.KeyInputListener;
-import client.window.view.game.MouseInputListener;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 import game.Location;
 import game.Unit;
-import game.enums.Direction;
 import game.enums.Field;
 import game.enums.PlayerColor;
-import game.enums.UnitType;
 import game.map.GameMap;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
@@ -37,9 +33,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class ViewGame extends View implements ClientListener {
-
-	private boolean stop = true;
-
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
 
@@ -155,8 +148,6 @@ public class ViewGame extends View implements ClientListener {
 		audioPlayer.start();
 
 		centerCamera();
-
-		stop = false;
 	}
 
 	public GLJPanel getCenter() {
@@ -241,42 +232,6 @@ public class ViewGame extends View implements ClientListener {
 
 		cam.tzoom *= a;
 	}
-	/*
-	private boolean drawing = false;
-	public void draw() {
-		if (stop || audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || controller.game.getMap() == null || cam == null) return;
-		drawing = true;
-		audioPlayer.updateVolume();
-		AnimationAction currentAnimation = controller.getAnimationAction();
-
-		GameMap m = controller.game.getMap();
-		{	//Draw In-game stuff
-			g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
-
-			double wx = 1/cam.zoom;
-			double wy = wx* GUIConstants.HEX_TILE_XY_RATIO;
-
-			for (Unit u: m.getUnits()) {
-				UnitType ut = u.getType();
-				double w = wx*ut.getSize();
-				double h = w*GUIConstants.UNIT_XY_RATIO;
-
-				double py = (u.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
-				double px = (u.getX())*wx - (u.getY())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
-
-				if (currentAnimation != null && currentAnimation instanceof AnimationActionUnitMove) {
-					AnimationActionUnitMove animation = (AnimationActionUnitMove) currentAnimation;
-
-					if (animation.getUnit() == u) {
-						py = (u.getY() + animation.getCurrentDirection().getYMovement()*animation.interpolation())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + (wy-h)/2;
-						px = (u.getX() + animation.getCurrentDirection().getXMovement()*animation.interpolation())*wx - (u.getY() + animation.getCurrentDirection().getYMovement()*animation.interpolation())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + (wx-w)/2;
-					}
-				}
-
-				g.drawImage(TextureHandler.getImagePng("units_" + ut.toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), (int) px, (int) py, (int) w, (int) h, null);
-
-			}
-	}*/
 
 	private boolean drawing2 = false;
 	public void redrawInfoBar() {
@@ -357,7 +312,6 @@ public class ViewGame extends View implements ClientListener {
 
 	@Override
 	public void stop() {
-		stop = true;
 		center.destroy();
 		center.removeMouseWheelListener(mouseListener);
 		center.removeMouseMotionListener(mouseListener);
