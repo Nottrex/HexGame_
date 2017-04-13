@@ -3,11 +3,11 @@ package client.window.view.game.gameView.shader;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.math.Matrix4;
 
-public class StaticShader extends ShaderProgramm{
-	private static final String VERTEX_FILE = "vertexShader";
-	private static final String FRAGMENT_FILE = "fragmentShader";
+public class FieldShader extends ShaderProgramm{
+	private static final String VERTEX_FILE = "fieldVertexShader";
+	private static final String FRAGMENT_FILE = "fieldFragmentShader";
 
-	public StaticShader(GL2 gl) {
+	public FieldShader(GL2 gl) {
 		super(gl, VERTEX_FILE, FRAGMENT_FILE);
 	}
 

@@ -185,7 +185,8 @@ public class ViewGame extends View implements ClientListener {
 
 	public void onMouseClick(int x, int y) {
 		float[] point = center.screenPositionToWorldPosition(x, y);
-		controller.onMouseClick(getHexFieldPosition(point[0], point[1]));
+		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
+		redrawInfoBar();
 	}
 
 
@@ -246,28 +247,14 @@ public class ViewGame extends View implements ClientListener {
 		if (stop || audioPlayer == null || center == null || center.getWidth() <= 0 || center.getHeight() <= 0 || drawing || controller == null || controller.game == null || controller.game.getMap() == null || cam == null) return;
 		drawing = true;
 		audioPlayer.updateVolume();
-		controller.updateAnimationActions();
 		AnimationAction currentAnimation = controller.getAnimationAction();
 
-		BufferedImage buffer = new BufferedImage(center.getWidth(), center.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-		Graphics g = buffer.getGraphics();
-
-		g.setColor(GUIConstants.COLOR_GAME_BACKGROUND);
-		g.fillRect(0, 0, center.getWidth(), center.getHeight());
-
-		cam.update();
-
-		g.setColor(Color.BLUE);
 		GameMap m = controller.game.getMap();
 		{	//Draw In-game stuff
 			g.translate((int) -(cam.x/cam.zoom), (int) -(cam.y/cam.zoom));
 
 			double wx = 1/cam.zoom;
 			double wy = wx* GUIConstants.HEX_TILE_XY_RATIO;
-			{
-				g.drawImage(mapBuffer, (int) (-((int)Math.ceil(m.getHeight()/2.0))*wx), 0, (int) (wx * (m.getWidth() + (int)Math.ceil(m.getHeight()/2.0))), (int) (wy * GUIConstants.HEX_TILE_YY_RATIO * (m.getHeight()+1)), null);
-			}
 
 			for (Unit u: m.getUnits()) {
 				UnitType ut = u.getType();
@@ -398,7 +385,8 @@ public class ViewGame extends View implements ClientListener {
 		int lx = (bottom.getWidth()-800)/2;
 
 		float[] point = center.screenPositionToWorldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
-		Location mouseLocation = getHexFieldPosition(point[0], point[1]);
+		controller.hoverField = center.getHexFieldPosition(point[0], point[1]);
+		Location mouseLocation = controller.hoverField;
 
 		if (mouseLocation != null) {
 			Field f = m.getFieldAt(mouseLocation);
@@ -457,34 +445,6 @@ public class ViewGame extends View implements ClientListener {
 		drawing2 = false;
 	}
 
-	private Location getHexFieldPosition(float px, float py) {
-		py += GUIConstants.HEX_TILE_XY_RATIO;
-		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO*GUIConstants.HEX_TILE_XY_RATIO);
-
-		int	y = (int) Math.floor(dy);
-		int	x = (int) Math.floor(px + y/2.0);
-
-		if ((dy%1) <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
-			double vx = (px + y/2.0) % 1;
-			double vy = ((dy%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
-
-			if (vx < 0.5) {
-				if (vx + vy  < 0.5) {
-					x--;
-					y--;
-				}
-			} else {
-				vx = 1 - vx;
-
-				if (vx + vy  < 0.5) {
-					y--;
-				}
-			}
-		}
-
-		return new Location(x, y);
-	}
-
 	@Override
 	public void stop() {
 		stop = true;
@@ -501,6 +461,7 @@ public class ViewGame extends View implements ClientListener {
 	private void loadResources() {
 
 		TextureHandler.loadImagePngSpriteSheet("field", "fields/fields");
+		TextureHandler.loadImagePngSpriteSheet("fieldmarker", "fieldmarker/fieldmarker");
 
 		for (UnitType ut: UnitType.values()) {
 			for (PlayerColor pc: PlayerColor.values()) {
@@ -515,11 +476,6 @@ public class ViewGame extends View implements ClientListener {
 		for (Direction d: Direction.values()) {
 			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
 		}
-
-		TextureHandler.loadImagePng("fieldmarker_select", "fieldmarker/select");
-		TextureHandler.loadImagePng("fieldmarker_select2", "fieldmarker/overlay/normalVersions/normalYellow");
-		TextureHandler.loadImagePng("fieldmarker_red", "fieldmarker/overlay/normalVersions/normalRed");
-		TextureHandler.loadImagePng("fieldmarker_blue", "fieldmarker/overlay/normalVersions/normalBlue");
 
 		TextureHandler.loadImagePng("button_audioOn", "ui/buttons/audioOn");
 		TextureHandler.loadImagePng("button_audioOff", "ui/buttons/audioOff");

@@ -4,7 +4,8 @@ import client.Controller;
 import client.window.Camera;
 import client.window.GUIConstants;
 import client.window.TextureHandler;
-import client.window.view.game.gameView.shader.StaticShader;
+import client.window.view.game.gameView.shader.FieldShader;
+import client.window.view.game.gameView.shader.FieldmarkerShader;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.math.FloatUtil;
@@ -13,19 +14,30 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
+import game.Location;
+import game.Unit;
 import game.map.GameMap;
+import game.util.ActionUtil;
+import game.util.PossibleActions;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Optional;
 
 public class GameView extends GLJPanel implements GLEventListener {
 
 	private Controller controller;
 	private Camera cam;
-	private StaticShader shader;
+
+	private Texture fieldTexture;
+	private FieldShader fieldShader;
+
+	private Texture fieldmarkerTexture;
+	private FieldmarkerShader fieldmarkerShader;
+
 	public GameView(GLCapabilities capabilities, Controller controller, Camera cam) {
 		super(capabilities);
 		this.controller = controller;
@@ -41,22 +53,32 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		gl.setSwapInterval(1);
 		gl.glEnable(GL2.GL_TEXTURE_2D);
-		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 		gl.glClearColor(0f, 1f, 1f, 1f);
 
-		//gl.glEnable(GL2.GL_ALPHA_TEST);
-		//gl.glAlphaFunc(GL2.GL_GREATER,0.8f);
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
-		shader = new StaticShader(gl);
+		fieldShader = new FieldShader(gl);
 
-		shader.start(gl);
-		shader.setHexWidth(gl, 1f);
-		shader.setHexHeight(gl, (float) GUIConstants.HEX_TILE_YY_RATIO);
-		shader.setHexHeight2(gl, (float) GUIConstants.HEX_TILE_XY_RATIO);
-		shader.setTexture(gl, 0);
+		fieldShader.start(gl);
+		fieldShader.setHexWidth(gl, 1f);
+		fieldShader.setHexHeight(gl, (float) GUIConstants.HEX_TILE_YY_RATIO);
+		fieldShader.setHexHeight2(gl, (float) GUIConstants.HEX_TILE_XY_RATIO);
+		fieldShader.setTexture(gl, 0);
 		BufferedImage img = TextureHandler.getImagePng("field");
-		shader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
-		shader.stop(gl);
+		fieldShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
+		fieldShader.stop(gl);
+
+		fieldmarkerShader = new FieldmarkerShader(gl);
+
+		fieldmarkerShader.start(gl);
+		fieldmarkerShader.setHexWidth(gl, 1f);
+		fieldmarkerShader.setHexHeight(gl, (float) GUIConstants.HEX_TILE_YY_RATIO);
+		fieldmarkerShader.setHexHeight2(gl, (float) GUIConstants.HEX_TILE_XY_RATIO);
+		fieldmarkerShader.setTexture(gl, 0);
+		img = TextureHandler.getImagePng("fieldmarker");
+		fieldmarkerShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
+		fieldmarkerShader.stop(gl);
 
 		textureInit(gl);
 
@@ -65,28 +87,23 @@ public class GameView extends GLJPanel implements GLEventListener {
 	}
 
 	private void textureInit(GL2 gl) {
-		try {
-			final ByteArrayOutputStream output = new ByteArrayOutputStream() {
-				@Override
-				public synchronized byte[] toByteArray() {
-					return this.buf;
-				}
-			};
-			ImageIO.write(TextureHandler.getImagePng("field"), "png", output);
-			TextureData textured = TextureIO.newTextureData(this.getGLProfile(), new ByteArrayInputStream(output.toByteArray(), 0, output.size()), true, "png");
-			Texture texture = TextureIO.newTexture(gl, textured);
-			texture.enable(gl);
-			gl.glActiveTexture(GL2.GL_TEXTURE0);
-			texture.bind(gl);
-			texture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
-			texture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
-		} catch (Exception e) {e.printStackTrace();}
+		gl.glActiveTexture(GL2.GL_TEXTURE0);
+
+		fieldmarkerTexture = TextureIO.newTexture(gl, toTexture(this.getGLProfile(), TextureHandler.getImagePng("fieldmarker")));
+		fieldmarkerTexture.bind(gl);
+		fieldmarkerTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+		fieldmarkerTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+
+		fieldTexture = TextureIO.newTexture(gl, toTexture(this.getGLProfile(), TextureHandler.getImagePng("field")));
+		fieldTexture.bind(gl);
+		fieldTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+		fieldTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 	}
 
 	public void dispose(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 
-		shader.cleanUp(gl);
+		fieldShader.cleanUp(gl);
 	}
 
 	public void display(GLAutoDrawable drawable) {
@@ -96,22 +113,65 @@ public class GameView extends GLJPanel implements GLEventListener {
 		controller.updateAnimationActions();
 		updateCamera(gl, cam);
 
-		shader.start(gl);
-
+		fieldTexture.bind(gl);
+		fieldShader.start(gl);
 		GameMap map = controller.game.getMap();
 		for (int x = 0; x < map.getWidth(); x++) {
 			for (int y = 0; y < map.getHeight(); y++) {
 				if (!map.getFieldAt(x, y).isAccessible()) continue;
 
 				Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + map.getFieldAt(x, y).toString().toLowerCase());
-				shader.setLocation(gl, x, y);
-				shader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+				fieldShader.setLocation(gl, x, y);
+				fieldShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
 
 				gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 6);
 			}
 		}
+		fieldShader.stop(gl);
 
-		shader.stop(gl);
+
+		fieldmarkerTexture.bind(gl);
+		fieldmarkerShader.start(gl);
+
+		Location selectedField = controller.selectedField;
+		if (selectedField != null) {
+			fieldmarkerShader.setLocation(gl, selectedField.x, selectedField.y);
+			Rectangle rec = TextureHandler.getSpriteSheetBounds("fieldmarker_normalYellow");
+			fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 6);
+
+			Optional<Unit> u = map.getUnitAt(selectedField);
+
+			if (u.isPresent()) {
+				if (controller.pa == null) {
+					controller.pa = ActionUtil.getPossibleActions(controller.game, u.get());
+				}
+				PossibleActions pa = controller.pa;
+
+				for (Location target: pa.canMoveTo()) {
+					fieldmarkerShader.setLocation(gl, target.x, target.y);
+					rec = TextureHandler.getSpriteSheetBounds("fieldmarker_normalBlue");
+					fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+					gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 6);
+				}
+
+				for (Location target: pa.canAttack()) {
+					fieldmarkerShader.setLocation(gl, target.x, target.y);
+					rec = TextureHandler.getSpriteSheetBounds("fieldmarker_normalRed");
+					fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+					gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 6);
+				}
+			}
+		}
+		Location mouseLocation = controller.hoverField;
+		if (mouseLocation != null) {
+			fieldmarkerShader.setLocation(gl, mouseLocation.x, mouseLocation.y);
+			Rectangle rec = TextureHandler.getSpriteSheetBounds("fieldmarker_select");
+			fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 6);
+		}
+
+		fieldmarkerShader.stop(gl);
 
 		gl.glFlush();
 	}
@@ -126,9 +186,13 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		projectionMatrix = FloatUtil.makePerspective(new float[16], 0, true, (float)Math.toRadians(fov), aspect, near, far);
 
-		shader.start(gl);
-		shader.setProjectionMatrix(gl, projectionMatrix);
-		shader.stop(gl);
+		fieldShader.start(gl);
+		fieldShader.setProjectionMatrix(gl, projectionMatrix);
+		fieldShader.stop(gl);
+
+		fieldmarkerShader.start(gl);
+		fieldmarkerShader.setProjectionMatrix(gl, projectionMatrix);
+		fieldmarkerShader.stop(gl);
 
 		textureInit(gl);
 		gl.glViewport(x, y, width, height);
@@ -146,9 +210,13 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 			viewMatrix = FloatUtil.makeLookAt(new float[16], 0, cameraPosition, 0, target, 0, up, 0, new float[16]);
 
-			shader.start(gl);
-			shader.setCamera(gl, viewMatrix);
-			shader.stop(gl);
+			fieldShader.start(gl);
+			fieldShader.setCamera(gl, viewMatrix);
+			fieldShader.stop(gl);
+
+			fieldmarkerShader.start(gl);
+			fieldmarkerShader.setCamera(gl, viewMatrix);
+			fieldmarkerShader.stop(gl);
 		}
 	}
 
@@ -168,5 +236,49 @@ public class GameView extends GLJPanel implements GLEventListener {
 		float[] point = {distance*ray_wor[0]+cameraPosition[0], distance*ray_wor[1]-cameraPosition[1]};
 
 		return point;
+	}
+
+	public Location getHexFieldPosition(float px, float py) {
+		py += GUIConstants.HEX_TILE_XY_RATIO;
+		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO*GUIConstants.HEX_TILE_XY_RATIO);
+
+		int	y = (int) Math.floor(dy);
+		int	x = (int) Math.floor(px + y/2.0);
+
+		if ((dy%1) <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
+			double vx = (px + y/2.0) % 1;
+			double vy = ((dy%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
+
+			if (vx < 0.5) {
+				if (vx + vy  < 0.5) {
+					x--;
+					y--;
+				}
+			} else {
+				vx = 1 - vx;
+
+				if (vx + vy  < 0.5) {
+					y--;
+				}
+			}
+		}
+
+		return new Location(x, y);
+	}
+
+	private static TextureData toTexture(GLProfile glProfile, BufferedImage img) {
+		try {
+			final ByteArrayOutputStream output = new ByteArrayOutputStream() {
+				@Override
+				public synchronized byte[] toByteArray() {
+					return this.buf;
+				}
+			};
+			ImageIO.write(img, "png", output);
+			return TextureIO.newTextureData(glProfile, new ByteArrayInputStream(output.toByteArray(), 0, output.size()), true, "png");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

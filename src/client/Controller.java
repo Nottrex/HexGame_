@@ -30,6 +30,7 @@ public class Controller implements ClientListener {
 
 	public Game game;
 	public Location selectedField = null;
+	public Location hoverField = null;
 	public PossibleActions pa = null;
 
 	private ClientListener viewPacketListener;
