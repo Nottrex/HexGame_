@@ -184,8 +184,8 @@ public class ViewGame extends View implements ClientListener {
 	}
 
 	public void onMouseClick(int x, int y) {
-		center.screenPositionToWorldPosition(x, y);
-		controller.onMouseClick(getHexFieldPosition(x, y));
+		float[] point = center.screenPositionToWorldPosition(x, y);
+		controller.onMouseClick(getHexFieldPosition(point[0], point[1]));
 	}
 
 
@@ -397,7 +397,8 @@ public class ViewGame extends View implements ClientListener {
 		g.setColor(Color.WHITE);
 		int lx = (bottom.getWidth()-800)/2;
 
-		Location mouseLocation = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
+		float[] point = center.screenPositionToWorldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
+		Location mouseLocation = getHexFieldPosition(point[0], point[1]);
 
 		if (mouseLocation != null) {
 			Field f = m.getFieldAt(mouseLocation);
@@ -456,15 +457,15 @@ public class ViewGame extends View implements ClientListener {
 		drawing2 = false;
 	}
 
-	private Location getHexFieldPosition(int px, int py) {
-		double dy = (py + cam.y/cam.zoom) / ((GUIConstants.HEX_TILE_YY_RATIO)* GUIConstants.HEX_TILE_XY_RATIO/cam.zoom);
+	private Location getHexFieldPosition(float px, float py) {
+		py += GUIConstants.HEX_TILE_XY_RATIO;
+		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO*GUIConstants.HEX_TILE_XY_RATIO);
 
 		int	y = (int) Math.floor(dy);
-		int	x = (int) Math.floor((px + cam.x/cam.zoom + (y)*(GUIConstants.HEX_TILE_XY_RATIO/cam.zoom)/(2* GUIConstants.HEX_TILE_XY_RATIO)) * cam.zoom);
+		int	x = (int) Math.floor(px + y/2.0);
 
 		if ((dy%1) <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
-			int my = (int) Math.floor(dy);
-			double vx = ((px + cam.x/cam.zoom + (my)*(GUIConstants.HEX_TILE_XY_RATIO/cam.zoom)/(2* GUIConstants.HEX_TILE_XY_RATIO)) * cam.zoom ) % 1;
+			double vx = (px + y/2.0) % 1;
 			double vy = ((dy%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
 
 			if (vx < 0.5) {

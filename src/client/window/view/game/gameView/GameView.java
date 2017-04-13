@@ -52,7 +52,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		shader.start(gl);
 		shader.setHexWidth(gl, 1f);
 		shader.setHexHeight(gl, (float) GUIConstants.HEX_TILE_YY_RATIO);
-		shader.setHexHeight2(gl, 1);
+		shader.setHexHeight2(gl, (float) GUIConstants.HEX_TILE_XY_RATIO);
 		shader.setTexture(gl, 0);
 		BufferedImage img = TextureHandler.getImagePng("field");
 		shader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
