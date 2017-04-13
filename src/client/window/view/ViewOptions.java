@@ -63,6 +63,8 @@ public class ViewOptions extends View {
         newMusicVolume = AudioConstants.MUSIC_VOLUME;
         newEffectsVolume = AudioConstants.EFFECT_VOLUME;
 
+        window.getPanel().setLayout(null);
+
         TextureHandler.loadImagePng("Check", "ui/buttons/checkmark");
 
         button_accept = new TextButton(window, "Accept", e -> {
@@ -112,6 +114,8 @@ public class ViewOptions extends View {
             newEffectsVolume =(float)(musicDistance* volumeEffects.getValue() + AudioConstants.MIN_VOLUME);
         });
 
+        changeSize();
+
         window.getPanel().add(button_accept);
         window.getPanel().add(button_cancel);
 
@@ -123,8 +127,6 @@ public class ViewOptions extends View {
 
         window.getPanel().add(volumeEffects);
         window.getPanel().add(text_volumeEffects);
-
-        changeSize();
 
         started = true;
 
