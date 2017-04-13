@@ -167,11 +167,14 @@ public class ViewGame extends View implements ClientListener {
 
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
+		if (center.getHeight() == 0) {
+			cam.tzoom = 0.13f;
+		} else {
+			cam.tzoom = (float)((m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight());
 
-		cam.tzoom = (float)((m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight());
-
-		//cam.ty = (float)((GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO - 20*cam.tzoom);
-		//cam.tx = (float)(0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4));
+			//cam.ty = (float)((GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO - 20*cam.tzoom);
+			//cam.tx = (float)(0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4));
+		}
 	}
 
 	public void onMouseClick(int x, int y) {

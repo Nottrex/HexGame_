@@ -3,12 +3,13 @@ package client.window;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class FileHandler {
 
 	public static String loadFile(String fileName) {
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(ClassLoader.getSystemResource("res/files/" + fileName).getFile()));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("res/files/" + fileName)));
 
 			StringBuilder source = new StringBuilder();
 			String line;

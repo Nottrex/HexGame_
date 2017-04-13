@@ -75,6 +75,8 @@ public class ViewMainMenu extends View {
 
 	@Override
 	public void changeSize() {
+		if (button_create == null || button_start == null || button_quit == null || button_options == null) return;
+
 		int width = window.getPanel().getWidth();
 		int height = window.getPanel().getHeight();
 

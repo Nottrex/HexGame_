@@ -11,8 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Options {
+    private static final File DATA_FILE_FOLDER = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator);
+    private static final File DATA_FILE = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator + "options.yml");
 
-    private static final File DATA_FILE = new File("res/files/options/options.yml");
+    static {
+        DATA_FILE_FOLDER.mkdirs();
+    }
 
     public static void save() {
         DumperOptions op = new DumperOptions();

@@ -356,10 +356,14 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glViewport(x, y, width, height);
 	}
 
-	private float[] viewMatrix;
-	private float[] cameraPosition;
+	private float[] viewMatrix = null;
+	private float[] cameraPosition = null;
 	private void updateCamera(GL2 gl, Camera cam) {
 		boolean b = cam.update();
+		if (cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN) {
+			cam.tzoom = 1;
+			b = cam.update();
+		}
 
 		if (viewMatrix==null || b) {
 			float[] target = {-cam.x, -cam.y, 0};
@@ -387,6 +391,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 	}
 
 	public float[] screenPositionToWorldPosition(int x, int y) {
+		if (projectionMatrix == null || viewMatrix == null || cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN) return new float[] {-1, -1};
+
 		float[] ray_nds = {(x*1.0f/getWidth())*2-1, ((y*1.0f/getHeight())*2-1), 1.0f};
 		float[] ray_clip = {ray_nds[0], ray_nds[1], -1.0f, 1.0f};
 

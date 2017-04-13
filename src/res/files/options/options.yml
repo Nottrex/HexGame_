@@ -1,9 +1,0 @@
-Graphics:
-  AA: true
-Audio:
-  Music: -20.0
-  Effects: -20.0
-Inputs:
-  Username: null
-  IP: null
-  Port: null
