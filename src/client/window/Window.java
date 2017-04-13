@@ -1,6 +1,9 @@
 package client.window;
 
 import client.Controller;
+import client.Options;
+import client.audio.AudioHandler;
+import client.audio.AudioPlayer;
 import client.window.view.ViewMainMenu;
 
 import java.awt.*;
@@ -17,6 +20,7 @@ public class Window extends JFrame {
 	private boolean stop = false;
 
 	private Controller controller;
+	private AudioPlayer uiPlayer = new AudioPlayer();
 	private View view;
 
 	public Window() {
@@ -38,6 +42,7 @@ public class Window extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				Options.save();
 			}
 		});
 
@@ -81,9 +86,15 @@ public class Window extends JFrame {
 		panel.setIgnoreRepaint(true);
 		this.setContentPane(panel);
 
+		AudioHandler.loadMusicWav("Click", "sounds/click");
+
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		TextureHandler.loadImagePng("cursor","ui/cursor");
 		Cursor c = toolkit.createCustomCursor(TextureHandler.getImagePng("cursor") , new Point(0, 0), "img");
 		this.setCursor(c);
+	}
+
+	public AudioPlayer getPlayer() {
+		return uiPlayer;
 	}
 }

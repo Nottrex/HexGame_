@@ -41,7 +41,9 @@ public class CustomTextField extends JComponent {
 					if (text.length() > 0) {
 						text = text.substring(0, text.length()-1);
 					}
-				} else {
+				} /*else if(e.isControlDown() && e.getKeyChar() == 'v') {
+					System.out.println("Paste");
+				} */else {
 					if (keyRestrict.isAllowed(e.getKeyChar())) {
 						text += e.getKeyChar();
 					}
@@ -55,7 +57,7 @@ public class CustomTextField extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, GUIConstants.VALUE_ANTIALIASING);
 		g2.setColor(GUIConstants.BUTTON_COLOR);
 
 		String text = getText();

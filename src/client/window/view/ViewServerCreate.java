@@ -3,6 +3,7 @@ package client.window.view;
 import client.Controller;
 import client.components.CustomTextField;
 import client.components.TextButton;
+import client.window.GUIConstants;
 import client.window.View;
 import client.window.Window;
 import server.ServerMain;
@@ -35,7 +36,7 @@ public class ViewServerCreate extends View {
         if(background == null) background = new DynamicBackground();
         window.getPanel().setLayout(null);
 
-        buttonConnect = new TextButton("Create", e ->
+        buttonConnect = new TextButton(window, "Create", e ->
         {
             if (textFieldName.getText().isEmpty()) return;
 
@@ -45,11 +46,18 @@ public class ViewServerCreate extends View {
                 port = Integer.valueOf(textFieldPort.getText());
             } catch (Exception e2) {}
 
+            GUIConstants.LAST_USERNAME = textFieldName.getText();
+            GUIConstants.LAST_IP = "localhost";
+            GUIConstants.LAST_PORT = textFieldPort.getText();
+
             window.updateView(new ViewGameSetup(new ServerMain(port), background, textFieldName.getText(), "localhost", port));
         });
-        buttonBackToMainMenu = new TextButton("Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
+        buttonBackToMainMenu = new TextButton(window, "Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
         textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
         textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
+
+        if(GUIConstants.LAST_PORT != null) textFieldPort.setText(GUIConstants.LAST_PORT);
+        if(GUIConstants.LAST_USERNAME != null) textFieldName.setText(GUIConstants.LAST_USERNAME);
 
         changeSize();
 

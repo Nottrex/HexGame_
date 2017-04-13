@@ -22,14 +22,21 @@ public class TextLabel extends JComponent {
 		g.setColor(Color.WHITE);
 
 		String text = content.getText();
+		int lines = text.split("\n").length;
 
-		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f);
+		Font font = GUIConstants.FONT.deriveFont(Math.min(getHeight()*0.375f / lines, getHeight()*0.25f));
 		g.setFont(font);
 
 		int fWidth = getWidth();
-		if (centerText) fWidth = (int) g.getFontMetrics(font).getStringBounds(text, g).getWidth();
+		int fHeight = g.getFontMetrics(font).getHeight();
 
-		g.drawString(text, (getWidth()-fWidth)/2, getHeight()/2);
+		for(int i = 0; i <  lines; i++) {
+			String toDraw = text.split("\n")[i];
+			if (centerText) fWidth = (int) g.getFontMetrics(font).getStringBounds(toDraw, g).getWidth();
+			int y = fHeight*(i + 1);
+			int x = (getWidth()-fWidth)/2;
+			g.drawString(toDraw, x, y);
+		}
 	}
 
 	public void setContent(Text content) {

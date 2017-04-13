@@ -34,8 +34,8 @@ public class MapGenerator {
                 else if(f <= 5.4f/9.0f)out[x][y] = Field.GRASS_ROCK;
                 else if(f <= 6.0f/9.0f)out[x][y] = Field.DIRT;
                 else if(f <= 7.0f/9.0f)out[x][y] = Field.DIRT_ROCK;
-                else if(f <= 8.0f/9.0f)out[x][y] = Field.MARS;
-                else if(f <= 9.0f/9.0f)out[x][y] = Field.STONE;
+                else if(f <= 8.0f/9.0f)out[x][y] = Field.STONE;
+                else if(f <= 9.0f/9.0f)out[x][y] = Field.SNOW;
             }
         }
 

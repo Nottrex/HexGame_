@@ -20,10 +20,15 @@ public class AudioPlayer {
     private int pausedFrame;
     private boolean forcedStop;
 
+    public AudioPlayer() {
+        removeBuffer = new ArrayList<>();
+        currentlyPlaying = new ArrayList<>();
+        queue = new ArrayList<>();
+        loops = new ArrayList<>();
+    }
     public AudioPlayer(String startClip) {
         this(startClip, 1);
     }
-
     public AudioPlayer(String startClip, int startloop) {
         removeBuffer = new ArrayList<>();
         currentlyPlaying = new ArrayList<>();
@@ -101,6 +106,18 @@ public class AudioPlayer {
         start();
     }
 
+    public void next() {
+        currentClip = queue.get(0);
+        currentLoops = loops.get(0);
+
+        setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
+        currentClip.setFramePosition(0);
+        currentClip.start();
+
+        queue.remove(0);
+        loops.remove(0);
+    }
+
     /**
      * Plays a {@link Clip} once
      * @param audioName to get AudioFile from {@link AudioHandler}
@@ -111,14 +128,13 @@ public class AudioPlayer {
         c.setFramePosition(0);
         c.start();
 
-        currentlyPlaying.add(c);
+       currentlyPlaying.add(c);
         c.addLineListener(new LineListener() {
             @Override
             public void update(LineEvent event) {
                 if(event.getType() == LineEvent.Type.STOP) {
 
                     removeBuffer.add(c);
-                    c.close();
                 }
             }
         });
@@ -169,7 +185,7 @@ public class AudioPlayer {
      * @param c Clip which volume should be updated
      * @param volume the new volume
      */
-    private void setVolume(Clip c, int volume) {
+    private void setVolume(Clip c, float volume) {
         FloatControl fc = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
         fc.setValue(volume);
     }
