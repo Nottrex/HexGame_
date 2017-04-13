@@ -276,65 +276,6 @@ public class ViewGame extends View implements ClientListener {
 				g.drawImage(TextureHandler.getImagePng("units_" + ut.toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), (int) px, (int) py, (int) w, (int) h, null);
 
 			}
-
-			Location mloc = getHexFieldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
-			drawHexField(mloc.x, mloc.y, g, TextureHandler.getImagePng("fieldmarker_select"), wx, wy);
-
-			Location selectedField = controller.selectedField;
-
-			if (selectedField != null) {
-				drawHexField(selectedField.x, selectedField.y, g, TextureHandler.getImagePng("fieldmarker_select2"), wx, wy);
-
-				Optional<Unit> u = m.getUnitAt(selectedField);
-
-				if (u.isPresent()) {
-
-					if (controller.pa == null) {
-						controller.pa = ActionUtil.getPossibleActions(controller.game, u.get());
-					}
-
-					for (Location target: controller.pa.canMoveTo()) {
-						drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_blue"), wx, wy);
-					}
-
-					for (Location target: controller.pa.canAttack()) {
-						drawHexField(target.x, target.y, g, TextureHandler.getImagePng("fieldmarker_red"), wx, wy);
-					}
-
-					if (controller.pa.canMoveTo().contains(mloc)) {
-						java.util.List<Direction> movements = controller.pa.moveTo(mloc);
-						Location a = selectedField;
-
-						for (Direction d: movements) {
-							drawMovementArrow(a.x, a.y, g, d, wx, wy);
-							a = d.applyMovement(a);
-						}
-					} else if (controller.pa.canAttack().contains(mloc)) {
-						java.util.List<Direction> movements = controller.pa.moveToToAttack(mloc);
-						Location a = selectedField;
-
-						for (Direction d: movements) {
-							drawMovementArrow(a.x, a.y, g, d, wx, wy);
-							a = d.applyMovement(a);
-						}
-					}
-				}
-			}
-
-			g.translate((int) (cam.x/cam.zoom), (int) (cam.y/cam.zoom));
-		}
-
-		//Draw gui stuff
-		for (Component c: center.getComponents()) {
-			g.translate(c.getX(), c.getY());
-
-			c.update(g);
-
-			g.translate(-c.getX(), -c.getY());
-		}
-
-		//center.getGraphics().drawImage(buffer, 0, 0, null);
-		drawing = false;
 	}*/
 
 	private boolean drawing2 = false;
@@ -373,7 +314,7 @@ public class ViewGame extends View implements ClientListener {
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
+				g.drawImage(TextureHandler.getImagePng("unit_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
 				g.drawString(u.getType().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
@@ -398,7 +339,7 @@ public class ViewGame extends View implements ClientListener {
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("units_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
+				g.drawImage(TextureHandler.getImagePng("unit_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
 				g.drawString(u.getType().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
@@ -431,12 +372,7 @@ public class ViewGame extends View implements ClientListener {
 		TextureHandler.loadImagePngSpriteSheet("field", "fields/fields");
 		TextureHandler.loadImagePngSpriteSheet("fieldmarker", "fieldmarker/fieldmarker");
 		TextureHandler.loadImagePngSpriteSheet("arrow", "arrow/arrow");
-
-		for (UnitType ut: UnitType.values()) {
-			for (PlayerColor pc: PlayerColor.values()) {
-				TextureHandler.loadImagePng("units_" + ut.toString().toLowerCase() + "_" + pc.toString().toLowerCase(), "units/" + ut.toString().toLowerCase() + "/" + pc.toString().toLowerCase());
-			}
-		}
+		TextureHandler.loadImagePngSpriteSheet("unit", "units/units");
 
 		for (PlayerColor pc: PlayerColor.values()) {
 			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());

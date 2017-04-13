@@ -1,12 +1,15 @@
 package client.window.view.game.gameView;
 
+import client.AnimationAction;
 import client.Controller;
+import client.animationActions.AnimationActionUnitMove;
 import client.window.Camera;
 import client.window.GUIConstants;
 import client.window.TextureHandler;
 import client.window.view.game.gameView.shader.FieldShader;
 import client.window.view.game.gameView.shader.FieldmarkerShader;
 import client.window.view.game.gameView.shader.SquareShader;
+import client.window.view.game.gameView.shader.UnitShader;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.math.FloatUtil;
@@ -18,6 +21,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import game.Location;
 import game.Unit;
 import game.enums.Direction;
+import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -42,6 +46,9 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 	private Texture arrowTexture;
 	private SquareShader squareShader;
+
+	private Texture unitTexture;
+	private UnitShader unitShader;
 
 	public GameView(GLCapabilities capabilities, Controller controller, Camera cam) {
 		super(capabilities);
@@ -93,6 +100,15 @@ public class GameView extends GLJPanel implements GLEventListener {
 		squareShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
 		squareShader.stop(gl);
 
+		unitShader = new UnitShader(gl);
+
+
+		unitShader.start(gl);
+		unitShader.setTexture(gl, 0);
+		img = TextureHandler.getImagePng("unit");
+		unitShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
+		unitShader.stop(gl);
+
 		textureInit(gl);
 
 		animator = new FPSAnimator(this, 60);
@@ -116,6 +132,11 @@ public class GameView extends GLJPanel implements GLEventListener {
 		arrowTexture.bind(gl);
 		arrowTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
 		arrowTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+
+		unitTexture = TextureIO.newTexture(gl, toTexture(this.getGLProfile(), TextureHandler.getImagePng("unit")));
+		unitTexture.bind(gl);
+		unitTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+		unitTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 	}
 
 	public void dispose(GLAutoDrawable drawable) {
@@ -129,8 +150,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 		controller.updateAnimationActions();
+		AnimationAction currentAnimation = controller.getAnimationAction();
 		updateCamera(gl, cam);
-
 
 		fieldTexture.bind(gl);
 		fieldShader.start(gl);
@@ -229,6 +250,33 @@ public class GameView extends GLJPanel implements GLEventListener {
 			}
 		}
 
+		unitTexture.bind(gl);
+		unitShader.start(gl);
+		for (Unit unit: map.getUnits()) {
+			UnitType ut = unit.getType();
+			double w = ut.getSize();
+			double h = w*GUIConstants.UNIT_XY_RATIO;
+
+			double py = -((unit.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO-h)/2);
+			double px = unit.getX() - unit.getY()/2.0 + (1-w)/2;
+
+			if (currentAnimation != null && currentAnimation instanceof AnimationActionUnitMove) {
+				AnimationActionUnitMove animation = (AnimationActionUnitMove) currentAnimation;
+
+				if (animation.getUnit() == unit) {
+					py = -((unit.getY()+animation.getCurrentDirection().getYMovement()*animation.interpolation())*(GUIConstants.HEX_TILE_YY_RATIO)*GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO-h)/2);
+					px = (unit.getX()+animation.getCurrentDirection().getXMovement()*animation.interpolation()) - (unit.getY()+animation.getCurrentDirection().getYMovement()*animation.interpolation())/2.0 + (1-w)/2;
+				}
+			}
+
+			unitShader.setBounds(gl, (float) px, (float) py, (float) w, (float) h);
+			Rectangle rec = TextureHandler.getSpriteSheetBounds("unit_" + ut.toString().toLowerCase() + "_" + unit.getPlayer().toString().toLowerCase());
+			unitShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+
+			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+		}
+
+		unitShader.stop(gl);
 
 		gl.glFlush();
 	}
@@ -300,6 +348,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 		squareShader.setProjectionMatrix(gl, projectionMatrix);
 		squareShader.stop(gl);
 
+		unitShader.start(gl);
+		unitShader.setProjectionMatrix(gl, projectionMatrix);
+		unitShader.stop(gl);
+
 		textureInit(gl);
 		gl.glViewport(x, y, width, height);
 	}
@@ -327,6 +379,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 			squareShader.start(gl);
 			squareShader.setCamera(gl, viewMatrix);
 			squareShader.stop(gl);
+
+			unitShader.start(gl);
+			unitShader.setCamera(gl, viewMatrix);
+			unitShader.stop(gl);
 		}
 	}
 
