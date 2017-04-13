@@ -6,6 +6,7 @@ import client.window.GUIConstants;
 import client.window.TextureHandler;
 import client.window.view.game.gameView.shader.FieldShader;
 import client.window.view.game.gameView.shader.FieldmarkerShader;
+import client.window.view.game.gameView.shader.SquareShader;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.math.FloatUtil;
@@ -16,6 +17,7 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import game.Location;
 import game.Unit;
+import game.enums.Direction;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -37,6 +39,9 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 	private Texture fieldmarkerTexture;
 	private FieldmarkerShader fieldmarkerShader;
+
+	private Texture arrowTexture;
+	private SquareShader squareShader;
 
 	public GameView(GLCapabilities capabilities, Controller controller, Camera cam) {
 		super(capabilities);
@@ -80,6 +85,14 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldmarkerShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
 		fieldmarkerShader.stop(gl);
 
+		squareShader = new SquareShader(gl);
+
+		squareShader.start(gl);
+		squareShader.setTexture(gl, 0);
+		img = TextureHandler.getImagePng("arrow");
+		squareShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
+		squareShader.stop(gl);
+
 		textureInit(gl);
 
 		animator = new FPSAnimator(this, 60);
@@ -98,6 +111,11 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldTexture.bind(gl);
 		fieldTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
 		fieldTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+
+		arrowTexture = TextureIO.newTexture(gl, toTexture(this.getGLProfile(), TextureHandler.getImagePng("arrow")));
+		arrowTexture.bind(gl);
+		arrowTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+		arrowTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 	}
 
 	public void dispose(GLAutoDrawable drawable) {
@@ -112,6 +130,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		controller.updateAnimationActions();
 		updateCamera(gl, cam);
+
 
 		fieldTexture.bind(gl);
 		fieldShader.start(gl);
@@ -173,7 +192,90 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldmarkerShader.stop(gl);
 
+		if (selectedField != null && mouseLocation != null) {
+			Optional<Unit> u = map.getUnitAt(selectedField);
+
+			if (u.isPresent()) {
+				PossibleActions pa = controller.pa;
+
+				if (pa != null) {
+					arrowTexture.bind(gl);
+					squareShader.start(gl);
+
+					if (pa.canAttack().contains(mouseLocation)) {
+						java.util.List<Direction> movements = pa.moveToToAttack(mouseLocation);
+
+						Location a = new Location(selectedField.x, selectedField.y);
+
+						for (Direction d : movements) {
+							drawMovementArrow(gl, squareShader, a, d);
+							a = d.applyMovement(a);
+						}
+					}
+
+					if (pa.canMoveTo().contains(mouseLocation)) {
+						java.util.List<Direction> movements = pa.moveTo(mouseLocation);
+
+						Location a = new Location(selectedField.x, selectedField.y);
+
+						for (Direction d : movements) {
+							drawMovementArrow(gl, squareShader, a, d);
+							a = d.applyMovement(a);
+						}
+					}
+
+					squareShader.stop(gl);
+				}
+			}
+		}
+
+
 		gl.glFlush();
+	}
+
+	private static void drawMovementArrow(GL2 gl, SquareShader squareShader, Location location, Direction d) {
+		double wx = 1;
+		double wy = GUIConstants.HEX_TILE_XY_RATIO;
+		double centerY1 = -((location.y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy - wy/2);
+		double centerX1 = (location.x)*wx - (location.y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
+
+		double centerY2 = -((location.y+d.getYMovement())*(GUIConstants.HEX_TILE_YY_RATIO)*wy - wy/2);
+		double centerX2 = (location.x+d.getXMovement())*wx - (location.y+d.getYMovement())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
+
+		float[] position = null;
+		Rectangle spriteSheetPosition = null;
+		switch (d) {
+			case RIGHT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_right");
+				position = new float[] {(float) (centerX1+wx*GUIConstants.ARROW_SIZE/2), (float) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (GUIConstants.ARROW_SIZE*wx)};
+				break;
+			case LEFT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_left");
+				position = new float[]{(float) (centerX2+wx*GUIConstants.ARROW_SIZE/2), (float) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (GUIConstants.ARROW_SIZE*wx)};
+				break;
+			case UP_RIGHT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_up_right");
+				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
+				break;
+			case UP_LEFT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_up_left");
+				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
+				break;
+			case DOWN_LEFT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_down_left");
+				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
+				break;
+			case DOWN_RIGHT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_down_right");
+				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
+				break;
+			default:
+				break;
+		}
+
+		squareShader.setTextureSheetBounds(gl, spriteSheetPosition.x, spriteSheetPosition.y, spriteSheetPosition.width, spriteSheetPosition.height);
+		squareShader.setBounds(gl, position[0], position[1], position[2], position[3]);
+		gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
 	}
 
 	private float[] projectionMatrix;
@@ -194,6 +296,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldmarkerShader.setProjectionMatrix(gl, projectionMatrix);
 		fieldmarkerShader.stop(gl);
 
+		squareShader.start(gl);
+		squareShader.setProjectionMatrix(gl, projectionMatrix);
+		squareShader.stop(gl);
+
 		textureInit(gl);
 		gl.glViewport(x, y, width, height);
 	}
@@ -203,7 +309,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private void updateCamera(GL2 gl, Camera cam) {
 		boolean b = cam.update();
 
-		if (viewMatrix==null||b) {
+		if (viewMatrix==null || b) {
 			float[] target = {-cam.x, -cam.y, 0};
 			cameraPosition = new float[] {-cam.x, -cam.y, 1/cam.zoom};
 			float[] up = {0, 1, 0};
@@ -217,6 +323,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 			fieldmarkerShader.start(gl);
 			fieldmarkerShader.setCamera(gl, viewMatrix);
 			fieldmarkerShader.stop(gl);
+
+			squareShader.start(gl);
+			squareShader.setCamera(gl, viewMatrix);
+			squareShader.stop(gl);
 		}
 	}
 
@@ -244,10 +354,9 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		int	y = (int) Math.floor(dy);
 		int	x = (int) Math.floor(px + y/2.0);
-
-		if ((dy%1) <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
-			double vx = (px + y/2.0) % 1;
-			double vy = ((dy%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
+		if (((dy%1)+1)%1 <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
+			double vx = (((px + y/2.0) % 1)+1)%1;
+			double vy = ((((dy%1)+1)%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
 
 			if (vx < 0.5) {
 				if (vx + vy  < 0.5) {

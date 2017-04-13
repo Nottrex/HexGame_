@@ -337,37 +337,6 @@ public class ViewGame extends View implements ClientListener {
 		drawing = false;
 	}*/
 
-	private void drawMovementArrow(int x, int y, Graphics g, Direction d, double wx, double wy) {
-		double centerY1 = (y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy + wy/2;
-		double centerX1 = (x)*wx - (y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
-
-		double centerY2 = (y+d.getYMovement())*(GUIConstants.HEX_TILE_YY_RATIO)*wy + wy/2;
-		double centerX2 = (x+d.getXMovement())*wx - (y+d.getYMovement())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
-
-		switch (d) {
-			case RIGHT:
-				g.drawImage(TextureHandler.getImagePng("arrow_right"), (int) (centerX1+wx*GUIConstants.ARROW_SIZE/2), (int) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (GUIConstants.ARROW_SIZE*wx), null);
-				break;
-			case LEFT:
-				g.drawImage(TextureHandler.getImagePng("arrow_left"), (int) (centerX2+wx*GUIConstants.ARROW_SIZE/2), (int) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (GUIConstants.ARROW_SIZE*wx), null);
-				break;
-			case UP_RIGHT:
-				g.drawImage(TextureHandler.getImagePng("arrow_up_right"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
-				break;
-			case UP_LEFT:
-				g.drawImage(TextureHandler.getImagePng("arrow_up_left"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
-				break;
-			case DOWN_LEFT:
-				g.drawImage(TextureHandler.getImagePng("arrow_down_left"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
-				break;
-			case DOWN_RIGHT:
-				g.drawImage(TextureHandler.getImagePng("arrow_down_right"), (int) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (int) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (int) (wx*GUIConstants.ARROW_SIZE), (int) (wx*GUIConstants.ARROW_SIZE), null);
-				break;
-			default:
-				break;
-		}
-	}
-
 	private boolean drawing2 = false;
 	public void redrawInfoBar() {
 		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || controller == null || controller.game == null || drawing2) return;
@@ -459,9 +428,9 @@ public class ViewGame extends View implements ClientListener {
 	}
 
 	private void loadResources() {
-
 		TextureHandler.loadImagePngSpriteSheet("field", "fields/fields");
 		TextureHandler.loadImagePngSpriteSheet("fieldmarker", "fieldmarker/fieldmarker");
+		TextureHandler.loadImagePngSpriteSheet("arrow", "arrow/arrow");
 
 		for (UnitType ut: UnitType.values()) {
 			for (PlayerColor pc: PlayerColor.values()) {
@@ -471,10 +440,6 @@ public class ViewGame extends View implements ClientListener {
 
 		for (PlayerColor pc: PlayerColor.values()) {
 			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
-		}
-
-		for (Direction d: Direction.values()) {
-			TextureHandler.loadImagePng("arrow_" + d.toString().toLowerCase(), "arrow/arrow_" + d.toString().toLowerCase());
 		}
 
 		TextureHandler.loadImagePng("button_audioOn", "ui/buttons/audioOn");
