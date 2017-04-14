@@ -98,7 +98,7 @@ public class ViewGame extends View implements ClientListener {
 		button_centerCamera = new ImageButton(window, TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(window, TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
 		button_backToMainMenu = new ImageButton(window, TextureHandler.getImagePng("button_endTurn"), e -> {onLeave(); if(server != null) server.stop(); window.updateView(new ViewMainMenu());});
-		fpsLabel = new TextLabel(() -> ("FPS: " + center.animator.getFPS()), false);
+		fpsLabel = new TextLabel(() -> ("FPS: " + (int)center.animator.getLastFPS()), false);
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
 			public BufferedImage getImage() {

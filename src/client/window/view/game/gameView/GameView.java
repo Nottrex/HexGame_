@@ -112,6 +112,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		textureInit(gl);
 
 		animator = new FPSAnimator(this, 60);
+		animator.setUpdateFPSFrames(60, null);
 		animator.start();
 	}
 
