@@ -64,6 +64,7 @@ public class DynamicBackground {
 			Color c = interpolateColor(drawOvers.get(l), targetColors.get(l), (1.0*(currentTime-interpolationStart.get(l)))/interpolationTime.get(l));
 			drawHexField(l.x, l.y, g, new Color(c.getRed()/255.0f, c.getGreen()/255.0f, c.getBlue()/255.0f, 0.2f));
 		}
+
 		BufferedImage buffer2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
 		float data[] = { 0.0625f, 0.125f, 0.0625f, 0.125f, 0.25f, 0.125f,
@@ -82,11 +83,13 @@ public class DynamicBackground {
 	private void update() {
 		long currentTime = System.currentTimeMillis();
 
+
 		for(int x = -1; x < w/120 + 15; x++){
 			for(int y = -1; y < h/140 + 18; y++){
-				if(!drawOvers.containsKey(new Location(x, y))){
+				Location l = new Location(x, y);
+				if(!drawOvers.containsKey(l)){
 					int gr = r.nextInt(255);
-					Location l = new Location(x, y);
+					l = new Location(x, y);
 					drawOvers.put(l, new Color(gr, gr, gr));
 
 					int gr2 = gr+(r.nextInt(2*MAX_COLOR_DISTANCE_BACKGROUND+1)-MAX_COLOR_DISTANCE_BACKGROUND);
@@ -154,6 +157,8 @@ public class DynamicBackground {
 		double px = (x)*120 - (y)*60;
 
 		g.setColor(c);
-		g.fillPolygon(GUIConstants.HEX_TILE((int)px, (int)py));
+		g.translate((int)px, (int)py);
+		g.fillPolygon(GUIConstants.HEX_TILE);
+		g.translate(-(int)px, -(int)py);
 	}
 }

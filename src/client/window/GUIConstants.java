@@ -15,9 +15,7 @@ public class GUIConstants {
   
 	public static final double ARROW_SIZE 					= 0.5;
 
-	public static Polygon HEX_TILE(int x, int y) {
-		return new Polygon(new int[]{x, x + 60, x + 120, x + 120, x + 60, x}, new int[]{y + 35, y, y + 35, y + 105, y + 140, y + 105}, 6);
-	}
+	public static Polygon HEX_TILE =  new Polygon(new int[]{0, 60, 120, 120, 60, 0}, new int[]{35, 0, 35, 105, 140, 105}, 6);
   
 	public static final Font FONT							= new Font("Arial", Font.BOLD, 12);
 

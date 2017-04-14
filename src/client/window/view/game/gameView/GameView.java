@@ -390,7 +390,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		float aspect = width*1.0f/height;
 		float fov = 90;
 		float near = 0.01f;
-		float far = 1000f;
+		float far = 10000f;
 
 		projectionMatrix = FloatUtil.makePerspective(new float[16], 0, true, (float)Math.toRadians(fov), aspect, near, far);
 
