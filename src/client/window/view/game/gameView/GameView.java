@@ -178,6 +178,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		animator = new FPSAnimator(this, 60);
 		animator.setUpdateFPSFrames(60, null);
 		animator.start();
+		requestFocus();
 	}
 
 	private void textureInit(GL2 gl) {
