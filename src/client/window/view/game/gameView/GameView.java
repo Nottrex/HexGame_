@@ -411,6 +411,16 @@ public class GameView extends GLJPanel implements GLEventListener {
 		return point;
 	}
 
+	public float[] hexPositionToWorldPosition(Location hexField) {
+		int x = hexField.x;
+		int y = hexField.y;
+
+		float fx = x * 1 - y  / 2;
+		float fy = (float)(-y * GUIConstants.HEX_TILE_YY_RATIO + GUIConstants.HEX_TILE_XY_RATIO);
+
+		return new float[]{fx, fy};
+	}
+
 	public Location getHexFieldPosition(float px, float py) {
 		py += GUIConstants.HEX_TILE_XY_RATIO;
 		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO*GUIConstants.HEX_TILE_XY_RATIO);

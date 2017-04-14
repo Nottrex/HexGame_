@@ -221,6 +221,15 @@ public class ViewGame extends View implements ClientListener {
 			}
 		}
 
+		if(keyCode == KeyEvent.VK_0) {
+			Unit u = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor()).get(0);
+			if(u == null) return;
+			cam.tx = -center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()))[0];
+			cam.ty = -center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()))[1];
+
+			centerCamera();
+		}
+
 		controller.onKeyType(keyCode);
 	}
 
