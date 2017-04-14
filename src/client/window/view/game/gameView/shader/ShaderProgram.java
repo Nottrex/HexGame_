@@ -4,12 +4,12 @@ import client.window.FileHandler;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.math.Matrix4;
 
-public abstract class ShaderProgramm {
+public abstract class ShaderProgram {
 	private int programID;
 	private int vertexShaderID;
 	private int fragmentShaderID;
 
-	public ShaderProgramm(GL2 gl, String vertexFile, String fragmentFile) {
+	public ShaderProgram(GL2 gl, String vertexFile, String fragmentFile) {
 		vertexShaderID = loadShader(gl, vertexFile, gl.GL_VERTEX_SHADER);
 		fragmentShaderID = loadShader(gl, fragmentFile, gl.GL_FRAGMENT_SHADER);
 
@@ -19,8 +19,57 @@ public abstract class ShaderProgramm {
 		gl.glLinkProgram(programID);
 		gl.glValidateProgram(programID);
 
+		int[] error = new int[]{-1};
+
+		gl.glGetShaderiv(vertexShaderID, GL2.GL_COMPILE_STATUS, error, 0);
+		if (error[0] != GL2.GL_TRUE) {
+			int[] len = new int[1];
+			gl.glGetShaderiv(vertexShaderID, GL2.GL_INFO_LOG_LENGTH, len, 0);
+			if (len[0] == 0) {
+				System.err.println("No error stated2");
+				System.exit(-1);
+			}
+			byte[] errormessage = new byte[len[0]];
+			gl.glGetShaderInfoLog(vertexShaderID, len[0], len, 0, errormessage, 0);
+
+			System.err.println(new String(errormessage, 0, len[0] + 1));
+			System.exit(-1);
+		}
+
+		gl.glGetShaderiv(fragmentShaderID, GL2.GL_COMPILE_STATUS, error, 0);
+
+		if (error[0] != GL2.GL_TRUE) {
+			int[] len = new int[1];
+			gl.glGetShaderiv(fragmentShaderID, GL2.GL_INFO_LOG_LENGTH, len, 0);
+			if (len[0] == 0) {
+				System.err.println("No error stated3");
+				System.exit(-1);
+			}
+			byte[] errormessage = new byte[len[0]];
+			gl.glGetShaderInfoLog(fragmentShaderID, len[0], len, 0, errormessage, 0);
+
+			System.err.println(new String(errormessage, 0, len[0] + 1));
+			System.exit(-1);
+		}
+
+
+		gl.glGetProgramiv(programID, GL2.GL_LINK_STATUS, error, 0);
+		if (error[0] != GL2.GL_TRUE) {
+			int[] len = new int[1];
+			gl.glGetProgramiv(programID, GL2.GL_INFO_LOG_LENGTH, len, 0);
+			if (len[0] == 0) {
+				System.err.println("No error stated1");
+				System.exit(-1);
+			}
+			byte[] errormessage = new byte[len[0]];
+			gl.glGetProgramInfoLog(programID, len[0], len, 0, errormessage, 0);
+			System.err.println(new String(errormessage, 0, len[0]));
+			System.exit(-1);
+		}
+
 		bindAttributes(gl);
 		getUniformLocations(gl);
+		//gl.glLinkProgram(programID);
 	}
 
 	public void start(GL2 gl) {
@@ -63,8 +112,8 @@ public abstract class ShaderProgramm {
 		return gl.glGetUniformLocation(programID, name);
 	}
 
-	protected void bindAttribute(GL2 gl, int attribute, String variableName) {
-		gl.glBindAttribLocation(programID, attribute, variableName);
+	protected int getAttributeLocation(GL2 gl, String variableName) {
+		return gl.glGetAttribLocation(programID, variableName);
 	}
 
 	private static int loadShader(GL2 gl, String file, int type) {

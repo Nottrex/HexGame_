@@ -2,7 +2,7 @@ package client.window.view.game.gameView.shader;
 
 import com.jogamp.opengl.GL2;
 
-public class UnitShader extends ShaderProgramm{
+public class UnitShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "unitVertexShader";
 	private static final String FRAGMENT_FILE = "unitFragmentShader";
 

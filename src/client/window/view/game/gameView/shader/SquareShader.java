@@ -2,7 +2,7 @@ package client.window.view.game.gameView.shader;
 
 import com.jogamp.opengl.GL2;
 
-public class SquareShader extends ShaderProgramm{
+public class SquareShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "squareVertexShader";
 	private static final String FRAGMENT_FILE = "squareFragmentShader";
 

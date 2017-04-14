@@ -2,7 +2,7 @@ package client.window.view.game.gameView.shader;
 
 import com.jogamp.opengl.GL2;
 
-public class FieldmarkerShader extends ShaderProgramm{
+public class FieldmarkerShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "fieldmarkerVertexShader";
 	private static final String FRAGMENT_FILE = "fieldmarkerFragmentShader";
 

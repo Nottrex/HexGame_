@@ -1,9 +1,8 @@
 package client.window.view.game.gameView.shader;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.math.Matrix4;
 
-public class FieldShader extends ShaderProgramm{
+public class FieldShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "fieldVertexShader";
 	private static final String FRAGMENT_FILE = "fieldFragmentShader";
 
@@ -11,24 +10,19 @@ public class FieldShader extends ShaderProgramm{
 		super(gl, VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, locationLocation, cameraLocation, projectionLocation;
-	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation;
+	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, cameraLocation, projectionLocation;
+	private int texTWLocation, texTHLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
 		hexWidthLocation = getUniformLocation(gl, "hexWidth");
 		hexHeightLocation = getUniformLocation(gl, "hexHeight");
-		locationLocation = getUniformLocation(gl, "location");
 		hexHeight2Location = getUniformLocation(gl, "hexHeight2");
 		cameraLocation = getUniformLocation(gl, "cameraMatrix");
 		projectionLocation = getUniformLocation(gl, "projectionMatrix");
 
-		texXLocation = getUniformLocation(gl, "texX");
-		texYLocation = getUniformLocation(gl, "texY");
 		texTWLocation = getUniformLocation(gl, "texTW");
 		texTHLocation = getUniformLocation(gl, "texTH");
-		texHLocation = getUniformLocation(gl, "texH");
-		texWLocation = getUniformLocation(gl, "texW");
 	}
 
 	public void setTexture(GL2 gl, int tex) {
@@ -47,10 +41,6 @@ public class FieldShader extends ShaderProgramm{
 		setUniform1f(gl, hexHeightLocation, height);
 	}
 
-	public void setLocation(GL2 gl, float locationX, float locationY) {
-		setUniform2f(gl, locationLocation, locationX, locationY);
-	}
-
 	public void setCamera(GL2 gl, float[] camera) {
 		setUniformMat4(gl, cameraLocation, camera);
 	}
@@ -59,20 +49,23 @@ public class FieldShader extends ShaderProgramm{
 		setUniformMat4(gl, projectionLocation, projectionMatrix);
 	}
 
-	public void setTextureSheetBounds(GL2 gl, int x, int y, int width, int height) {
-		setUniform1i(gl, texXLocation, x);
-		setUniform1i(gl, texYLocation, y);
-		setUniform1i(gl, texWLocation, width);
-		setUniform1i(gl, texHLocation, height);
-	}
-
 	public void setTextureTotalBounds(GL2 gl, int texTW, int texTH) {
 		setUniform1i(gl, texTWLocation, texTW);
 		setUniform1i(gl, texTHLocation, texTH);
 	}
 
+	private int locationLocation, texLocationLocation;
 	@Override
 	protected void bindAttributes(GL2 gl) {
+		locationLocation = getAttributeLocation(gl, "location");
+		texLocationLocation = getAttributeLocation(gl, "texLocation");
+	}
 
+	public int getLocationLocation() {
+		return locationLocation;
+	}
+
+	public int getTexLocationLocation() {
+		return texLocationLocation;
 	}
 }
