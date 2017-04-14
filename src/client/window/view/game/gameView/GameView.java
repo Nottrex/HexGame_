@@ -425,8 +425,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		}
 
 		if (viewMatrix==null || b) {
-			float[] target = {-cam.x, -cam.y, 0};
-			cameraPosition = new float[] {-cam.x, -cam.y, 1/cam.zoom};
+			float[] target = {cam.x, cam.y, 0};
+			cameraPosition = new float[] {cam.x, cam.y, 1/cam.zoom};
 			float[] up = {0, 1, 0};
 
 			viewMatrix = FloatUtil.makeLookAt(new float[16], 0, cameraPosition, 0, target, 0, up, 0, new float[16]);
@@ -473,8 +473,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		int x = hexField.x;
 		int y = hexField.y;
 
-		float fx = x * 1 - y  / 2;
-		float fy = (float)(-y * GUIConstants.HEX_TILE_YY_RATIO + GUIConstants.HEX_TILE_XY_RATIO);
+		float fx = x * 1 - y  / 2 + 0.5f;
+		float fy = (float)(-y * GUIConstants.HEX_TILE_YY_RATIO - GUIConstants.HEX_TILE_XY_RATIO) - (float) GUIConstants.HEX_TILE_YY_RATIO/2;
 
 		return new float[]{fx, fy};
 	}

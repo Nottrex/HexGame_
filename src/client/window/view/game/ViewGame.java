@@ -167,14 +167,12 @@ public class ViewGame extends View implements ClientListener {
 
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
-		if (center.getHeight() == 0) {
-			cam.tzoom = 0.13f;
-		} else {
-			cam.tzoom = (float)((m.getHeight()* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_XY_RATIO) / center.getHeight());
+		cam.tzoom = 2.2f/m.getHeight();
 
-			//cam.ty = (float)((GUIConstants.HEX_TILE_XY_RATIO)/2-cam.tzoom*center.getHeight()/2 + (m.getHeight()/2)* GUIConstants.HEX_TILE_XY_RATIO* GUIConstants.HEX_TILE_YY_RATIO - 20*cam.tzoom);
-			//cam.tx = (float)(0.5 - cam.tzoom*center.getWidth()/2 + (m.getWidth()/2) - (m.getHeight()/4));
-		}
+		float[] pos = center.hexPositionToWorldPosition(new Location(m.getWidth()/2, m.getHeight()/2+1));
+
+		cam.tx = pos[0];
+		cam.ty = pos[1];
 	}
 
 	public void onMouseClick(int x, int y) {
@@ -190,8 +188,8 @@ public class ViewGame extends View implements ClientListener {
 
 		dy = -dy;
 
-		cam.tx -= (dx*(-one[0]+zero[0]));
-		cam.ty -= (dy*(-one[1]+zero[1]));
+		cam.tx += (dx*(-one[0]+zero[0]));
+		cam.ty += (dy*(-one[1]+zero[1]));
 	}
 
 	public void onKeyType(int keyCode) {
@@ -224,10 +222,11 @@ public class ViewGame extends View implements ClientListener {
 		if(keyCode == KeyEvent.VK_0) {
 			Unit u = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor()).get(0);
 			if(u == null) return;
-			cam.tx = -center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()))[0];
-			cam.ty = -center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()))[1];
+			float[] pos = center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()));
+			cam.tx = pos[0];
+			cam.ty = pos[1];
 
-			centerCamera();
+			cam.tzoom = 2.2f/20;
 		}
 
 		controller.onKeyType(keyCode);
