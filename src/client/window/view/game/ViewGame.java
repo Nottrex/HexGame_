@@ -31,6 +31,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 public class ViewGame extends View implements ClientListener {
 	private MouseInputListener mouseListener;
@@ -186,8 +187,6 @@ public class ViewGame extends View implements ClientListener {
 		float[] zero = center.screenPositionToWorldPosition(0, 0);
 		float[] one = center.screenPositionToWorldPosition(1, 1);
 
-		dy = -dy;
-
 		cam.tx += (dx*(-one[0]+zero[0]));
 		cam.ty += (dy*(-one[1]+zero[1]));
 	}
@@ -220,13 +219,14 @@ public class ViewGame extends View implements ClientListener {
 		}
 
 		if(keyCode == KeyEvent.VK_0) {
-			Unit u = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor()).get(0);
-			if(u == null) return;
+			List<Unit> units = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor());
+			if (units.isEmpty()) return;
+			Unit u = units.get(0);
 			float[] pos = center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()));
 			cam.tx = pos[0];
 			cam.ty = pos[1];
 
-			cam.tzoom = 2.2f/20;
+			cam.tzoom = 2.2f/15;
 		}
 
 		controller.onKeyType(keyCode);

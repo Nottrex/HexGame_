@@ -452,7 +452,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 	public float[] screenPositionToWorldPosition(int x, int y) {
 		if (projectionMatrix == null || viewMatrix == null || cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN) return new float[] {-1, -1};
 
-		float[] ray_nds = {(x*1.0f/getWidth())*2-1, ((y*1.0f/getHeight())*2-1), 1.0f};
+		float[] ray_nds = {(x*1.0f/getWidth())*2-1, (1-(y*1.0f/getHeight())*2), 1.0f};
 		float[] ray_clip = {ray_nds[0], ray_nds[1], -1.0f, 1.0f};
 
 		float[] ray_eye = FloatUtil.multMatrixVec(FloatUtil.invertMatrix(projectionMatrix, new float[16]), ray_clip, new float[4]);
@@ -464,7 +464,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		ray_wor = VectorUtil.normalizeVec3(ray_wor);
 
 		float distance = -cameraPosition[2]/ray_wor[2];
-		float[] point = {distance*ray_wor[0]+cameraPosition[0], distance*ray_wor[1]-cameraPosition[1]};
+		float[] point = {distance*ray_wor[0]+cameraPosition[0], distance*ray_wor[1]+cameraPosition[1]};
 
 		return point;
 	}
@@ -480,6 +480,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 	}
 
 	public Location getHexFieldPosition(float px, float py) {
+		py = -py;
 		py += GUIConstants.HEX_TILE_XY_RATIO;
 		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO*GUIConstants.HEX_TILE_XY_RATIO);
 
