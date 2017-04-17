@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public class GameMap {
 	private Field[][] map;
+	private int[][] diversityMap;
 	private int width, height;
 	private List<Unit> units;
 
@@ -22,6 +23,8 @@ public class GameMap {
 		this.width = map.length;
 		this.height = map[0].length;
 
+		this.diversityMap = gm.getDiversityMap();
+
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));
@@ -29,10 +32,12 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 	}
 
-	public GameMap(Field[][] map, List<Unit> units) {
+	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap) {
 		this.map = map;
 		this.width = map.length;
 		this.height = (width > 0) ? map[0].length : 0;
+
+		this.diversityMap = diversityMap;
 
 		this.units = units;
 	}
@@ -96,6 +101,8 @@ public class GameMap {
 	public int getHeight() {
 		return height;
 	}
+
+	public int getDiversity(int x, int y) { return diversityMap[x][y];}
 
 	public GameMap(String data) {
 		

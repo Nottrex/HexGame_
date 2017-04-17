@@ -107,7 +107,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 			for (int y = 0; y < map.getHeight(); y++) {
 				if (map.getFieldAt(x, y).isAccessible()) {
 					Field f = map.getFieldAt(x, y);
-					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase());
+					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase() + "_" + map.getDiversity(x, y));
 					for(int i = 0; i < 12; i++) {
 						locations[12*2*a+i*2] = x;
 						locations[12*2*a+1+i*2] = y;

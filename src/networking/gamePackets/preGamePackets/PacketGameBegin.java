@@ -54,7 +54,7 @@ public class PacketGameBegin implements Packet {
 			units.add(PacketDecrypterUtil.getUnit(pd));
 		}
 
-		GameMap map = new GameMap(fieldArray, units);
+		GameMap map = new GameMap(fieldArray, units, new int[width][height]);					//TODO: real diversitymap
 
 		game = new Game(map, players, round, playerTurnID);
 	}
