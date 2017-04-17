@@ -6,6 +6,7 @@ import game.enums.UnitType;
 import game.map.GameMap;
 import game.map.MapGenerator;
 import game.map.presets.HexPreset;
+import game.map.presets.OvalPreset;
 
 import java.util.Map;
 import java.util.Optional;
