@@ -11,7 +11,12 @@ public class FieldmarkerShader extends ShaderProgram {
 	}
 
 	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, locationLocation, cameraLocation, projectionLocation;
-	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation;
+	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation, timeLocation;
+
+	public void setTime(GL2 gl, float time) {
+		setUniform1f(gl, timeLocation, time);
+	}
+
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
@@ -28,6 +33,8 @@ public class FieldmarkerShader extends ShaderProgram {
 		texTHLocation = getUniformLocation(gl, "texTH");
 		texHLocation = getUniformLocation(gl, "texH");
 		texWLocation = getUniformLocation(gl, "texW");
+
+		timeLocation = getUniformLocation(gl, "time");
 	}
 
 	public void setTexture(GL2 gl, int tex) {
