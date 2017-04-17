@@ -69,6 +69,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		GL2 gl = drawable.getGL().getGL2();
 		drawable.setGL((new DebugGL2(gl)));
 
+		gl.glDepthFunc(GL.GL_LEQUAL);
+
 		gl.setSwapInterval(1);
 		gl.glEnable(GL2.GL_TEXTURE_2D);
 		gl.glClearColor(0f, 1f, 1f, 1f);
@@ -99,23 +101,22 @@ public class GameView extends GLJPanel implements GLEventListener {
 			}
 		}
 
-		float[] locations = new float[length*2*12];
-		float[] texLocations = new float[length*4*12];
+		float[] locations = new float[length*2*18];
+		float[] texLocations = new float[length*4*18];
 
 		int a = 0;
 		for (int x = 0; x < map.getWidth(); x++) {
 			for (int y = 0; y < map.getHeight(); y++) {
 				if (map.getFieldAt(x, y).isAccessible()) {
-					Field f = map.getFieldAt(x, y);
 					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase() + "_" + map.getDiversity(x, y));
-					for(int i = 0; i < 12; i++) {
-						locations[12*2*a+i*2] = x;
-						locations[12*2*a+1+i*2] = y;
+					for(int i = 0; i < 18; i++) {
+						locations[18*2*a+i*2] = x;
+						locations[18*2*a+1+i*2] = y;
 
-						texLocations[12*4*a+i*4] = rec.x;
-						texLocations[12*4*a+1+i*4] = rec.y;
-						texLocations[12*4*a+2+i*4] = rec.width;
-						texLocations[12*4*a+3+i*4] = rec.height;
+						texLocations[18*4*a+i*4] = rec.x;
+						texLocations[18*4*a+1+i*4] = rec.y;
+						texLocations[18*4*a+2+i*4] = rec.width;
+						texLocations[18*4*a+3+i*4] = rec.height;
 
 					}
 					a++;
@@ -129,10 +130,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glGenBuffers(2, buffers);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*12 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*18 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*12 * 4, texLocationBuffer, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*18 * 4, texLocationBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glGenVertexArrays(1, vertexArray);
 		gl.glBindVertexArray(vertexArray.get(0));
@@ -224,7 +225,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
 
 		gl.glBindVertexArray(vertexArray.get(0));
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, length*12);
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, length*18);
 		gl.glBindVertexArray(0);
 		fieldShader.stop(gl);
 

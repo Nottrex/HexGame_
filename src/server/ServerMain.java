@@ -36,7 +36,7 @@ public class ServerMain implements ServerListener {
 		players = new HashMap<>();
 		playerReady = new HashMap<>();
 		playerColor = new HashMap<>();
-/*
+
 		Scanner s = new Scanner(System.in);
 
 		System.out.print("Port: ");
@@ -48,10 +48,10 @@ public class ServerMain implements ServerListener {
 			} catch(Exception e) {
 				System.out.print("The port must be a number\nPort: ");
 			}
-		}*/
+		}
 
-		server = new Server(25565, this);
-/*
+		server = new Server(port, this);
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -64,7 +64,7 @@ public class ServerMain implements ServerListener {
 				}
 			}
 		}).start();
-*/	}
+	}
 
 	public ServerMain(int port) {
 		serverState = ServerState.WAITING_FOR_PLAYERS;
@@ -131,7 +131,7 @@ public class ServerMain implements ServerListener {
 			} while (f);
 		}
 
-		game = new Game(21, 21, playerColor);
+		game = new Game(51, 51, playerColor);
 		game.nextRound();
 
 		System.out.println("StartGame");

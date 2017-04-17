@@ -1,8 +1,13 @@
 #version 130
+
 uniform sampler2D tex;
+
 in vec2 fragTex;
+in float center;
+
 out vec4 finalColor;
 
 void main() {
     finalColor = texture(tex, fragTex);
+    finalColor = mix(finalColor, vec4(0, 0, 0, 1.0), smoothstep(0.95, 1, center)*0.5);
 }
