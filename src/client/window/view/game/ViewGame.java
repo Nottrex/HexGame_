@@ -50,6 +50,7 @@ public class ViewGame extends View implements ClientListener {
 	private ImageButton button_centerCamera;
 	private ImageButton button_endTurn;
 	private ImageButton button_backToMainMenu;
+	private ImageButton button_nextUnit;
 	private ImageTextLabel topBar;
 	private TextLabel fpsLabel;
 
@@ -98,7 +99,8 @@ public class ViewGame extends View implements ClientListener {
 		button_musicOn = new ImageButton(window, TextureHandler.getImagePng("button_musicOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_MUSIC));
 		button_centerCamera = new ImageButton(window, TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(window, TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
-		button_backToMainMenu = new ImageButton(window, TextureHandler.getImagePng("button_endTurn"), e -> {onLeave(); if(server != null) server.stop(); window.updateView(new ViewMainMenu());});
+		button_nextUnit = new ImageButton(window, TextureHandler.getImagePng("button_nextUnit"), e -> onKeyType(KeyBindings.KEY_NEXT_UNIT));
+		button_backToMainMenu = new ImageButton(window, TextureHandler.getImagePng("button_leave"), e -> {onLeave(); if(server != null) server.stop(); window.updateView(new ViewMainMenu());});
 		fpsLabel = new TextLabel(() -> ("FPS: " + (int)center.animator.getLastFPS()), false);
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
@@ -118,6 +120,7 @@ public class ViewGame extends View implements ClientListener {
 		center.add(button_centerCamera);
 		center.add(button_endTurn);
 		center.add(button_backToMainMenu);
+		center.add(button_nextUnit);
 		center.add(topBar);
 		center.add(fpsLabel);
 		center.addComponentListener(new ComponentAdapter() {
@@ -132,9 +135,10 @@ public class ViewGame extends View implements ClientListener {
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
 				button_musicOn.setBounds(width - buttonHeight*2 - 5*2, 5, buttonHeight, buttonHeight);
 				button_centerCamera.setBounds(width - buttonHeight*3 - 5*3, 5, buttonHeight, buttonHeight);
-				button_backToMainMenu.setBounds(5, 5*2 + barHeight, buttonHeight, buttonHeight);
+				button_nextUnit.setBounds(width - buttonHeight*4 - 5*4, 5, buttonHeight, buttonHeight);
+				button_backToMainMenu.setBounds(5, 5, buttonHeight, buttonHeight);
 				topBar.setBounds((width-(380*barHeight)/49)/2, 5, (380*barHeight)/49, barHeight);
-				fpsLabel.setBounds(5, 5, barHeight*5, barHeight);
+				fpsLabel.setBounds(10 + buttonHeight, 5, barHeight*5, barHeight);
 
 				button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
 			}
@@ -218,11 +222,14 @@ public class ViewGame extends View implements ClientListener {
 			}
 		}
 
-		if(keyCode == KeyEvent.VK_0) {
+		if(keyCode == KeyBindings.KEY_NEXT_UNIT) {
 			List<Unit> units = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor());
 			if (units.isEmpty()) return;
 			Unit u = units.get(0);
 			float[] pos = center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()));
+
+			controller.selectedField = new Location(u.getX(), u.getY());
+
 			cam.tx = pos[0];
 			cam.ty = pos[1];
 
@@ -352,6 +359,9 @@ public class ViewGame extends View implements ClientListener {
 		TextureHandler.loadImagePng("button_centerCamera", "ui/buttons/centerCamera");
 
 		TextureHandler.loadImagePng("button_endTurn", "ui/buttons/endTurn");
+		TextureHandler.loadImagePng("button_nextUnit", "ui/buttons/next");
+
+		TextureHandler.loadImagePng("button_leave", "ui/buttons/exit");
 
 		AudioHandler.loadMusicWav("EP", "music/EP");
 	}
