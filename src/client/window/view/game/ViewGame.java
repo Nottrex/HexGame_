@@ -20,6 +20,8 @@ import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
 import game.map.GameMap;
+import game.util.ActionUtil;
+import game.util.PossibleActions;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.packets.Packet;
@@ -225,7 +227,31 @@ public class ViewGame extends View implements ClientListener {
 		if(keyCode == KeyBindings.KEY_NEXT_UNIT) {
 			List<Unit> units = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor());
 			if (units.isEmpty()) return;
-			Unit u = units.get(0);
+
+			int i = 0;
+			if (controller.selectedField != null) {
+				Optional<Unit> selected = controller.game.getMap().getUnitAt(controller.selectedField);
+				if (selected.isPresent() && units.contains(selected.get())) {
+					i = (units.indexOf(selected.get())+1)%units.size();
+				}
+			}
+			int j = i;
+			while (true) {
+				Unit u = units.get(i);
+
+				PossibleActions pa = ActionUtil.getPossibleActions(controller.game, u);
+
+				if (pa.canMoveTo().isEmpty() && pa.canAttack().isEmpty()) {
+					i = (i+1) % units.size();
+				} else {
+					break;
+				}
+
+				if (i == j) return;
+			}
+
+			Unit u = units.get(i);
+
 			float[] pos = center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()));
 
 			controller.selectedField = null;
@@ -234,7 +260,7 @@ public class ViewGame extends View implements ClientListener {
 			cam.tx = pos[0];
 			cam.ty = pos[1];
 
-			cam.tzoom = 2.2f/15;
+			//cam.tzoom = 2.2f/15;
 		}
 
 		controller.onKeyType(keyCode);
