@@ -48,6 +48,12 @@ public class GameMap {
 		return map[l.x][l.y];
 	}
 
+	public int getDiversityAt(Location l) {
+		if (l.x < 0 || l.x >= width || l.y < 0 || l.y >= height) return 0;
+
+		return diversityMap[l.x][l.y];
+	}
+
 	public Field getFieldAt(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) return Field.VOID;
 		
