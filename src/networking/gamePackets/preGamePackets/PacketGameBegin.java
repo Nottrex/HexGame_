@@ -13,10 +13,7 @@ import networking.packets.Packet;
 import networking.packets.PacketBuilder;
 import networking.packets.PacketDecrypter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PacketGameBegin implements Packet {
 	private Game game;
@@ -54,7 +51,16 @@ public class PacketGameBegin implements Packet {
 			units.add(PacketDecrypterUtil.getUnit(pd));
 		}
 
-		GameMap map = new GameMap(fieldArray, units);
+		int[][] divMap = new int[width][height];
+		Random r = new Random();
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				divMap[x][y] = r.nextInt(fieldArray[x][y].getDiversity());
+			}
+		}
+
+		GameMap map = new GameMap(fieldArray, units, divMap);
 
 		game = new Game(map, players, round, playerTurnID);
 	}

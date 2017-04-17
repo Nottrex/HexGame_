@@ -276,7 +276,7 @@ public class ViewGame extends View implements ClientListener {
 			Field f = m.getFieldAt(mouseLocation);
 
 			if (f != Field.VOID) {
-				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase()), lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
+				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(mouseLocation)), lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
 				g.drawString("Costs: " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
@@ -301,7 +301,7 @@ public class ViewGame extends View implements ClientListener {
 			Field f = m.getFieldAt(controller.selectedField);
 
 			if (f != Field.VOID) {
-				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase()), 400 + lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
+				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(controller.selectedField)), 400 + lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
 				g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 

@@ -14,9 +14,11 @@ import java.util.stream.Collectors;
 
 public class GameMap {
 	private Field[][] map;
+	private int[][] diversityMap;
 	private int width, height;
 	private List<Unit> units;
 
+	// Server sided use
 	public GameMap(MapGenerator gm) {
 		this.map = gm.getMap();
 		this.width = map.length;
@@ -29,10 +31,12 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 	}
 
-	public GameMap(Field[][] map, List<Unit> units) {
+	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap) {
 		this.map = map;
 		this.width = map.length;
 		this.height = (width > 0) ? map[0].length : 0;
+
+		this.diversityMap = diversityMap;
 
 		this.units = units;
 	}
@@ -41,6 +45,12 @@ public class GameMap {
 		if (l.x < 0 || l.x >= width || l.y < 0 || l.y >= height) return Field.VOID;
 
 		return map[l.x][l.y];
+	}
+
+	public int getDiversityAt(Location l) {
+		if (l.x < 0 || l.x >= width || l.y < 0 || l.y >= height) return 0;
+
+		return diversityMap[l.x][l.y];
 	}
 
 	public Field getFieldAt(int x, int y) {
@@ -96,6 +106,8 @@ public class GameMap {
 	public int getHeight() {
 		return height;
 	}
+
+	public int getDiversity(int x, int y) { return diversityMap[x][y];}
 
 	public GameMap(String data) {
 		
