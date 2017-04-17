@@ -18,12 +18,11 @@ public class GameMap {
 	private int width, height;
 	private List<Unit> units;
 
+	// Server sided use
 	public GameMap(MapGenerator gm) {
 		this.map = gm.getMap();
 		this.width = map.length;
 		this.height = map[0].length;
-
-		this.diversityMap = gm.getDiversityMap();
 
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));

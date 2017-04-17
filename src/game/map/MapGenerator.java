@@ -10,12 +10,9 @@ public class MapGenerator {
     private ValueNoise_2D vn;
     private MapPreset mp;
 
-    private int[][] diversity;
-
     public MapGenerator(MapPreset mp) {
         this.mp = mp;
         this.vn = new ValueNoise_2D(mp.getPresetMap().length, mp.getPresetMap()[0].length);
-        diversity = new int[mp.getPresetMap().length][mp.getPresetMap()[0].length];
 
         vn.calculate();
     }
@@ -23,7 +20,6 @@ public class MapGenerator {
     public Field[][] getMap() {
         Field[][] out = new Field[mp.getPresetMap().length][mp.getPresetMap()[0].length];
 
-        Random r = new Random();
         for(int x = 0; x < out.length; x++) {
             for(int y = 0; y < out[0].length; y++){
                 if(mp.getPresetMap()[x][y] == Field.VOID) {
@@ -42,16 +38,10 @@ public class MapGenerator {
                 else if(f <= 7.0f/9.0f)out[x][y] = Field.DIRT_ROCK;
                 else if(f <= 8.0f/9.0f)out[x][y] = Field.STONE;
                 else if(f <= 9.0f/9.0f)out[x][y] = Field.SNOW;
-
-                diversity[x][y] = r.nextInt(out[x][y].getDiversity());
-                System.out.println(diversity[x][y]);
             }
         }
 
         return out;
     }
 
-    public int[][] getDiversityMap() {
-        return diversity;
-    }
 }
