@@ -228,7 +228,8 @@ public class ViewGame extends View implements ClientListener {
 			Unit u = units.get(0);
 			float[] pos = center.hexPositionToWorldPosition(new Location(u.getX(), u.getY()));
 
-			controller.selectedField = new Location(u.getX(), u.getY());
+			controller.selectedField = null;
+			controller.onMouseClick(new Location(u.getX(), u.getY()));
 
 			cam.tx = pos[0];
 			cam.ty = pos[1];
