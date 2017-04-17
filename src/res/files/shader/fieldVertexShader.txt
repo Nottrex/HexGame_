@@ -23,8 +23,5 @@ void main() {
     fragTex.y = 1-(texLocation[1]+(1-fragTex.y)*texLocation[3])/texTH;
 
     vec4 pos = vec4((vertexPos[int(mod(gl_VertexID, 12))].x+location.x-location.y/2)*hexWidth, (vertexPos[int(mod(gl_VertexID, 12))].y)*hexHeight2-(location.y)*hexHeight2*hexHeight, 0, 1);
-
-    pos.x = pos.x + 0.2f * (sin(pos.x/8f+time/2000f)+cos(pos.y/8f+time/2000f));
-    pos.y = pos.y + 0.2f * (cos(pos.x/8f+time/2000f)+sin(pos.y/8f+time/2000f));
     gl_Position = projectionMatrix * cameraMatrix * pos;
 }
