@@ -6,8 +6,8 @@ package game.enums;
 public enum Field {
 	WATER("Water", 1, true, true, 1),
 	FOREST("Forest", 2, false, true, 1),
-	GRASS("Grass", 1, false, true, 2),
-	GRASS_ROCK("Grass-rock", 3, false, true, 1),
+	GRASS("Grass", 1, false, true, 1),
+	GRASS_ROCK("Grass-rock", 3, false, true, 2),
 	DIRT("Dirt", 1, false, true, 2),
 	DIRT_ROCK("Dirt-rock", 3, false, true, 1),
 	SAND("Sand", 2, false, true, 2),
