@@ -221,6 +221,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldTexture.bind(gl);
 		fieldShader.start(gl);
+		fieldShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
+
 		gl.glBindVertexArray(vertexArray.get(0));
 		gl.glDrawArrays(GL.GL_TRIANGLES, 0, length*12);
 		gl.glBindVertexArray(0);
@@ -231,6 +233,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldmarkerTexture.bind(gl);
 		fieldmarkerShader.start(gl);
+		fieldmarkerShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
 
 		Location selectedField = controller.selectedField;
 		if (selectedField != null) {
@@ -281,6 +284,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 				if (pa != null) {
 					arrowTexture.bind(gl);
 					squareShader.start(gl);
+					squareShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
 
 					if (pa.canAttack().contains(mouseLocation)) {
 						java.util.List<Direction> movements = pa.moveToToAttack(mouseLocation);
@@ -311,6 +315,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		unitTexture.bind(gl);
 		unitShader.start(gl);
+		unitShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
 		for (Unit unit: map.getUnits()) {
 			UnitType ut = unit.getType();
 			double w = ut.getSize();

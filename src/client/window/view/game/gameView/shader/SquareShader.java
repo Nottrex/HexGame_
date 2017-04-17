@@ -11,7 +11,7 @@ public class SquareShader extends ShaderProgram {
 	}
 
 	private int texLocation, xLocation, yLocation, widthLocation, heightLocation, cameraLocation, projectionLocation;
-	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation;
+	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation, timeLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
@@ -28,6 +28,8 @@ public class SquareShader extends ShaderProgram {
 		texTHLocation = getUniformLocation(gl, "texTH");
 		texHLocation = getUniformLocation(gl, "texH");
 		texWLocation = getUniformLocation(gl, "texW");
+
+		timeLocation = getUniformLocation(gl, "time");
 	}
 
 	public void setTexture(GL2 gl, int tex) {
@@ -59,6 +61,10 @@ public class SquareShader extends ShaderProgram {
 	public void setTextureTotalBounds(GL2 gl, int texTW, int texTH) {
 		setUniform1i(gl, texTWLocation, texTW);
 		setUniform1i(gl, texTHLocation, texTH);
+	}
+
+	public void setTime(GL2 gl, float time) {
+		setUniform1f(gl, timeLocation, time);
 	}
 
 	@Override
