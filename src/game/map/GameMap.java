@@ -10,6 +10,7 @@ import game.enums.UnitType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameMap {
@@ -23,6 +24,14 @@ public class GameMap {
 		this.map = gm.getMap();
 		this.width = map.length;
 		this.height = map[0].length;
+
+		Random r = new Random();
+		diversityMap = new int[width][height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				diversityMap[x][y] = r.nextInt(getFieldAt(x, y).getDiversity());
+			}
+		}
 
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
@@ -51,6 +60,11 @@ public class GameMap {
 		if (l.x < 0 || l.x >= width || l.y < 0 || l.y >= height) return 0;
 
 		return diversityMap[l.x][l.y];
+	}
+	public int getDiversityAt(int x, int y) {
+		if (x < 0 || x >= width || y < 0 || y >= height) return 0;
+
+		return diversityMap[x][y];
 	}
 
 	public Field getFieldAt(int x, int y) {
@@ -107,7 +121,6 @@ public class GameMap {
 		return height;
 	}
 
-	public int getDiversity(int x, int y) { return diversityMap[x][y];}
 
 	public GameMap(String data) {
 		

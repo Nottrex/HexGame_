@@ -39,9 +39,11 @@ public class PacketGameBegin implements Packet {
 		int width = pd.readInt();
 		int height = pd.readInt();
 		Field[][] fieldArray = new Field[width][height];
+		int[][] divMap = new int[width][height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				fieldArray[x][y] = Field.values()[pd.readByte()];
+				divMap[x][y] = pd.readByte();
 			}
 		}
 
@@ -49,15 +51,6 @@ public class PacketGameBegin implements Packet {
 		List<Unit> units = new ArrayList<>();
 		for (int i = 0; i < unitAmount; i++) {
 			units.add(PacketDecrypterUtil.getUnit(pd));
-		}
-
-		int[][] divMap = new int[width][height];
-		Random r = new Random();
-
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				divMap[x][y] = r.nextInt(fieldArray[x][y].getDiversity());
-			}
 		}
 
 		GameMap map = new GameMap(fieldArray, units, divMap);
@@ -88,6 +81,7 @@ public class PacketGameBegin implements Packet {
 		for (int x = 0; x < map.getWidth(); x++) {
 			for (int y = 0; y < map.getHeight(); y++) {
 				pb.addByte((byte) map.getFieldAt(x, y).ordinal());
+				pb.addByte((byte) map.getDiversityAt(x, y));
 			}
 		}
 
