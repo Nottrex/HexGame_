@@ -158,7 +158,9 @@ public class DynamicBackground {
 
 		g.setColor(c);
 		g.translate((int)px, (int)py);
-		g.fillPolygon(GUIConstants.HEX_TILE);
+
+		g.fillPolygon(GUIConstants.HEX_TILE);		// The part {0, 60, 120}{35, 0, 35} is the problem which uses all of the memory
+
 		g.translate(-(int)px, -(int)py);
 	}
 }
