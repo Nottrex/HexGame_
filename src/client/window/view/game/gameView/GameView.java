@@ -440,6 +440,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 			fieldShader.start(gl);
 			fieldShader.setCamera(gl, viewMatrix);
+			fieldShader.setCamZ(gl, cameraPosition[2]);
 			fieldShader.stop(gl);
 
 			fieldmarkerShader.start(gl);

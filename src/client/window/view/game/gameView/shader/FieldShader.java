@@ -12,7 +12,7 @@ public class FieldShader extends ShaderProgram {
 
 	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, cameraLocation, projectionLocation;
 	private int texTWLocation, texTHLocation;
-	private int timeLocation;
+	private int timeLocation, camZLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
@@ -25,6 +25,7 @@ public class FieldShader extends ShaderProgram {
 		timeLocation = getUniformLocation(gl, "time");
 		texTWLocation = getUniformLocation(gl, "texTW");
 		texTHLocation = getUniformLocation(gl, "texTH");
+		camZLocation = getUniformLocation(gl, "cam_z");
 	}
 
 	public void setTexture(GL2 gl, int tex) {
@@ -58,6 +59,10 @@ public class FieldShader extends ShaderProgram {
 
 	public void setTime(GL2 gl, float time) {
 		setUniform1f(gl, timeLocation, time);
+	}
+
+	public void setCamZ(GL2 gl, float cam_z) {
+		setUniform1f(gl, camZLocation, cam_z);
 	}
 
 	private int locationLocation, texLocationLocation;
