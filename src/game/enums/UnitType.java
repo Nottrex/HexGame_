@@ -5,8 +5,13 @@ package game.enums;
  * Determines its stats
  */
 public enum UnitType {
-	PANZER("Tank", 0.75, 5, 1, 2, false, false, true);
-	
+	PANZER("Tank", 0.75, 5, 2, 3, false, false, true),
+	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true),
+	//FLUGABWEHR(),
+	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true),
+	KAVALERIE("Cavalry", 0.75, 4, 1, 2, false, false, false),
+	PANZER_ARTILLERIE("Tank_Artillery", 0.75, 4, 4, 6, false, false, true);
+
 	private int movementDistance;
 	private int minAttackDistance, maxAttackDistance;
 	private double size;
