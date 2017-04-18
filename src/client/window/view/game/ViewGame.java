@@ -314,7 +314,7 @@ public class ViewGame extends View implements ClientListener {
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("unit_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
+				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
 				g.drawString(u.getType().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
@@ -339,7 +339,7 @@ public class ViewGame extends View implements ClientListener {
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("unit_" + u.getType().toString().toLowerCase() + "_" + u.getPlayer().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
+				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
 				g.drawString(u.getType().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
 				g.drawString(u.getPlayer().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
