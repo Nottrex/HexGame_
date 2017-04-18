@@ -18,12 +18,15 @@ public class GameMap {
 	private int[][] diversityMap;
 	private int width, height;
 	private List<Unit> units;
+	private List<Location> spawnPoints;
 
 	// Server sided use
 	public GameMap(MapGenerator gm) {
 		this.map = gm.getMap();
 		this.width = map.length;
 		this.height = map[0].length;
+
+		spawnPoints = gm.getSpawnPoints();
 
 		Random r = new Random();
 		diversityMap = new int[width][height];
@@ -40,7 +43,7 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
 	}
 
-	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap) {
+	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap, List<Location> spawnPoints) {
 		this.map = map;
 		this.width = map.length;
 		this.height = (width > 0) ? map[0].length : 0;
@@ -48,6 +51,8 @@ public class GameMap {
 		this.diversityMap = diversityMap;
 
 		this.units = units;
+
+		this.spawnPoints = spawnPoints;
 	}
 
 	public Field getFieldAt(Location l) {
@@ -121,6 +126,13 @@ public class GameMap {
 		return height;
 	}
 
+	public List<Location> getSpawnPoints() {
+		return spawnPoints;
+	}
+
+	public int getMaxPlayers() {
+		return spawnPoints.size();
+	}
 
 	public GameMap(String data) {
 		

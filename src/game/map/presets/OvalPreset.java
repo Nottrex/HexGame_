@@ -1,6 +1,10 @@
 package game.map.presets;
 
+import game.Location;
 import game.enums.Field;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OvalPreset implements MapPreset{
 
@@ -25,5 +29,13 @@ public class OvalPreset implements MapPreset{
 		}
 
 		return out;
+	}
+
+	@Override
+	public List<Location> getSpawnPoints() {
+		List<Location> locations = new ArrayList<>();
+
+		//TODO: getSpawnPoints
+		return locations;
 	}
 }

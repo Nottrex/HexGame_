@@ -1,8 +1,10 @@
 package game.map;
 
+import game.Location;
 import game.enums.Field;
 import game.map.presets.MapPreset;
 
+import java.util.List;
 import java.util.Random;
 
 public class MapGenerator {
@@ -15,6 +17,10 @@ public class MapGenerator {
         this.vn = new ValueNoise_2D(mp.getPresetMap().length, mp.getPresetMap()[0].length);
 
         vn.calculate();
+    }
+
+    public List<Location> getSpawnPoints() {
+        return mp.getSpawnPoints();
     }
 
     public Field[][] getMap() {

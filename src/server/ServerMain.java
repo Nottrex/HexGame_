@@ -3,6 +3,9 @@ package server;
 import game.Game;
 import game.Unit;
 import game.enums.PlayerColor;
+import game.map.MapGenerator;
+import game.map.presets.HexPreset;
+import game.map.presets.MapPreset;
 import networking.ServerState;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
@@ -29,6 +32,8 @@ public class ServerMain implements ServerListener {
 	private Map<String, PlayerColor> playerColor;
 
 	private Game game;
+
+	private MapPreset preset = new HexPreset(51);
 
 	public ServerMain() {
 		serverState = ServerState.WAITING_FOR_PLAYERS;
@@ -131,7 +136,7 @@ public class ServerMain implements ServerListener {
 			} while (f);
 		}
 
-		game = new Game(51, 51, playerColor);
+		game = new Game(new MapGenerator(preset), playerColor);
 		game.nextRound();
 
 		System.out.println("StartGame");
@@ -226,7 +231,7 @@ public class ServerMain implements ServerListener {
 				return;
 			}
 
-			if (players.size() >= PlayerColor.values().length) {
+			if (players.size() >= Math.min(PlayerColor.values().length, preset.getSpawnPoints().size())) {
 				server.sendPacket(s, new PacketClientKicked("The game is full"));
 				server.kickClient(s);
 				return;

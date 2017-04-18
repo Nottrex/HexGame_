@@ -1,6 +1,9 @@
 package game.map.presets;
 
+import game.Location;
 import game.enums.Field;
+
+import java.util.List;
 
 /**
  * Presets for the map generation
@@ -9,4 +12,6 @@ import game.enums.Field;
 public interface MapPreset {
 
     public Field[][] getPresetMap();
+
+    public List<Location> getSpawnPoints();
 }

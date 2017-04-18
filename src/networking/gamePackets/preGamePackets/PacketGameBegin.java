@@ -1,6 +1,7 @@
 package networking.gamePackets.preGamePackets;
 
 import game.Game;
+import game.Location;
 import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
@@ -47,13 +48,19 @@ public class PacketGameBegin implements Packet {
 			}
 		}
 
+		int spawnPointAmount = pd.readInt();
+		List<Location> spawnPoints = new ArrayList<>();
+		for (int i = 0; i < spawnPointAmount; i++) {
+			spawnPoints.add(new Location(pd.readInt(), pd.readInt()));
+		}
+
 		int unitAmount = pd.readInt();
 		List<Unit> units = new ArrayList<>();
 		for (int i = 0; i < unitAmount; i++) {
 			units.add(PacketDecrypterUtil.getUnit(pd));
 		}
 
-		GameMap map = new GameMap(fieldArray, units, divMap);
+		GameMap map = new GameMap(fieldArray, units, divMap, spawnPoints);
 
 		game = new Game(map, players, round, playerTurnID);
 	}
@@ -83,6 +90,12 @@ public class PacketGameBegin implements Packet {
 				pb.addByte((byte) map.getFieldAt(x, y).ordinal());
 				pb.addByte((byte) map.getDiversityAt(x, y));
 			}
+		}
+
+		pb.addInt(map.getMaxPlayers());
+		for (Location l: map.getSpawnPoints()) {
+			pb.addInt(l.x);
+			pb.addInt(l.y);
 		}
 
 		pb.addInt(map.getUnits().size());

@@ -34,8 +34,8 @@ public class Game {
 		this.players = players;
 	}
 
-	public Game(int width, int height, Map<String, PlayerColor> players) {
-		this.map = new GameMap(new MapGenerator(new HexPreset(width, height)));
+	public Game(MapGenerator generator, Map<String, PlayerColor> players) {
+		this.map = new GameMap(generator);
 		this.players = players;
 		playerAmount = players.keySet().size();
 	}
