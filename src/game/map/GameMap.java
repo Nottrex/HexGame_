@@ -37,10 +37,10 @@ public class GameMap {
 		}
 
 		units = new ArrayList<>();
-		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 20, 20));
-		units.add(new Unit(PlayerColor.BLUE, UnitType.TANK, 15, 15));
-		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 20, 15));
-		units.add(new Unit(PlayerColor.RED, UnitType.TANK, 5, 15));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 20, 20));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 15, 15));
+		units.add(new Unit(PlayerColor.RED, UnitType.PANZER, 20, 15));
+		units.add(new Unit(PlayerColor.RED, UnitType.PANZER, 5, 15));
 	}
 
 	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap, List<Location> spawnPoints) {

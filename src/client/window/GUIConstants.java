@@ -8,7 +8,7 @@ public class GUIConstants {
 
 	public static final int MAXIMUM_DRAG_DISTANCE_FOR_CLICK	= 10;
 
-	public static final double UNIT_XY_RATIO				= 1;
+	public static final double UNIT_XY_RATIO				= 1.4/1.2;
 	public static final double HEX_TILE_XY_RATIO			= 1.4/1.2;
 	public static final double HEX_TILE_YY_RATIO			= 1.05/1.4;
 	public static final double ZOOM							= 1.1;

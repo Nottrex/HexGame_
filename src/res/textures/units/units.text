@@ -1,5 +1,29 @@
-4
-tank_blue 0 0 128 128
-tank_green 128 0 128 128
-tank_red 0 128 128 128
-tank_yellow 128 128 128 128
+28
+blue_artillerie 0 0 120 140
+blue_flugabwehr 120 0 120 140
+blue_infanterie 240 0 120 140
+blue_kavalerie 360 0 120 140
+blue_panzer 0 140 120 140
+blue_panzer_artillerie 120 140 120 140
+blue_pionier 240 140 120 140
+green_artillerie 360 140 120 140
+green_flugabwehr 0 280 120 140
+green_infanterie 120 280 120 140
+green_kavallerie 240 280 120 140
+green_panzer 360 280 120 140
+green_panzer_artillerie 0 420 120 140
+green_pionier 120 420 120 140
+red_artillerie 240 420 120 140
+red_flugabwehr 360 420 120 140
+red_infanterie 0 560 120 140
+red_kavallerie 120 560 120 140
+red_panzer 240 560 120 140
+red_panzer_artillerie 360 560 120 140
+red_pionier 0 700 120 140
+yellow_artillerie 120 700 120 140
+yellow_flugabwehr 240 700 120 140
+yellow_infanterie 360 700 120 140
+yellow_kavallerie 0 840 120 140
+yellow_panzer 120 840 120 140
+yellow_panzer_artillerie 240 840 120 140
+yellow_pionier 360 840 120 140

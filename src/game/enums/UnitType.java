@@ -5,7 +5,7 @@ package game.enums;
  * Determines its stats
  */
 public enum UnitType {
-	TANK("Tank", 0.75, 5, 1, 2, false, false, true);
+	PANZER("Tank", 0.75, 5, 1, 2, false, false, true);
 	
 	private int movementDistance;
 	private int minAttackDistance, maxAttackDistance;

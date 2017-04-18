@@ -336,7 +336,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 			}
 
 			unitShader.setBounds(gl, (float) px, (float) py, (float) w, (float) h);
-			Rectangle rec = TextureHandler.getSpriteSheetBounds("unit_" + ut.toString().toLowerCase() + "_" + unit.getPlayer().toString().toLowerCase());
+			Rectangle rec = TextureHandler.getSpriteSheetBounds("unit_" + unit.getPlayer().toString().toLowerCase() + "_" + ut.toString().toLowerCase());
 			unitShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
 
 			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
