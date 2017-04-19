@@ -11,7 +11,7 @@ public class FieldShader extends ShaderProgram {
 	}
 
 	private int texLocation, cameraLocation, projectionLocation;
-	private int timeLocation, camZLocation;
+	private int timeLocation, camZLocation, fogBoundsLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
@@ -20,6 +20,12 @@ public class FieldShader extends ShaderProgram {
 
 		timeLocation = getUniformLocation(gl, "time");
 		camZLocation = getUniformLocation(gl, "cam_z");
+
+		fogBoundsLocation = getUniformLocation(gl, "fogBounds");
+	}
+
+	public void setFogBounds(GL2 gl, float x, float y, float width, float height) {
+		setUniform4f(gl, fogBoundsLocation, x, y,width, height);
 	}
 
 	public void setTexture(GL2 gl, int tex) {

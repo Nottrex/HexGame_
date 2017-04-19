@@ -92,6 +92,10 @@ public abstract class ShaderProgram {
 	protected abstract void bindAttributes(GL2 gl);
 	protected abstract void getUniformLocations(GL2 gl);
 
+	protected void setUniform4f(GL2 gl, int location, float v1, float v2, float v3, float v4) {
+		gl.glUniform4f(location, v1, v2, v3, v4);
+	}
+
 	protected void setUniform1f(GL2 gl, int location, float value) {
 		gl.glUniform1f(location, value);
 	}

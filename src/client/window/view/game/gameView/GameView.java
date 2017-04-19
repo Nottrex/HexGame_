@@ -125,8 +125,18 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private void setupFieldShader(GL2 gl) {
 		fieldShader = new FieldShader(gl);
 
+		BufferedImage img = TextureHandler.getImagePng("field");
+		float hexHeight = (float) GUIConstants.HEX_TILE_YY_RATIO;
+		float hexHeight2 = (float) GUIConstants.HEX_TILE_XY_RATIO;
+		float hexWidth = 1f;
+		float tw = img.getWidth();
+		float th = img.getHeight();
+
+		Rectangle fogBounds = TextureHandler.getSpriteSheetBounds("field_fog");
+
 		fieldShader.start(gl);
 		fieldShader.setTexture(gl, 0);
+		fieldShader.setFogBounds(gl, fogBounds.x / tw, fogBounds.y / th, fogBounds.width / tw, fogBounds.height / th);
 		fieldShader.stop(gl);
 
 		GameMap map = controller.game.getMap();
@@ -144,13 +154,6 @@ public class GameView extends GLJPanel implements GLEventListener {
 		byte[] fieldData = new byte[length*vertexPos.length];
 		int[] indices = new int[length*18];
 
-		BufferedImage img = TextureHandler.getImagePng("field");
-		float hexHeight = (float) GUIConstants.HEX_TILE_YY_RATIO;
-		float hexHeight2 = (float) GUIConstants.HEX_TILE_XY_RATIO;
-		float hexWidth = 1f;
-		float tw = img.getWidth();
-		float th = img.getHeight();
-
 		int a = 0;
 		for (int x = 0; x < map.getWidth(); x++) {
 			for (int y = 0; y < map.getHeight(); y++) {
@@ -165,7 +168,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 						locations[a*vertexPos.length*2 + 2*i] = (vertexPos[i][0]+x-y/2.0f)*hexWidth;
 						locations[a*vertexPos.length*2 + 2*i + 1] = (vertexPos[i][1])*hexHeight2-(y)*hexHeight2*hexHeight;
 
-						fieldData[a*vertexPos.length + i] = 0 | (0 << 1);
+						fieldData[a*vertexPos.length + i] = 0 | (0)| (0 << 2);
 					}
 
 					indices[a*18] = a*7;
