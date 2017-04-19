@@ -32,7 +32,7 @@ public abstract class ShaderProgram {
 			byte[] errormessage = new byte[len[0]];
 			gl.glGetShaderInfoLog(vertexShaderID, len[0], len, 0, errormessage, 0);
 
-			System.err.println(new String(errormessage, 0, len[0] + 1));
+			System.err.println(this.getClass().toString() + ": vertexShader: " + new String(errormessage, 0, len[0] + 1));
 			System.exit(-1);
 		}
 
@@ -48,7 +48,7 @@ public abstract class ShaderProgram {
 			byte[] errormessage = new byte[len[0]];
 			gl.glGetShaderInfoLog(fragmentShaderID, len[0], len, 0, errormessage, 0);
 
-			System.err.println(new String(errormessage, 0, len[0] + 1));
+			System.err.println(this.getClass().toString() + ": fragmentShader: " + new String(errormessage, 0, len[0] + 1));
 			System.exit(-1);
 		}
 

@@ -37,12 +37,15 @@ import java.nio.IntBuffer;
 import java.util.Optional;
 
 public class GameView extends GLJPanel implements GLEventListener {
+	private static final float[][] vertexPos = {
+			{0.0f, 0.25f}, {0.0f, 0.75f}, {0.5f, 1f}, {1.0f, 0.75f}, {1.0f, 0.25f}, {0.5f, 0f}, {0.5f, 0.5f}
+	};
 
 	private Controller controller;
 	private Camera cam;
 
-	private IntBuffer buffers = IntBuffer.allocate(2);
-	private IntBuffer vertexArray = IntBuffer.allocate(1);
+	private IntBuffer buffers = IntBuffer.allocate(3);
+	private IntBuffer vao = IntBuffer.allocate(1);
 	private int length;
 	private Texture fieldTexture;
 	private FieldShader fieldShader;
@@ -80,72 +83,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 
-		fieldShader = new FieldShader(gl);
-
-		fieldShader.start(gl);
-		fieldShader.setHexWidth(gl, 1f);
-		fieldShader.setHexHeight(gl, (float) GUIConstants.HEX_TILE_YY_RATIO);
-		fieldShader.setHexHeight2(gl, (float) GUIConstants.HEX_TILE_XY_RATIO);
-		fieldShader.setTexture(gl, 0);
-		BufferedImage img = TextureHandler.getImagePng("field");
-		fieldShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
-		fieldShader.stop(gl);
-
-		GameMap map = controller.game.getMap();
-		length = 0;
-		for (int x = 0; x < map.getWidth(); x++) {
-			for (int y = 0; y < map.getHeight(); y++) {
-				if (map.getFieldAt(x, y).isAccessible()) {
-					length++;
-				}
-			}
-		}
-
-		float[] locations = new float[length*2*18];
-		float[] texLocations = new float[length*4*18];
-
-		int a = 0;
-		for (int x = 0; x < map.getWidth(); x++) {
-			for (int y = 0; y < map.getHeight(); y++) {
-				if (map.getFieldAt(x, y).isAccessible()) {
-					Field f = map.getFieldAt(x, y);
-					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase() + "_" + map.getDiversityAt(x, y));
-					for(int i = 0; i < 18; i++) {
-						locations[18*2*a+i*2] = x;
-						locations[18*2*a+1+i*2] = y;
-
-						texLocations[18*4*a+i*4] = rec.x;
-						texLocations[18*4*a+1+i*4] = rec.y;
-						texLocations[18*4*a+2+i*4] = rec.width;
-						texLocations[18*4*a+3+i*4] = rec.height;
-
-					}
-					a++;
-				}
-			}
-		}
-
-		FloatBuffer locationBuffer = FloatBuffer.wrap(locations);
-		FloatBuffer texLocationBuffer = FloatBuffer.wrap(texLocations);
-
-		gl.glGenBuffers(2, buffers);
-
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*18 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
-
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*18 * 4, texLocationBuffer, GL2.GL_STATIC_DRAW);
-
-		gl.glGenVertexArrays(1, vertexArray);
-		gl.glBindVertexArray(vertexArray.get(0));
-
-		gl.glEnableVertexAttribArray(fieldShader.getLocationLocation());
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
-		gl.glVertexAttribPointer(fieldShader.getLocationLocation(), 2, GL.GL_FLOAT, false, 0, 0);
-
-		gl.glEnableVertexAttribArray(fieldShader.getTexLocationLocation());
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
-		gl.glVertexAttribPointer(fieldShader.getTexLocationLocation(), 4, GL.GL_FLOAT, false, 0, 0);
+		setupFieldShader(gl);
 
 		fieldmarkerShader = new FieldmarkerShader(gl);
 
@@ -154,7 +92,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldmarkerShader.setHexHeight(gl, (float) GUIConstants.HEX_TILE_YY_RATIO);
 		fieldmarkerShader.setHexHeight2(gl, (float) GUIConstants.HEX_TILE_XY_RATIO);
 		fieldmarkerShader.setTexture(gl, 0);
-		img = TextureHandler.getImagePng("fieldmarker");
+		BufferedImage img = TextureHandler.getImagePng("fieldmarker");
 		fieldmarkerShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
 		fieldmarkerShader.stop(gl);
 
@@ -181,6 +119,105 @@ public class GameView extends GLJPanel implements GLEventListener {
 		animator.setUpdateFPSFrames(60, null);
 		animator.start();
 		requestFocus();
+	}
+
+	private void setupFieldShader(GL2 gl) {
+		fieldShader = new FieldShader(gl);
+
+		fieldShader.start(gl);
+		fieldShader.setTexture(gl, 0);
+		fieldShader.stop(gl);
+
+		GameMap map = controller.game.getMap();
+		length = 0;
+		for (int x = 0; x < map.getWidth(); x++) {
+			for (int y = 0; y < map.getHeight(); y++) {
+				if (map.getFieldAt(x, y).isAccessible()) {
+					length++;
+				}
+			}
+		}
+
+		float[] locations = new float[length*2*vertexPos.length];
+		float[] texLocations = new float[length*2*vertexPos.length];
+		int[] indices = new int[length*18];
+
+		BufferedImage img = TextureHandler.getImagePng("field");
+		float hexHeight = (float) GUIConstants.HEX_TILE_YY_RATIO;
+		float hexHeight2 = (float) GUIConstants.HEX_TILE_XY_RATIO;
+		float hexWidth = 1f;
+		float tw = img.getWidth();
+		float th = img.getHeight();
+
+		int a = 0;
+		for (int x = 0; x < map.getWidth(); x++) {
+			for (int y = 0; y < map.getHeight(); y++) {
+				if (map.getFieldAt(x, y).isAccessible()) {
+					Field f = map.getFieldAt(x, y);
+					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase() + "_" + map.getDiversityAt(x, y));
+
+					for (int i = 0; i < vertexPos.length; i++) {
+						texLocations[a*vertexPos.length*2 + 2*i] = (rec.x+vertexPos[i][0]*rec.width)/tw;
+						texLocations[a*vertexPos.length*2 + 2*i + 1] = 1-(rec.y+(1-vertexPos[i][1])*rec.height)/th;
+
+						locations[a*vertexPos.length*2 + 2*i] = (vertexPos[i][0]+x-y/2.0f)*hexWidth;
+						locations[a*vertexPos.length*2 + 2*i + 1] = (vertexPos[i][1])*hexHeight2-(y)*hexHeight2*hexHeight;
+					}
+
+					indices[a*18] = a*7;
+					indices[a*18+1] = a*7+6;
+					indices[a*18+2] = a*7+1;
+
+					indices[a*18+3] = a*7+1;
+					indices[a*18+4] = a*7+6;
+					indices[a*18+5] = a*7+2;
+
+					indices[a*18+6] = a*7+2;
+					indices[a*18+7] = a*7+6;
+					indices[a*18+8] = a*7+3;
+
+					indices[a*18+9] = a*7+3;
+					indices[a*18+10] = a*7+6;
+					indices[a*18+11] = a*7+4;
+
+					indices[a*18+12] = a*7+4;
+					indices[a*18+13] = a*7+6;
+					indices[a*18+14] = a*7+5;
+
+					indices[a*18+15] = a*7+5;
+					indices[a*18+16] = a*7+6;
+					indices[a*18+17] = a*7;
+
+					a++;
+				}
+			}
+		}
+
+		FloatBuffer locationBuffer = FloatBuffer.wrap(locations);
+		FloatBuffer texLocationBuffer = FloatBuffer.wrap(texLocations);
+		IntBuffer indicesBuffer = IntBuffer.wrap(indices);
+
+		gl.glGenBuffers(3, buffers);
+
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*7 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
+
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*7 * 2, texLocationBuffer, GL2.GL_STATIC_DRAW);
+
+		gl.glGenVertexArrays(1, vao);
+		gl.glBindVertexArray(vao.get(0));
+
+		gl.glEnableVertexAttribArray(fieldShader.getLocationLocation());
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
+		gl.glVertexAttribPointer(fieldShader.getLocationLocation(), 2, GL.GL_FLOAT, false, 0, 0);
+
+		gl.glEnableVertexAttribArray(fieldShader.getTexLocationLocation());
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
+		gl.glVertexAttribPointer(fieldShader.getTexLocationLocation(), 2, GL.GL_FLOAT, false, 0, 0);
+
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, buffers.get(2));
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 18*length*4, indicesBuffer, GL.GL_STATIC_DRAW);
 	}
 
 	private void textureInit(GL2 gl) {
@@ -225,8 +262,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldShader.start(gl);
 		fieldShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
 
-		gl.glBindVertexArray(vertexArray.get(0));
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, length*18);
+		gl.glBindVertexArray(vao.get(0));
+		gl.glDrawElements(GL.GL_TRIANGLES, length*18, GL.GL_UNSIGNED_INT, 0);
 		gl.glBindVertexArray(0);
 		fieldShader.stop(gl);
 
@@ -530,4 +567,5 @@ public class GameView extends GLJPanel implements GLEventListener {
 		}
 		return null;
 	}
+
 }

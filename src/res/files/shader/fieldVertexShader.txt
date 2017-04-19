@@ -1,34 +1,22 @@
 #version 130
 in vec2 location;
-in vec4 texLocation;
+in vec2 texLocation;
 
-uniform int texTW;
-uniform int texTH;
-
-uniform float hexWidth;
-uniform float hexHeight2;
-uniform float hexHeight;
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
 
 uniform float time;
 uniform float cam_z;
 
-const vec2 vertexPos[18] = vec2[18] (vec2(0.0, 0.25), vec2(0.5, 0.5), vec2(0.0, 0.75), vec2(0.0,  0.75), vec2(0.5, 0.5), vec2(0.5, 1), vec2(0.5, 1), vec2(0.5, 0.5), vec2(1, 0.75), vec2(1, 0.75), vec2(0.5, 0.5), vec2(1, 0.25), vec2(1, 0.25), vec2(0.5, 0.5), vec2(0.5, 0), vec2(0.5, 0), vec2(0.5, 0.5), vec2(0.0, 0.25));
-const vec2 vertexTex[18] = vec2[18] (vec2(0.0, 0.25), vec2(0.5, 0.5), vec2(0.0, 0.75), vec2(0.0,  0.75), vec2(0.5, 0.5), vec2(0.5, 1), vec2(0.5, 1), vec2(0.5, 0.5), vec2(1, 0.75), vec2(1, 0.75), vec2(0.5, 0.5), vec2(1, 0.25), vec2(1, 0.25), vec2(0.5, 0.5), vec2(0.5, 0), vec2(0.5, 0), vec2(0.5, 0.5), vec2(0.0, 0.25));
 out vec2 fragTex;
 out float center;
-
 out float drawLines;
 
 void main() {
-    fragTex = vertexTex[int(mod(gl_VertexID, 18))];
-    fragTex.x = (texLocation[0]+fragTex.x*texLocation[2])/texTW;
-    fragTex.y = 1-(texLocation[1]+(1-fragTex.y)*texLocation[3])/texTH;
+    fragTex = texLocation;
 
-    vec4 pos = vec4((vertexPos[int(mod(gl_VertexID, 18))].x+location.x-location.y/2)*hexWidth, (vertexPos[int(mod(gl_VertexID, 18))].y)*hexHeight2-(location.y)*hexHeight2*hexHeight, 0, 1);
-    gl_Position = projectionMatrix * cameraMatrix * pos;
+    gl_Position = projectionMatrix * cameraMatrix * vec4(location.x, location.y, 0, 1);
 
     drawLines = 1-smoothstep(18, 25, cam_z);
-    center = abs(mod(gl_VertexID, 3) - 1);
+    center = -sign(mod(gl_VertexID, 7) - 6);
 }

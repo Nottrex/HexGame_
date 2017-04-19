@@ -10,38 +10,20 @@ public class FieldShader extends ShaderProgram {
 		super(gl, VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, cameraLocation, projectionLocation;
-	private int texTWLocation, texTHLocation;
+	private int texLocation, cameraLocation, projectionLocation;
 	private int timeLocation, camZLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");
-		hexWidthLocation = getUniformLocation(gl, "hexWidth");
-		hexHeightLocation = getUniformLocation(gl, "hexHeight");
-		hexHeight2Location = getUniformLocation(gl, "hexHeight2");
 		cameraLocation = getUniformLocation(gl, "cameraMatrix");
 		projectionLocation = getUniformLocation(gl, "projectionMatrix");
 
 		timeLocation = getUniformLocation(gl, "time");
-		texTWLocation = getUniformLocation(gl, "texTW");
-		texTHLocation = getUniformLocation(gl, "texTH");
 		camZLocation = getUniformLocation(gl, "cam_z");
 	}
 
 	public void setTexture(GL2 gl, int tex) {
 		setUniform1i(gl, texLocation, tex);
-	}
-
-	public void setHexWidth(GL2 gl, float width) {
-		setUniform1f(gl, hexWidthLocation, width);
-	}
-
-	public void setHexHeight2(GL2 gl, float height2) {
-		setUniform1f(gl, hexHeight2Location, height2);
-	}
-
-	public void setHexHeight(GL2 gl, float height) {
-		setUniform1f(gl, hexHeightLocation, height);
 	}
 
 	public void setCamera(GL2 gl, float[] camera) {
@@ -50,11 +32,6 @@ public class FieldShader extends ShaderProgram {
 
 	public void setProjectionMatrix(GL2 gl, float[] projectionMatrix) {
 		setUniformMat4(gl, projectionLocation, projectionMatrix);
-	}
-
-	public void setTextureTotalBounds(GL2 gl, int texTW, int texTH) {
-		setUniform1i(gl, texTWLocation, texTW);
-		setUniform1i(gl, texTHLocation, texTH);
 	}
 
 	public void setTime(GL2 gl, float time) {
