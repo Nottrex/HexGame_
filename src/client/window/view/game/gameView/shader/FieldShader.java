@@ -42,11 +42,12 @@ public class FieldShader extends ShaderProgram {
 		setUniform1f(gl, camZLocation, cam_z);
 	}
 
-	private int locationLocation, texLocationLocation;
+	private int locationLocation, texLocationLocation, fieldDataLocation;
 	@Override
 	protected void bindAttributes(GL2 gl) {
 		locationLocation = getAttributeLocation(gl, "location");
 		texLocationLocation = getAttributeLocation(gl, "texLocation");
+		fieldDataLocation = getAttributeLocation(gl, "fieldData");
 	}
 
 	public int getLocationLocation() {
@@ -55,5 +56,9 @@ public class FieldShader extends ShaderProgram {
 
 	public int getTexLocationLocation() {
 		return texLocationLocation;
+	}
+
+	public  int getFieldDataLocation() {
+		return fieldDataLocation;
 	}
 }

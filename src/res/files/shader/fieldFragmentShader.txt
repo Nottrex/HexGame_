@@ -5,10 +5,15 @@ uniform sampler2D tex;
 in vec2 fragTex;
 in float center;
 in float drawLines;
+in float drawBlackWhite;
+in vec4 edgeColor;
 
 out vec4 finalColor;
 
 void main() {
     finalColor = texture(tex, fragTex);
-    finalColor = mix(finalColor, vec4(0, 0, 0, 1.0), drawLines*smoothstep(0.95, 1, center)*0.5);
+    finalColor = mix(finalColor, edgeColor, drawLines*smoothstep(0.95, 1, center)*0.5);
+
+    float grey = 0.3 * finalColor.r + 0.59 * finalColor.g + 0.11 * finalColor.b;
+    finalColor = mix(finalColor, vec4(grey, grey, grey, 1), drawBlackWhite);
 }

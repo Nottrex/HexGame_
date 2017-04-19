@@ -1,6 +1,7 @@
 package game.map;
 
 import game.Location;
+import game.enums.Direction;
 import game.enums.Field;
 import game.map.presets.MapPreset;
 
@@ -44,6 +45,15 @@ public class MapGenerator {
                 else if(f <= 7.0f/9.0f)out[x][y] = Field.DIRT_ROCK;
                 else if(f <= 8.0f/9.0f)out[x][y] = Field.STONE;
                 else if(f <= 9.0f/9.0f)out[x][y] = Field.SNOW;
+            }
+        }
+
+        for (Location l: mp.getSpawnPoints()) {
+            out[l.x][l.y] = Field.GRASS;
+
+            for (Direction d: Direction.values()) {
+                Location l2 = d.applyMovement(l);
+                out[l2.x][l2.y] = Field.GRASS;
             }
         }
 

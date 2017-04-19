@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private Controller controller;
 	private Camera cam;
 
-	private IntBuffer buffers = IntBuffer.allocate(3);
+	private IntBuffer buffers = IntBuffer.allocate(4);
 	private IntBuffer vao = IntBuffer.allocate(1);
 	private int length;
 	private Texture fieldTexture;
@@ -140,6 +141,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		float[] locations = new float[length*2*vertexPos.length];
 		float[] texLocations = new float[length*2*vertexPos.length];
+		byte[] fieldData = new byte[length*vertexPos.length];
 		int[] indices = new int[length*18];
 
 		BufferedImage img = TextureHandler.getImagePng("field");
@@ -162,6 +164,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 						locations[a*vertexPos.length*2 + 2*i] = (vertexPos[i][0]+x-y/2.0f)*hexWidth;
 						locations[a*vertexPos.length*2 + 2*i + 1] = (vertexPos[i][1])*hexHeight2-(y)*hexHeight2*hexHeight;
+
+						fieldData[a*vertexPos.length + i] = 0 | (0 << 1);
 					}
 
 					indices[a*18] = a*7;
@@ -195,15 +199,19 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		FloatBuffer locationBuffer = FloatBuffer.wrap(locations);
 		FloatBuffer texLocationBuffer = FloatBuffer.wrap(texLocations);
+		ByteBuffer fieldDataBuffer = ByteBuffer.wrap(fieldData);
 		IntBuffer indicesBuffer = IntBuffer.wrap(indices);
 
-		gl.glGenBuffers(3, buffers);
+		gl.glGenBuffers(4, buffers);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
 		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*7 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
 		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*7 * 2, texLocationBuffer, GL2.GL_STATIC_DRAW);
+
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(2));
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 1*length*7, fieldDataBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glGenVertexArrays(1, vao);
 		gl.glBindVertexArray(vao.get(0));
@@ -216,7 +224,11 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
 		gl.glVertexAttribPointer(fieldShader.getTexLocationLocation(), 2, GL.GL_FLOAT, false, 0, 0);
 
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, buffers.get(2));
+		gl.glEnableVertexAttribArray(fieldShader.getFieldDataLocation());
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(2));
+		gl.glVertexAttribIPointer(fieldShader.getFieldDataLocation(), 1, GL.GL_BYTE, 0, 0);
+
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, buffers.get(3));
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 18*length*4, indicesBuffer, GL.GL_STATIC_DRAW);
 	}
 
