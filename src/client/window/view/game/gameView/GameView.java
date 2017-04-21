@@ -229,7 +229,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		gl.glEnableVertexAttribArray(fieldShader.getFieldDataLocation());
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(2));
-		gl.glVertexAttribIPointer(fieldShader.getFieldDataLocation(), 1, GL.GL_BYTE, 0, 0);
+		gl.glVertexAttribPointer(fieldShader.getFieldDataLocation(), 1, GL.GL_BYTE, false, 0, 0);
 
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, buffers.get(3));
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 18*length*4, indicesBuffer, GL.GL_STATIC_DRAW);

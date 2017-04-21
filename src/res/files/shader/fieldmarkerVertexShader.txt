@@ -1,4 +1,4 @@
-#version 150
+#version 130
 uniform float hexWidth;
 uniform float hexHeight2;
 uniform float hexHeight;
