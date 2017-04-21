@@ -25,11 +25,11 @@ public class MapGenerator {
     }
 
     public Field[][] getMap() {
-        Field[][] out = new Field[mp.getPresetMap().length][mp.getPresetMap()[0].length];
-
+        Field[][] presetMap = mp.getPresetMap();
+        Field[][] out = new Field[presetMap.length][presetMap[0].length];
         for(int x = 0; x < out.length; x++) {
             for(int y = 0; y < out[0].length; y++){
-                if(mp.getPresetMap()[x][y] == Field.VOID) {
+                if(presetMap[x][y] == Field.VOID) {
                     out[x][y] = Field.VOID;
                     continue;
                 }
