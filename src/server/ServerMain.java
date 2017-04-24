@@ -33,7 +33,7 @@ public class ServerMain implements ServerListener {
 
 	private Game game;
 
-	private MapPreset preset = new HexPreset(1111);
+private MapPreset preset = new HexPreset(101);
 
 	public ServerMain() {
 		serverState = ServerState.WAITING_FOR_PLAYERS;
