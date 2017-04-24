@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class Util {
 
@@ -7,7 +8,11 @@ public class Util {
 		try {
 			return ImageIO.read(ClassLoader.getSystemResource(file));
 		}catch(Exception e) {
-			return null;
+			try {
+				return ImageIO.read(new File(file));
+			}catch(Exception e2) {
+				return null;
+			}
 		}
 	}
 }

@@ -16,12 +16,18 @@ public class TexturePacker {
 
 		String input = s.nextLine();
 		while(!input.equals("exit")) {
-			if(input.startsWith("add")) {
+			if(input.startsWith("add ")) {
 				String[] content = input.split(" ");
 				if(content.length == 3) {
 					tp.addImage(content[1], Util.load(content[2]));
 					System.out.println("There are now " + tp.getSize() + " images");
 				}else System.out.println("Usage: add [name] [file path]");
+			}if(input.startsWith("addDir")) {
+				String[] content = input.split(" ");
+				if (content.length == 2) {
+					tp.addDirectory(content[1]);
+					System.out.println("There are now " + tp.getSize() + " images");
+				} else System.out.println("Usage: addDir [file path]");
 			}else if(input.startsWith("remove")) {
 				if(input.split(" ").length == 2) {
 					tp.removeImage(input.split(" ")[1]);
@@ -39,6 +45,7 @@ public class TexturePacker {
 				}
 			}else if(input.startsWith("help")) {
 				System.out.println("add [name] [file path] - adds a image");
+				System.out.println("addDir [file path] - adds all pngs in that path");
 				System.out.println("remove [name] - removes image");
 				System.out.println("pack - puts images together");
 				System.out.println("save [filename] - saves the .png and .text");
@@ -64,6 +71,20 @@ public class TexturePacker {
 			content.put(name, image);
 			return true;
 		}else return false;
+	}
+
+	public boolean addDirectory(String path) {
+
+		File folder = new File(path);
+		if(folder == null) return false;
+		for(File f: folder.listFiles()) {
+			String name = f.getName();
+			if(name.endsWith(".png")) {
+				addImage(name.split(".png")[0], Util.load(f.getAbsolutePath()));
+			}
+		}
+
+		return true;
 	}
 
 	public boolean removeImage(String name) {
@@ -107,13 +128,13 @@ public class TexturePacker {
 		List<String> name = new ArrayList<>();
 		name.addAll(content.keySet());
 
-		int width = columns * content.get(name.get(0)).getWidth();
-		int height = rows * content.get(name.get(0)).getHeight();
+		int width = columns * (content.get(name.get(0)).getWidth() + 2);
+		int height = rows * (content.get(name.get(0)).getHeight() + 2);
 
 		int w = 0, h = 0;
 
-		while(Math.pow(2, w) < w) w++;
-		while(Math.pow(2, h) < h) w++;
+		while(Math.pow(2, w) < width) w+=1;
+		while(Math.pow(2, h) < height) h+=1;
 
 		packedContent = new BufferedImage((int) Math.pow(2, w), (int) Math.pow(2, h), BufferedImage.TYPE_INT_ARGB);
 		Graphics g = packedContent.getGraphics();
@@ -126,13 +147,17 @@ public class TexturePacker {
 				x = latest.x;
 			}else {
 				x = 0;
-				y += i.getHeight();
+				y += i.getHeight() + 2;
 			}
 
 			g.drawImage(i, x, y,null);
+			g.drawImage(i, x + 2, y,null);
+			g.drawImage(i, x, y + 2,null);
+			g.drawImage(i, x + 2, y + 2,null);
+			g.drawImage(i, x + 1, y + 1,null);
 
-			locations.put(new Location(x, y), i);
-			latest = new Location(x + i.getWidth(), y);
+			locations.put(new Location(x + 1, y + 1), i);
+			latest = new Location(x + i.getWidth() + 2, y);
 		}
 	}
 
@@ -152,7 +177,7 @@ public class TexturePacker {
 
 				for(String s: content.keySet()) if(content.get(s).equals(i)) name = s;
 
-				w.write(name + " " + l.x + " " + l.y + " " + i.getWidth() + " " + i.getHeight() + "\n");
+				w.write(name + " " + l.x + " " + l.y + " " + i.getWidth()+1 + " " + i.getHeight()+1 + "\n");
 			}
 
 			w.close();
