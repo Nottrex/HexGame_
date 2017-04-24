@@ -1,7 +1,7 @@
 #version 130
 in vec2 location;
 in vec2 texLocation;
-in int fieldData;
+in float fieldData2;
 
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
@@ -19,17 +19,18 @@ out float drawBlackWhite;
 out float drawFog;
 out vec4 edgeColor;
 
-const vec4 colors[5] = vec4[5] (vec4(0, 0, 0, 1), vec4(1, 0, 0, 1), vec4(0, 1, 0, 1), vec4(0, 0, 1, 1), vec4(1, 1, 0, 1));
-const vec2 pos[7] = vec2[7] (vec2(0.0, 0.25), vec2(0.0, 0.75), vec2(0.5, 1), vec2(1.0, 0.75), vec2(1.0, 0.25), vec2(0.5, 0), vec2(0.5, 0.5));
+uniform vec4 colors[5] = vec4[5] (vec4(0, 0, 0, 1), vec4(1, 0, 0, 1), vec4(0, 1, 0, 1), vec4(0, 0, 1, 1), vec4(1, 1, 0, 1));
+uniform vec2 pos[7] = vec2[7] (vec2(0.0, 0.25), vec2(0.0, 0.75), vec2(0.5, 1), vec2(1.0, 0.75), vec2(1.0, 0.25), vec2(0.5, 0), vec2(0.5, 0.5));
 
 void main() {
     fragTex = texLocation;
 
     gl_Position = projectionMatrix * cameraMatrix * vec4(location.x, location.y, 0, 1);
 
+    int fieldData = int(fieldData2);
     drawBlackWhite = mod(fieldData,2);
     drawFog = (mod(fieldData, 4) - drawBlackWhite)/2;
-    int data = fieldData >> 2;
+    int data = fieldData / 4;
 
     edgeColor = colors[data];
     drawLines = 1-smoothstep(18, 25, cam_z);
