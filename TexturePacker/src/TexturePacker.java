@@ -150,10 +150,10 @@ public class TexturePacker {
 				y += i.getHeight() + 2;
 			}
 
-			g.drawImage(i, x, y,null);
-			g.drawImage(i, x + 2, y,null);
-			g.drawImage(i, x, y + 2,null);
-			g.drawImage(i, x + 2, y + 2,null);
+			g.drawImage(i, x, y + 1,null);
+			g.drawImage(i, x + 2, y + 1,null);
+			g.drawImage(i, x + 1, y + 2,null);
+			g.drawImage(i, x + 1, y,null);
 			g.drawImage(i, x + 1, y + 1,null);
 
 			locations.put(new Location(x + 1, y + 1), i);
