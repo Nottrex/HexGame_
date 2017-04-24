@@ -41,6 +41,10 @@ public class DynamicBackground {
 		interpolationColor = new Color(r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS), r.nextInt(MAX_COLOR_BRIGHTNESS));
 	}
 
+
+	private final float[] data = { 0.0625f, 0.125f, 0.0625f, 0.125f, 0.25f, 0.125f,
+			0.0625f, 0.125f, 0.0625f };
+
 	/**
 	 * Draws the background
 	 * @param width of the image
@@ -64,14 +68,12 @@ public class DynamicBackground {
 			Color c = interpolateColor(drawOvers.get(l), targetColors.get(l), (1.0*(currentTime-interpolationStart.get(l)))/interpolationTime.get(l));
 			drawHexField(l.x, l.y, g, new Color(c.getRed()/255.0f, c.getGreen()/255.0f, c.getBlue()/255.0f, 0.2f));
 		}
+		System.gc();
 
 		BufferedImage buffer2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-		float data[] = { 0.0625f, 0.125f, 0.0625f, 0.125f, 0.25f, 0.125f,
-				0.0625f, 0.125f, 0.0625f };
 		Kernel kernel = new Kernel(3, 3, data);
-		ConvolveOp convolve = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP,
-				null);
+		ConvolveOp convolve = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
 		convolve.filter(buffer, buffer2);
 
 		return buffer2;

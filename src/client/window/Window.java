@@ -38,7 +38,7 @@ public class Window extends JFrame {
 		});
 
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setUndecorated(true);
+		setUndecorated(false);
 		setVisible(true);
 
 		addWindowListener(new WindowAdapter() {
