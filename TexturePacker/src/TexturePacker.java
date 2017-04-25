@@ -177,7 +177,7 @@ public class TexturePacker {
 
 				for(String s: content.keySet()) if(content.get(s).equals(i)) name = s;
 
-				w.write(name + " " + l.x + " " + l.y + " " + i.getWidth()+1 + " " + i.getHeight()+1 + "\n");
+				w.write(name + " " + l.x + " " + l.y + " " + i.getWidth() + " " + i.getHeight() + "\n");
 			}
 
 			w.close();
