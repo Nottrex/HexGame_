@@ -33,7 +33,7 @@ void main() {
     int data = fieldData / 4;
 
     edgeColor = colors[data];
-    drawLines = 1-smoothstep(18, 25, cam_z);
+    drawLines = (1-smoothstep(18, 25, cam_z))*(sin(time/500)+5)/6;
 
     int v = int(mod(gl_VertexID, 7));
     center = -sign(v - 6);
