@@ -6,6 +6,8 @@ import game.enums.PlayerColor;
 import game.map.MapGenerator;
 import game.map.presets.HexPreset;
 import game.map.presets.MapPreset;
+import game.map.presets.OvalPreset;
+import game.map.presets.SquarePreset;
 import networking.ServerState;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
@@ -33,7 +35,7 @@ public class ServerMain implements ServerListener {
 
 	private Game game;
 
-private MapPreset preset = new HexPreset(101);
+	private MapPreset preset = new OvalPreset( 201, 201);
 
 	public ServerMain() {
 		serverState = ServerState.WAITING_FOR_PLAYERS;
