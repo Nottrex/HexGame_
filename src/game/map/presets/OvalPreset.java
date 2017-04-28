@@ -42,9 +42,10 @@ public class OvalPreset implements MapPreset{
 	@Override
 	public List<Location> getSpawnPoints() {
 		List<Location> locations = new ArrayList<>();
-		locations.add(new Location(2, 2));
-		locations.add(new Location(3, 3));
-		//TODO: getSpawnPoints
+		locations.add(new Location(width/2 + 1, 2));
+		locations.add(new Location(width/2 + height/2, height - 2));
+		locations.add(new Location(height/4, height/2));		//
+		locations.add(new Location(width + height/4 - 1, height/2));
 		return locations;
 	}
 }

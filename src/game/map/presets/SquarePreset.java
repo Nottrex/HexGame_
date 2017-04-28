@@ -43,9 +43,9 @@ public class SquarePreset implements  MapPreset{
         List<Location> locations = new ArrayList<>();
 
         locations.add(new Location(2, 2));
-        locations.add(new Location(width-3, height-3)); //TODO: Fix
-        locations.add(new Location(2, height-3));
-        locations.add(new Location(width-3, 2));        //TODO: Fix
+        locations.add(new Location(width-3 + height/2, height-3)); //TODO: Fix
+        locations.add(new Location(2 + height/2, height-3));
+        locations.add(new Location(width-2, 2));        //TODO: Fix
 
         return locations;
     }
