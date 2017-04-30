@@ -83,6 +83,18 @@ public class ServerMain implements ServerListener {
 		server = new Server(port, this);
 	}
 
+	public ServerMain(MapPreset preset, int port) {
+		this.preset = preset;
+
+		serverState = ServerState.WAITING_FOR_PLAYERS;
+
+		players = new HashMap<>();
+		playerReady = new HashMap<>();
+		playerColor = new HashMap<>();
+
+		server = new Server(port, this);
+	}
+
 	public void playerQuit(String player) {
 		Socket s = getPlayerSocket(player);
 
