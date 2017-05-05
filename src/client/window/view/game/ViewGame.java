@@ -174,7 +174,7 @@ public class ViewGame extends View implements ClientListener {
 
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
-		cam.tzoom = 2.2f/m.getHeight();
+		cam.setZoom(2.2f/m.getHeight());
 
 		float[] pos = center.hexPositionToWorldPosition(new Location(m.getWidth()/2, m.getHeight()/2+1));
 
@@ -275,7 +275,7 @@ public class ViewGame extends View implements ClientListener {
 			a = 1 / GUIConstants.ZOOM;
 		}
 
-		cam.tzoom *= a;
+		cam.zoomSmooth((float) a);
 	}
 
 	private boolean drawing2 = false;

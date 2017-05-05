@@ -479,7 +479,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private void updateCamera(GL2 gl, Camera cam) {
 		boolean b = cam.update();
 		if (cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN) {
-			cam.tzoom = 1;
+			cam.setZoom(1);
 			b = cam.update();
 		}
 
