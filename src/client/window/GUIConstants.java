@@ -28,4 +28,6 @@ public class GUIConstants {
 	public static String LAST_USERNAME						= null;
 	public static String LAST_IP							= null;
 	public static String LAST_PORT							= null;
+
+	public static final int MAX_MAP_SIZE					= 2000;
 }

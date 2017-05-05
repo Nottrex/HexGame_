@@ -2,10 +2,13 @@ package client.window.view;
 
 import client.Controller;
 import client.components.CustomTextField;
+import client.components.ImageButton;
 import client.components.TextButton;
 import client.window.GUIConstants;
+import client.window.TextureHandler;
 import client.window.View;
 import client.window.Window;
+import game.map.presets.MapPreset;
 import server.ServerMain;
 
 import javax.swing.*;
@@ -16,11 +19,13 @@ public class ViewServerCreate extends View {
     private Window window;
     private Controller controller;
 
+    private ImageButton buttonOptions;
     private TextButton buttonConnect, buttonBackToMainMenu;
     private CustomTextField textFieldName, textFieldPort;
 
     private JPanel panel;
     private DynamicBackground background;
+    private MapPreset mp;
     private boolean started = false;
 
     public ViewServerCreate(DynamicBackground background) {
@@ -36,6 +41,7 @@ public class ViewServerCreate extends View {
         if(background == null) background = new DynamicBackground();
         window.getPanel().setLayout(null);
 
+        buttonOptions = new ImageButton(window, TextureHandler.getImagePng("Options"), e->window.updateView(new ViewServerOptions(window, this, background)));
         buttonConnect = new TextButton(window, "Create", e ->
         {
             if (textFieldName.getText().isEmpty()) return;
@@ -50,7 +56,8 @@ public class ViewServerCreate extends View {
             GUIConstants.LAST_IP = "localhost";
             GUIConstants.LAST_PORT = textFieldPort.getText();
 
-            window.updateView(new ViewGameSetup(new ServerMain(port), background, textFieldName.getText(), "localhost", port));
+            if(mp == null) window.updateView(new ViewGameSetup(new ServerMain(port), background, textFieldName.getText(), "localhost", port));
+            else window.updateView(new ViewGameSetup(new ServerMain(mp, port), background, textFieldName.getText(), "localhost", port));
         });
         buttonBackToMainMenu = new TextButton(window, "Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
         textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
@@ -64,6 +71,7 @@ public class ViewServerCreate extends View {
         window.getPanel().add(textFieldName);
         window.getPanel().add(textFieldPort);
         window.getPanel().add(buttonConnect);
+        window.getPanel().add(buttonOptions);
         window.getPanel().add(buttonBackToMainMenu);
 
         started = true;
@@ -86,6 +94,7 @@ public class ViewServerCreate extends View {
         int elementHeight = height/10;
         int elementWidth  = elementHeight*5;
 
+        buttonOptions.setBounds(5, 5, height/12, height/12);
         textFieldName.setBounds((width-elementWidth)/2, (height-5*elementHeight)/2, elementWidth, elementHeight);
         textFieldPort.setBounds((width-elementWidth)/2, (height-3*elementHeight)/2, elementWidth, elementHeight);
         buttonConnect.setBounds((width-elementWidth)/2, (height-elementHeight)/2, elementWidth, elementHeight);
@@ -109,6 +118,10 @@ public class ViewServerCreate extends View {
         }
 
         panel.getGraphics().drawImage(buffer, 0, 0, null);
+    }
+
+    public void setPreset(MapPreset mp) {
+        this.mp = mp;
     }
 
     @Override
