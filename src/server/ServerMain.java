@@ -35,7 +35,7 @@ public class ServerMain implements ServerListener {
 
 	private Game game;
 
-	private MapPreset preset = new OvalPreset( 201, 201);
+	private MapPreset preset = new HexPreset(201);
 
 	public ServerMain() {
 		serverState = ServerState.WAITING_FOR_PLAYERS;

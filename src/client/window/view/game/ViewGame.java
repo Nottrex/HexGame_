@@ -171,15 +171,19 @@ public class ViewGame extends View implements ClientListener {
 			width = window.getWidth();
 			height = window.getHeight();
 	}
-
+	private boolean startCenterCamera = false;
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
-		cam.setZoom(2.2f/m.getHeight());
-
 		float[] pos = center.hexPositionToWorldPosition(new Location(m.getWidth()/2, m.getHeight()/2+1));
 
-		cam.tx = pos[0];
-		cam.ty = pos[1];
+		if (startCenterCamera) {
+			cam.setZoomSmooth(2.2f/m.getHeight(), 500);
+			cam.setPositionSmooth(pos[0], pos[1], 500);
+		} else {
+			cam.setZoom(2.2f/m.getHeight());
+			cam.setPosition(pos[0], pos[1]);
+			startCenterCamera = true;
+		}
 	}
 
 	public void onMouseClick(int x, int y) {
@@ -193,8 +197,7 @@ public class ViewGame extends View implements ClientListener {
 		float[] zero = center.screenPositionToWorldPosition(0, 0);
 		float[] one = center.screenPositionToWorldPosition(1, 1);
 
-		cam.tx += (dx*(-one[0]+zero[0]));
-		cam.ty += (dy*(-one[1]+zero[1]));
+		cam.setPosition(cam.getX() + (dx*(-one[0]+zero[0])), cam.getY() + (dy*(-one[1]+zero[1])));
 	}
 
 	public void onKeyType(int keyCode) {
@@ -257,9 +260,7 @@ public class ViewGame extends View implements ClientListener {
 			controller.selectedField = null;
 			controller.onMouseClick(new Location(u.getX(), u.getY()));
 
-			cam.tx = pos[0];
-			cam.ty = pos[1];
-
+			cam.setPositionSmooth(pos[0], pos[1], 500);
 			//cam.tzoom = 2.2f/15;
 		}
 
