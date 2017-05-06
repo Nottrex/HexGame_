@@ -1,5 +1,6 @@
 package client.audio;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +22,8 @@ public class AudioHandler {
 	public static void loadMusicWav(String audioName, String fileName) {
 		Clip a = null;
 		try {
-			a = AudioSystem.getClip();
-			a.open(AudioSystem.getAudioInputStream(ClassLoader.getSystemResource("res/audio/" + fileName + ".wav")));
+			a = AudioSystem.getClip(null);
+			a.open(AudioSystem.getAudioInputStream(new BufferedInputStream(ClassLoader.getSystemResourceAsStream("res/audio/" + fileName + ".wav"))));
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			e.printStackTrace();
 		}
