@@ -42,7 +42,7 @@ public class ViewServerOptions extends View {
 
 	@Override
 	public void init(Window window, Controller controller) {
-		mapType = "Hexagon";
+		mapType = Strings.MAP_TYPE_HEXAGON;
 		widthValue = calcMapVal(0.5d);
 		heightValue = calcMapVal(0.5d);
 
@@ -52,6 +52,7 @@ public class ViewServerOptions extends View {
 			else if(mapType.equals(Strings.MAP_TYPE_OVAL)) mapType = Strings.MAP_TYPE_SQUARE;
 			else if(mapType.equals(Strings.MAP_TYPE_SQUARE)) mapType = Strings.MAP_TYPE_HEXAGON;
 
+			System.out.println(mapType);
 			buttonMapType.setText(mapType);
 		});
 
