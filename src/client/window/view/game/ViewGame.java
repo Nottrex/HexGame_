@@ -22,6 +22,7 @@ import game.enums.PlayerColor;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
+import i18n.Strings;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.packets.Packet;
@@ -112,7 +113,7 @@ public class ViewGame extends View implements ClientListener {
 
 			@Override
 			public String getText() {
-				return String.format("Round %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" : controller.game
+				return String.format(Strings.GAME_ROUND + " %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" : controller.game
 				.getPlayerColor().getDisplayName());
 			}
 		});
@@ -304,7 +305,7 @@ public class ViewGame extends View implements ClientListener {
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(mouseLocation)), lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString("Costs: " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
+				g.drawString(Strings.GAME_TILE_COSTS + ": " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
 			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);

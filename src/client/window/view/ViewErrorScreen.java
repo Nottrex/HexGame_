@@ -5,6 +5,7 @@ import client.components.TextButton;
 import client.components.TextLabel;
 import client.window.View;
 import client.window.Window;
+import i18n.Strings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,7 +42,7 @@ public class ViewErrorScreen extends View {
 
 		if(background == null) background = new DynamicBackground();
 
-		buttonBackToMainMenu = new TextButton(window, "Back to Main Menu", e -> window.updateView(new ViewMainMenu(background)));
+		buttonBackToMainMenu = new TextButton(window, Strings.BUTTON_TEXT_MAINMENU,e -> window.updateView(new ViewMainMenu(background)));
 		labelError = new TextLabel(() -> error, true);
 
 		changeSize();
