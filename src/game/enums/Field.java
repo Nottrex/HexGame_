@@ -1,19 +1,21 @@
 package game.enums;
 
+import i18n.Strings;
+
 /**
  * The type of one Hexagon
  */
 public enum Field {
-	WATER("Water", 1, true, true, 1),
-	FOREST("Forest", 2, false, true, 1),
-	GRASS("Grass", 1, false, true, 1),
-	GRASS_ROCK("Grass-rock", 3, false, true, 2),
-	DIRT("Dirt", 1, false, true, 2),
-	DIRT_ROCK("Dirt-rock", 3, false, true, 1),
-	SAND("Sand", 2, false, true, 2),
-	SNOW("Snow", 2, false, true, 1),
-	STONE("Stone", 1, false, true, 1),
-	VOID("Void", 999999999, false, false, 1);
+	WATER(Strings.FIELD_NAME_WATER, 1, true, true, 1),
+	FOREST(Strings.FIELD_NAME_FOREST, 2, false, true, 1),
+	GRASS(Strings.FIELD_NAME_GRASS, 1, false, true, 1),
+	GRASS_ROCK(Strings.FIELD_NAME_GRASS_ROCK, 3, false, true, 2),
+	DIRT(Strings.FIELD_NAME_DIRT, 1, false, true, 2),
+	DIRT_ROCK(Strings.FIELD_NAME_DIRT_ROCK, 3, false, true, 1),
+	SAND(Strings.FIELD_NAME_SAND, 2, false, true, 2),
+	SNOW(Strings.FIELD_NAME_SNOW, 2, false, true, 1),
+	STONE(Strings.FIELD_NAME_STONE, 1, false, true, 1),
+	VOID(Strings.FIELD_NAME_VOID, 999999999, false, false, 1);
 
 	private String displayName;
 	private int movementCost;

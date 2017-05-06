@@ -11,6 +11,7 @@ import game.map.presets.HexPreset;
 import game.map.presets.MapPreset;
 import game.map.presets.OvalPreset;
 import game.map.presets.SquarePreset;
+import i18n.Strings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,9 +48,9 @@ public class ViewServerOptions extends View {
 
 		buttonMapType = new TextButton(window, mapType, e->{
 
-			if(mapType.equals("Hexagon")) mapType = "Oval";
-			else if(mapType.equals("Oval")) mapType = "Square";
-			else if(mapType.equals("Square")) mapType = "Hexagon";
+			if(mapType.equals(Strings.MAP_TYPE_HEXAGON)) mapType = Strings.MAP_TYPE_OVAL;
+			else if(mapType.equals(Strings.MAP_TYPE_OVAL)) mapType = Strings.MAP_TYPE_SQUARE;
+			else if(mapType.equals(Strings.MAP_TYPE_SQUARE)) mapType = Strings.MAP_TYPE_HEXAGON;
 
 			buttonMapType.setText(mapType);
 		});
@@ -57,33 +58,33 @@ public class ViewServerOptions extends View {
 		displayWidth = new TextLabel(new TextLabel.Text() {
 			@Override
 			public String getText() {
-				return widthValue + "";
+				return Strings.WIDTH + ": " + widthValue + "";
 			}
 		}, false);
 
 		displayHeight = new TextLabel(new TextLabel.Text() {
 			@Override
 			public String getText() {
-				return heightValue + "";
+				return Strings.HEIGHT + ": " + heightValue + "";
 			}
 		}, false);
 
 		mapWidth = new HorizontalSlider(0.5f, e -> widthValue = calcMapVal(mapWidth.getValue()));
 		mapHeight = new HorizontalSlider(0.5f, e -> heightValue = calcMapVal(mapHeight.getValue()));
 
-		accept = new TextButton(window, "Accept", e->{
+		accept = new TextButton(window, Strings.BUTTON_TEXT_ACCEPT, e->{
 			if(widthValue % 2 == 0) widthValue += 1;
 			if(heightValue % 2 == 0) heightValue += 1;
 
 			MapPreset mp = null;
-			if(mapType.equals("Hexagon")) mp = new HexPreset((widthValue + heightValue)/2);
-			else if(mapType.equals("Oval")) mp = new OvalPreset(widthValue, heightValue);
-			else if(mapType.equals("Square")) mp = new SquarePreset(widthValue, heightValue);
+			if(mapType.equals(Strings.MAP_TYPE_HEXAGON)) mp = new HexPreset((widthValue + heightValue)/2);
+			else if(mapType.equals(Strings.MAP_TYPE_OVAL)) mp = new OvalPreset(widthValue, heightValue);
+			else if(mapType.equals(Strings.MAP_TYPE_SQUARE)) mp = new SquarePreset(widthValue, heightValue);
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
 
-		cancel = new TextButton(window, "Cancel", e -> window.updateView(prev));
+		cancel = new TextButton(window, Strings.BUTTON_TEXT_CANCEL, e -> window.updateView(prev));
 
 		window.getPanel().add(cancel);
 		window.getPanel().add(accept);

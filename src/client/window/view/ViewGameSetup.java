@@ -7,6 +7,7 @@ import client.window.View;
 import client.window.Window;
 import client.window.view.game.ViewGame;
 import game.enums.PlayerColor;
+import i18n.Strings;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.preGamePackets.*;
@@ -69,9 +70,9 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		displayInfo = "";
 
-		button_backToServerConnect = new TextButton(window, "Quit", e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
-		button_toggleReady = new TextButton(window, "Toggle Ready", e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
-		button_toggleColor = new TextButton(window, "Toggle Color", (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
+		button_backToServerConnect = new TextButton(window, Strings.BUTTON_TEXT_QUIT,e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
+		button_toggleReady = new TextButton(window, Strings.BUTTON_TEXT_TOGGLE_READY, e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
+		button_toggleColor = new TextButton(window, Strings.BUTTON_TEXT_TOOGLE_COLOR, (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
 
 		info = new TextLabel(new TextLabel.Text() {
 			@Override

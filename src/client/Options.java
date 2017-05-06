@@ -2,6 +2,7 @@ package client;
 
 import client.audio.AudioConstants;
 import client.window.GUIConstants;
+import i18n.LanguageLoader;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Options {
-    private static final File DATA_FILE_FOLDER = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator);
+    public static final File DATA_FILE_FOLDER = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator);
     private static final File DATA_FILE = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator + "options.yml");
 
     static {
@@ -40,6 +41,7 @@ public class Options {
         data.put("Audio", audioData);
         data.put("Graphics", guiData);
         data.put("Inputs", inputData);
+        data.put("Language", LanguageLoader.language);
 
         try {
             yaml.dump(data, new FileWriter(DATA_FILE));
@@ -71,10 +73,10 @@ public class Options {
                     GUIConstants.LAST_IP = inputData.get("IP");
                 }
 
+                LanguageLoader.language = (String) data.get("Language");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
-
 }
