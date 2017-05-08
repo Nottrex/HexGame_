@@ -42,7 +42,7 @@ public class ViewErrorScreen extends View {
 
 		if(background == null) background = new DynamicBackground();
 
-		buttonBackToMainMenu = new TextButton(window, Strings.BUTTON_TEXT_MAINMENU,e -> window.updateView(new ViewMainMenu(background)));
+		buttonBackToMainMenu = new TextButton(window, Strings.get("Back to Mainmenu"),e -> window.updateView(new ViewMainMenu(background)));
 		labelError = new TextLabel(() -> error, true);
 
 		changeSize();

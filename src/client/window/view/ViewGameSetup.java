@@ -70,9 +70,9 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		displayInfo = "";
 
-		button_backToServerConnect = new TextButton(window, Strings.BUTTON_TEXT_QUIT,e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
-		button_toggleReady = new TextButton(window, Strings.BUTTON_TEXT_TOGGLE_READY, e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
-		button_toggleColor = new TextButton(window, Strings.BUTTON_TEXT_TOOGLE_COLOR, (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
+		button_backToServerConnect = new TextButton(window, Strings.get("Quit"),e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
+		button_toggleReady = new TextButton(window, Strings.get("Toggle Ready"), e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
+		button_toggleColor = new TextButton(window, Strings.get("Toggle Color"), (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
 
 		info = new TextLabel(new TextLabel.Text() {
 			@Override

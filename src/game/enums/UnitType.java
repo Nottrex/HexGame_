@@ -7,11 +7,11 @@ import i18n.Strings;
  * Determines its stats
  */
 public enum UnitType {
-	PANZER(Strings.UNIT_NAME_TANK, 0.75, 5, 2, 3, false, false, true),
-	ARTILLERIE(Strings.UNIT_NAME_ARTILLERY, 0.75, 2, 6, 8, false, false, true),
+	PANZER(Strings.get("Tank"), 0.75, 5, 2, 3, false, false, true),
+	ARTILLERIE(Strings.get("Artillery"), 0.75, 2, 6, 8, false, false, true),
 	//FLUGABWEHR(),
-	INFANTERIE(Strings.UNIT_NAME_INFANTRY, 0.75, 3, 1, 1, false, true, true),
-	KAVALERIE(Strings.UNIT_NAME_CAVALRY, 0.75, 4, 1, 2, false, false, false);
+	INFANTERIE(Strings.get("Infantry"), 0.75, 3, 1, 1, false, true, true),
+	KAVALERIE(Strings.get("Cavalry"), 0.75, 4, 1, 2, false, false, false);
 	//PANZER_ARTILLERIE("Tank_Artillery", 0.75, 4, 4, 6, false, false, true);
 
 	private int movementDistance;

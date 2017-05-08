@@ -47,12 +47,12 @@ public class ViewMainMenu extends View {
 
 		TextureHandler.loadImagePng("Options", "ui/buttons/options");
 
-		button_quit = new TextButton(window, Strings.BUTTON_TEXT_EXIT,e -> {
+		button_quit = new TextButton(window, Strings.get("Exit Game"),e -> {
 			Options.save();
 			System.exit(0);
 		});
-		button_start = new TextButton(window, Strings.BUTTON_TEXT_JOIN_GAME, e -> window.updateView(new ViewServerConnect(background)));
-		button_create = new TextButton(window, Strings.BUTTON_TEXT_CREATE_GAME, e -> window.updateView(new ViewServerCreate(background)));
+		button_start = new TextButton(window, Strings.get("Join Game"), e -> window.updateView(new ViewServerConnect(background)));
+		button_create = new TextButton(window, Strings.get("Create Game"), e -> window.updateView(new ViewServerCreate(background)));
 		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewOptions(window, background)));
 
 		changeSize();

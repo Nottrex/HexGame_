@@ -6,7 +6,7 @@ import i18n.Strings;
  * Colors that a player can choose
  */
 public enum PlayerColor {
-	BLUE(Strings.COLOR_BLUE), RED(Strings.COLOR_RED), GREEN(Strings.COLOR_GREEN), YELLOW(Strings.COLOR_YELLOW);
+	BLUE(Strings.get("Blue")), RED(Strings.get("Red")), GREEN(Strings.get("Green")), YELLOW(Strings.get("Yellow"));
 
 	private String displayName;
 	PlayerColor(String displayName) {

@@ -104,8 +104,8 @@ public class Main {
 		System.out.println("What is your word for 'Oval'");
 		data.put("Oval", s.nextLine());
 
-		System.out.println("What is your word for 'Hexgonal'");
-		data.put("Hexgonal", s.nextLine());
+		System.out.println("What is your word for 'Hexagonal'");
+		data.put("Hexagonal", s.nextLine());
 
 		System.out.println("What is your word for 'Effects Volume'");
 		data.put("Effects Volume", s.nextLine());

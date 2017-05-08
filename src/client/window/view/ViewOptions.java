@@ -101,7 +101,7 @@ public class ViewOptions extends View {
             button_change_lang.setText(languages.get(langIndex));
         });
 
-        button_accept = new TextButton(window, Strings.BUTTON_TEXT_ACCEPT, e -> {
+        button_accept = new TextButton(window, Strings.get("Accept"), e -> {
             if(newAntialiasing != null) GUIConstants.VALUE_ANTIALIASING = newAntialiasing;
 
             AudioConstants.EFFECT_VOLUME = newEffectsVolume;
@@ -112,7 +112,7 @@ public class ViewOptions extends View {
 
             window.updateView(new ViewMainMenu(background));
         });
-        button_cancel = new TextButton(window, Strings.BUTTON_TEXT_CANCEL,e -> window.updateView(new ViewMainMenu(background)));
+        button_cancel = new TextButton(window, Strings.get("Cancel"),e -> window.updateView(new ViewMainMenu(background)));
 
 
         box_antialising = new CheckBox(window, GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
@@ -123,7 +123,7 @@ public class ViewOptions extends View {
         text_antialiasing = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {
-                return Strings.LABEL_USE_AA;
+                return Strings.get("Use AA");
             }
         }, false);
 
@@ -131,7 +131,7 @@ public class ViewOptions extends View {
         text_volumeMusic = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {
-                return Strings.LABEL_MUSIC_VOLUME;
+                return Strings.get("Music Volume");
             }
         }, false);
         volumeMusic = new HorizontalSlider( (AudioConstants.MUSIC_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
@@ -143,7 +143,7 @@ public class ViewOptions extends View {
         text_volumeEffects = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {
-                return Strings.LABEL_EFFECTS_VOLUME;
+                return Strings.get("Effects Volume");
             }
         }, false);
         volumeEffects = new HorizontalSlider( (AudioConstants.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {

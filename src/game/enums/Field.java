@@ -6,16 +6,16 @@ import i18n.Strings;
  * The type of one Hexagon
  */
 public enum Field {
-	WATER(Strings.FIELD_NAME_WATER, 1, true, true, 1),
-	FOREST(Strings.FIELD_NAME_FOREST, 2, false, true, 1),
-	GRASS(Strings.FIELD_NAME_GRASS, 1, false, true, 1),
-	GRASS_ROCK(Strings.FIELD_NAME_GRASS_ROCK, 3, false, true, 2),
-	DIRT(Strings.FIELD_NAME_DIRT, 1, false, true, 2),
-	DIRT_ROCK(Strings.FIELD_NAME_DIRT_ROCK, 3, false, true, 1),
-	SAND(Strings.FIELD_NAME_SAND, 2, false, true, 2),
-	SNOW(Strings.FIELD_NAME_SNOW, 2, false, true, 1),
-	STONE(Strings.FIELD_NAME_STONE, 1, false, true, 1),
-	VOID(Strings.FIELD_NAME_VOID, 999999999, false, false, 1);
+	WATER(Strings.get("Water"), 1, true, true, 1),
+	FOREST(Strings.get("Forest"), 2, false, true, 1),
+	GRASS(Strings.get("Grass"), 1, false, true, 1),
+	GRASS_ROCK(Strings.get("Grass_Rock"), 3, false, true, 2),
+	DIRT(Strings.get("Dirt"), 1, false, true, 2),
+	DIRT_ROCK(Strings.get("Dirt_Rock"), 3, false, true, 1),
+	SAND(Strings.get("Sand"), 2, false, true, 2),
+	SNOW(Strings.get("Snow"), 2, false, true, 1),
+	STONE(Strings.get("Stone"), 1, false, true, 1),
+	VOID(Strings.get("Void"), 999999999, false, false, 1);
 
 	private String displayName;
 	private int movementCost;

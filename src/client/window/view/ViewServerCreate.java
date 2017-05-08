@@ -43,7 +43,7 @@ public class ViewServerCreate extends View {
         window.getPanel().setLayout(null);
 
         buttonOptions = new ImageButton(window, TextureHandler.getImagePng("Options"), e->window.updateView(new ViewServerOptions(window, this, background)));
-        buttonConnect = new TextButton(window, Strings.BUTTON_TEXT_CREATE_GAME,e ->
+        buttonConnect = new TextButton(window, Strings.get("Create Game"),e ->
         {
             if (textFieldName.getText().isEmpty()) return;
 
@@ -60,7 +60,7 @@ public class ViewServerCreate extends View {
             if(mp == null) window.updateView(new ViewGameSetup(new ServerMain(port), background, textFieldName.getText(), "localhost", port));
             else window.updateView(new ViewGameSetup(new ServerMain(mp, port), background, textFieldName.getText(), "localhost", port));
         });
-        buttonBackToMainMenu = new TextButton(window, Strings.BUTTON_TEXT_MAINMENU, e -> window.updateView(new ViewMainMenu(background)));
+        buttonBackToMainMenu = new TextButton(window, Strings.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
         textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
         textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
 

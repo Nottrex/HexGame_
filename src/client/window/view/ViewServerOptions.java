@@ -42,15 +42,15 @@ public class ViewServerOptions extends View {
 
 	@Override
 	public void init(Window window, Controller controller) {
-		mapType = Strings.MAP_TYPE_HEXAGON;
+		mapType = Strings.get("Hexagonal");
 		widthValue = calcMapVal(0.5d);
 		heightValue = calcMapVal(0.5d);
 
 		buttonMapType = new TextButton(window, mapType, e->{
 
-			if(mapType.equals(Strings.MAP_TYPE_HEXAGON)) mapType = Strings.MAP_TYPE_OVAL;
-			else if(mapType.equals(Strings.MAP_TYPE_OVAL)) mapType = Strings.MAP_TYPE_SQUARE;
-			else if(mapType.equals(Strings.MAP_TYPE_SQUARE)) mapType = Strings.MAP_TYPE_HEXAGON;
+			if(mapType.equals(Strings.get("Hexagonal"))) mapType = Strings.get("Oval");
+			else if(mapType.equals(Strings.get("Oval"))) mapType = Strings.get("Square");
+			else if(mapType.equals(Strings.get("Square"))) mapType = Strings.get("Hexagonal");
 
 			System.out.println(mapType);
 			buttonMapType.setText(mapType);
@@ -59,33 +59,33 @@ public class ViewServerOptions extends View {
 		displayWidth = new TextLabel(new TextLabel.Text() {
 			@Override
 			public String getText() {
-				return Strings.WIDTH + ": " + widthValue + "";
+				return Strings.get("Width") + ": " + widthValue + "";
 			}
 		}, false);
 
 		displayHeight = new TextLabel(new TextLabel.Text() {
 			@Override
 			public String getText() {
-				return Strings.HEIGHT + ": " + heightValue + "";
+				return Strings.get("Height") + ": " + heightValue + "";
 			}
 		}, false);
 
 		mapWidth = new HorizontalSlider(0.5f, e -> widthValue = calcMapVal(mapWidth.getValue()));
 		mapHeight = new HorizontalSlider(0.5f, e -> heightValue = calcMapVal(mapHeight.getValue()));
 
-		accept = new TextButton(window, Strings.BUTTON_TEXT_ACCEPT, e->{
+		accept = new TextButton(window, Strings.get("Accept"), e->{
 			if(widthValue % 2 == 0) widthValue += 1;
 			if(heightValue % 2 == 0) heightValue += 1;
 
 			MapPreset mp = null;
-			if(mapType.equals(Strings.MAP_TYPE_HEXAGON)) mp = new HexPreset((widthValue + heightValue)/2);
-			else if(mapType.equals(Strings.MAP_TYPE_OVAL)) mp = new OvalPreset(widthValue, heightValue);
-			else if(mapType.equals(Strings.MAP_TYPE_SQUARE)) mp = new SquarePreset(widthValue, heightValue);
+			if(mapType.equals(Strings.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
+			else if(mapType.equals(Strings.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
+			else if(mapType.equals(Strings.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
 
-		cancel = new TextButton(window, Strings.BUTTON_TEXT_CANCEL, e -> window.updateView(prev));
+		cancel = new TextButton(window, Strings.get("Cancel"), e -> window.updateView(prev));
 
 		window.getPanel().add(cancel);
 		window.getPanel().add(accept);
