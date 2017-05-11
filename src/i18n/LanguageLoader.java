@@ -12,7 +12,7 @@ import java.util.Map;
 public class LanguageLoader {
 
 	public static String language = "English";
-	public static String LANGUAGE_FOLDER = Options.DATA_FILE_FOLDER.getAbsolutePath() + File.separator + "language" + File.separator;
+	public static String LANGUAGE_FOLDER = System.getProperty("user.dir") + "/src/res/language/";
 
 	public static void load() {
 
