@@ -330,7 +330,7 @@ public class ViewGame extends View implements ClientListener {
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(controller.selectedField)), 400 + lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString("Costs: " + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
+				g.drawString(Strings.get("Costs") + ": " + + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
 			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);

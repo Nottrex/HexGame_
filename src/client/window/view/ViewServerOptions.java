@@ -7,10 +7,7 @@ import client.components.TextLabel;
 import client.window.GUIConstants;
 import client.window.View;
 import client.window.Window;
-import game.map.presets.HexPreset;
-import game.map.presets.MapPreset;
-import game.map.presets.OvalPreset;
-import game.map.presets.SquarePreset;
+import game.map.presets.*;
 import i18n.Strings;
 
 import javax.swing.*;
@@ -50,7 +47,8 @@ public class ViewServerOptions extends View {
 
 			if(mapType.equals(Strings.get("Hexagonal"))) mapType = Strings.get("Oval");
 			else if(mapType.equals(Strings.get("Oval"))) mapType = Strings.get("Square");
-			else if(mapType.equals(Strings.get("Square"))) mapType = Strings.get("Hexagonal");
+			else if(mapType.equals(Strings.get("Square"))) mapType = "Custom";
+			else if(mapType.equals("Custom")) mapType = Strings.get("Hexagonal");
 
 			System.out.println(mapType);
 			buttonMapType.setText(mapType);
@@ -81,6 +79,7 @@ public class ViewServerOptions extends View {
 			if(mapType.equals(Strings.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
 			else if(mapType.equals(Strings.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
 			else if(mapType.equals(Strings.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
+			else if(mapType.equals("Custom")) mp = new CustomPreset("map");
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
