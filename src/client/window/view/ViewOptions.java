@@ -50,6 +50,7 @@ public class ViewOptions extends View {
 
         languages = new ArrayList<>();
         languages.add("English");
+        languages.add("Deutsch");
         langIndex = 0;
     }
 
@@ -72,12 +73,12 @@ public class ViewOptions extends View {
 
     @Override
     public void init(Window window, Controller controller) {
-        File d = new File(LanguageHandler.LANGUAGE_FOLDER);
+        /*File d = new File(LanguageHandler.LANGUAGE_FOLDER);
         if(d.exists()) {
             for (File f: d.listFiles()) {
                 languages.add(f.getName().split("\\.")[0]);
             }
-        }else d.mkdirs();
+        };*/
 
         for(int i = 0; i < languages.size(); i++) {
             if(languages.get(i).equals(LanguageHandler.language)) {

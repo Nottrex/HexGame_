@@ -1,5 +1,6 @@
 package client.i18n;
 
+import client.FileHandler;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -21,8 +22,8 @@ public class LanguageHandler {
 		dictionary = dict;
 	}
 
-	public static String language = "English";
-	public static String LANGUAGE_FOLDER = System.getProperty("user.dir") + "/src/res/language/";
+	public static String language = "Deutsch";
+	public static String LANGUAGE_FOLDER = "/language/";
 
 	public static void load() {
 
@@ -30,14 +31,14 @@ public class LanguageHandler {
 		op.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		Yaml yaml = new Yaml(op);
 
-		File languageFile = new File(LANGUAGE_FOLDER + language + ".yml");
-		System.out.println(languageFile.getAbsolutePath());
 		Map<String, String> data;
 
 		try{
-			data = (Map<String, String>) yaml.load(new FileInputStream(languageFile));
+			String dataString = FileHandler.loadFile(LANGUAGE_FOLDER + language + ".yml");
+			data = (Map<String, String>) yaml.load(dataString);
 		}catch(Exception e) {
 			data = new HashMap<>();
+			System.err.println("Error reading File: " + language);
 		}
 
 		LanguageHandler.set(data);

@@ -1,5 +1,6 @@
 package game.map.presets;
 
+import client.FileHandler;
 import game.Location;
 import game.enums.Field;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileReader;
+import java.util.Scanner;
 
 public class CustomPreset implements MapPreset{
 
@@ -15,42 +17,30 @@ public class CustomPreset implements MapPreset{
     private String mapName;
 
     public CustomPreset(String mapName) {
-        try {
-            this.mapName = mapName;
-            FileReader reader = new FileReader(System.getProperty("user.dir") + "/src/res/maps/" + mapName + ".txt");
-            BufferedReader br = new BufferedReader(reader);
+        this.mapName = mapName;
+        Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
 
-            this.width = Integer.parseInt(br.readLine());
-            this.height = Integer.parseInt(br.readLine());
-            br.close();
-
-        } catch (IOException e) {
-            System.err.println("Error loading map: " + mapName);
-            System.exit(-1);
-        }
+        this.width = Integer.parseInt(br.nextLine());
+        this.height = Integer.parseInt(br.nextLine());
+        br.close();
     }
     
     @Override
     public Field[][] getPresetMap() {
         Field[][] out = new Field[width][height];
+        Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
 
-        try {
-            FileReader reader = new FileReader(System.getProperty("user.dir") + "/src/res/maps/" + mapName + ".txt");
-            BufferedReader br = new BufferedReader(reader);
+        br.nextLine();
+        br.nextLine();
 
-            for (int x = 0; x < width; x++) {
-                String line = br.readLine();
-                for (int y = 0; y < height; y++) {
-                    char character = line.charAt(y);
-                    if (character == '0') out[x][y] = Field.VOID;
-                }
+        for (int x = 0; x < width; x++) {
+            String line = br.nextLine();
+            for (int y = 0; y < height; y++) {
+                char character = line.charAt(y);
+                if (character == '0') out[x][y] = Field.VOID;
             }
-            br.close();
-
-        } catch (IOException e) {
-            System.err.println("Error loading map: " + mapName);
-            System.exit(-1);
         }
+        br.close();
 
         return out;
     }
