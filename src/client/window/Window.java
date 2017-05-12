@@ -1,6 +1,7 @@
 package client.window;
 
-import client.Controller;
+import client.window.view.View;
+import client.game.Controller;
 import client.Options;
 import client.audio.AudioHandler;
 import client.audio.AudioPlayer;

@@ -1,17 +1,16 @@
 package client.window.view;
 
-import client.Controller;
+import client.game.Controller;
 import client.audio.AudioConstants;
-import client.components.CheckBox;
-import client.components.HorizontalSlider;
-import client.components.TextButton;
-import client.components.TextLabel;
+import client.window.components.CheckBox;
+import client.window.components.HorizontalSlider;
+import client.window.components.TextButton;
+import client.window.components.TextLabel;
 import client.window.GUIConstants;
 import client.window.TextureHandler;
-import client.window.View;
 import client.window.Window;
-import i18n.LanguageLoader;
-import i18n.Strings;
+import client.i18n.LanguageLoader;
+import client.i18n.Strings;
 
 import javax.swing.*;
 import java.awt.*;

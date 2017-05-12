@@ -1,13 +1,12 @@
 package client.window.view;
 
-import client.Controller;
+import client.game.Controller;
 import client.Options;
-import client.components.ImageButton;
-import client.components.TextButton;
+import client.window.components.ImageButton;
+import client.window.components.TextButton;
 import client.window.TextureHandler;
-import client.window.View;
 import client.window.Window;
-import i18n.Strings;
+import client.i18n.Strings;
 
 import javax.swing.*;
 import java.awt.*;

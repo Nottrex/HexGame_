@@ -1,15 +1,14 @@
 package client.window.view;
 
-import client.Controller;
-import client.components.CustomTextField;
-import client.components.ImageButton;
-import client.components.TextButton;
+import client.game.Controller;
+import client.window.components.CustomTextField;
+import client.window.components.ImageButton;
+import client.window.components.TextButton;
 import client.window.GUIConstants;
 import client.window.TextureHandler;
-import client.window.View;
 import client.window.Window;
 import game.map.presets.MapPreset;
-import i18n.Strings;
+import client.i18n.Strings;
 import server.ServerMain;
 
 import javax.swing.*;

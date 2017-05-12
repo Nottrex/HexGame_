@@ -1,6 +1,6 @@
 package game.enums;
 
-import i18n.Strings;
+import client.i18n.Strings;
 
 /**
  * Different types an {@link game.Unit} can have

@@ -1,11 +1,10 @@
 package client.window.view;
 
-import client.Controller;
-import client.components.TextButton;
-import client.components.TextLabel;
-import client.window.View;
+import client.game.Controller;
+import client.window.components.TextButton;
+import client.window.components.TextLabel;
 import client.window.Window;
-import i18n.Strings;
+import client.i18n.Strings;
 
 import javax.swing.*;
 import java.awt.*;

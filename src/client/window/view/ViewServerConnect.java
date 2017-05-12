@@ -1,12 +1,11 @@
 package client.window.view;
 
-import client.Controller;
-import client.components.CustomTextField;
-import client.components.TextButton;
+import client.game.Controller;
+import client.window.components.CustomTextField;
+import client.window.components.TextButton;
 import client.window.GUIConstants;
-import client.window.View;
 import client.window.Window;
-import i18n.Strings;
+import client.i18n.Strings;
 
 import javax.swing.*;
 import java.awt.*;

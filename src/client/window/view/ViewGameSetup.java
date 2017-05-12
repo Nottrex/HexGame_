@@ -1,13 +1,12 @@
 package client.window.view;
 
-import client.Controller;
-import client.components.TextButton;
-import client.components.TextLabel;
-import client.window.View;
+import client.game.Controller;
+import client.window.components.TextButton;
+import client.window.components.TextLabel;
 import client.window.Window;
-import client.window.view.game.ViewGame;
+import client.game.ViewGame;
 import game.enums.PlayerColor;
-import i18n.Strings;
+import client.i18n.Strings;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.preGamePackets.*;

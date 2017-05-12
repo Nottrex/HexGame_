@@ -1,8 +1,8 @@
 package client;
 
 import client.audio.AudioConstants;
+import client.i18n.LanguageLoader;
 import client.window.GUIConstants;
-import i18n.LanguageLoader;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 

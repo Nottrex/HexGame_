@@ -1,7 +1,7 @@
 package client;
 
+import client.i18n.LanguageLoader;
 import client.window.Window;
-import i18n.LanguageLoader;
 
 import javax.swing.*;
 
