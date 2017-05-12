@@ -22,8 +22,7 @@ public class LanguageHandler {
 		dictionary = dict;
 	}
 
-	public static String language = "Deutsch";
-	public static String LANGUAGE_FOLDER = "/language/";
+	public static String language = "English";
 
 	public static void load() {
 
@@ -34,7 +33,7 @@ public class LanguageHandler {
 		Map<String, String> data;
 
 		try{
-			String dataString = FileHandler.loadFile(LANGUAGE_FOLDER + language + ".yml");
+			String dataString = FileHandler.loadFile("language/" + language + ".yml");
 			data = (Map<String, String>) yaml.load(dataString);
 		}catch(Exception e) {
 			data = new HashMap<>();

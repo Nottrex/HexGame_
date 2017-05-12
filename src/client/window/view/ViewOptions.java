@@ -1,5 +1,6 @@
 package client.window.view;
 
+import client.FileHandler;
 import client.game.Controller;
 import client.audio.AudioConstants;
 import client.window.components.CheckBox;
@@ -17,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ViewOptions extends View {
 
@@ -49,8 +51,6 @@ public class ViewOptions extends View {
         this.window = window;
 
         languages = new ArrayList<>();
-        languages.add("English");
-        languages.add("Deutsch");
         langIndex = 0;
     }
 
@@ -73,12 +73,11 @@ public class ViewOptions extends View {
 
     @Override
     public void init(Window window, Controller controller) {
-        /*File d = new File(LanguageHandler.LANGUAGE_FOLDER);
-        if(d.exists()) {
-            for (File f: d.listFiles()) {
-                languages.add(f.getName().split("\\.")[0]);
-            }
-        };*/
+        Scanner files = new Scanner(FileHandler.loadFile("language/languages.txt"));
+        while (files.hasNextLine()) {
+            languages.add(files.nextLine().split("\\.")[0]);
+        }
+        files.close();
 
         for(int i = 0; i < languages.size(); i++) {
             if(languages.get(i).equals(LanguageHandler.language)) {
