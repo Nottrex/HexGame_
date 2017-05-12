@@ -6,7 +6,7 @@ import client.window.components.TextLabel;
 import client.window.Window;
 import client.game.ViewGame;
 import game.enums.PlayerColor;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.preGamePackets.*;
@@ -69,9 +69,9 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		displayInfo = "";
 
-		button_backToServerConnect = new TextButton(window, Strings.get("Quit"),e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
-		button_toggleReady = new TextButton(window, Strings.get("Toggle Ready"), e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
-		button_toggleColor = new TextButton(window, Strings.get("Toggle Color"), (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
+		button_backToServerConnect = new TextButton(window, LanguageHandler.get("Quit"), e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
+		button_toggleReady = new TextButton(window, LanguageHandler.get("Toggle Ready"), e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
+		button_toggleColor = new TextButton(window, LanguageHandler.get("Toggle Color"), (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
 
 		info = new TextLabel(new TextLabel.Text() {
 			@Override

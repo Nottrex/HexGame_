@@ -4,7 +4,7 @@ import client.game.Controller;
 import client.window.components.TextButton;
 import client.window.components.TextLabel;
 import client.window.Window;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,7 +41,7 @@ public class ViewErrorScreen extends View {
 
 		if(background == null) background = new DynamicBackground();
 
-		buttonBackToMainMenu = new TextButton(window, Strings.get("Back to Mainmenu"),e -> window.updateView(new ViewMainMenu(background)));
+		buttonBackToMainMenu = new TextButton(window, LanguageHandler.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
 		labelError = new TextLabel(() -> error, true);
 
 		changeSize();

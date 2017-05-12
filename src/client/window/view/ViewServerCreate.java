@@ -8,7 +8,7 @@ import client.window.GUIConstants;
 import client.window.TextureHandler;
 import client.window.Window;
 import game.map.presets.MapPreset;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 import server.ServerMain;
 
 import javax.swing.*;
@@ -42,7 +42,7 @@ public class ViewServerCreate extends View {
         window.getPanel().setLayout(null);
 
         buttonOptions = new ImageButton(window, TextureHandler.getImagePng("Options"), e->window.updateView(new ViewServerOptions(window, this, background)));
-        buttonConnect = new TextButton(window, Strings.get("Create Game"),e ->
+        buttonConnect = new TextButton(window, LanguageHandler.get("Create Game"), e ->
         {
             if (textFieldName.getText().isEmpty()) return;
 
@@ -59,7 +59,7 @@ public class ViewServerCreate extends View {
             if(mp == null) window.updateView(new ViewGameSetup(new ServerMain(port), background, textFieldName.getText(), "localhost", port));
             else window.updateView(new ViewGameSetup(new ServerMain(mp, port), background, textFieldName.getText(), "localhost", port));
         });
-        buttonBackToMainMenu = new TextButton(window, Strings.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
+        buttonBackToMainMenu = new TextButton(window, LanguageHandler.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
         textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
         textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
 

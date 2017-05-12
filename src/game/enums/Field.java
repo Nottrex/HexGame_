@@ -1,21 +1,21 @@
 package game.enums;
 
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 /**
  * The type of one Hexagon
  */
 public enum Field {
-	WATER(Strings.get("Water"), 1, true, true, 1),
-	FOREST(Strings.get("Forest"), 2, false, true, 1),
-	GRASS(Strings.get("Grass"), 1, false, true, 1),
-	GRASS_ROCK(Strings.get("Grass_Rock"), 3, false, true, 2),
-	DIRT(Strings.get("Dirt"), 1, false, true, 2),
-	DIRT_ROCK(Strings.get("Dirt_Rock"), 3, false, true, 1),
-	SAND(Strings.get("Sand"), 2, false, true, 2),
-	SNOW(Strings.get("Snow"), 2, false, true, 1),
-	STONE(Strings.get("Stone"), 1, false, true, 1),
-	VOID(Strings.get("Void"), 999999999, false, false, 1);
+	WATER(LanguageHandler.get("Water"), 1, true, true, 1),
+	FOREST(LanguageHandler.get("Forest"), 2, false, true, 1),
+	GRASS(LanguageHandler.get("Grass"), 1, false, true, 1),
+	GRASS_ROCK(LanguageHandler.get("Grass_Rock"), 3, false, true, 2),
+	DIRT(LanguageHandler.get("Dirt"), 1, false, true, 2),
+	DIRT_ROCK(LanguageHandler.get("Dirt_Rock"), 3, false, true, 1),
+	SAND(LanguageHandler.get("Sand"), 2, false, true, 2),
+	SNOW(LanguageHandler.get("Snow"), 2, false, true, 1),
+	STONE(LanguageHandler.get("Stone"), 1, false, true, 1),
+	VOID(LanguageHandler.get("Void"), 999999999, false, false, 1);
 
 	private String displayName;
 	private int movementCost;

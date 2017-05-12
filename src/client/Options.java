@@ -1,7 +1,7 @@
 package client;
 
 import client.audio.AudioConstants;
-import client.i18n.LanguageLoader;
+import client.i18n.LanguageHandler;
 import client.window.GUIConstants;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -41,7 +41,7 @@ public class Options {
         data.put("Audio", audioData);
         data.put("Graphics", guiData);
         data.put("Inputs", inputData);
-        data.put("Language", LanguageLoader.language);
+        data.put("Language", LanguageHandler.language);
 
         try {
             yaml.dump(data, new FileWriter(DATA_FILE));
@@ -73,7 +73,7 @@ public class Options {
                     GUIConstants.LAST_IP = inputData.get("IP");
                 }
 
-                LanguageLoader.language = (String) data.get("Language");
+                LanguageHandler.language = (String) data.get("Language");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

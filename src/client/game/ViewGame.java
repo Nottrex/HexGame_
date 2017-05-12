@@ -22,7 +22,7 @@ import game.enums.PlayerColor;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.packets.Packet;
@@ -37,6 +37,8 @@ import java.util.*;
 import java.util.List;
 
 public class ViewGame extends View implements ClientListener {
+	private static final long DOUBLEPRESSTIME = 250;
+
 	private MouseInputListener mouseListener;
 	private KeyInputListener keyListener;
 
@@ -113,7 +115,7 @@ public class ViewGame extends View implements ClientListener {
 
 			@Override
 			public String getText() {
-				return String.format(Strings.get("Round") + " %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" : controller.game
+				return String.format(LanguageHandler.get("Round") + " %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" : controller.game
 				.getPlayerColor().getDisplayName());
 			}
 		});
@@ -187,10 +189,17 @@ public class ViewGame extends View implements ClientListener {
 		}
 	}
 
+
+	private long lastClick;
 	public void onMouseClick(int x, int y) {
 		float[] point = center.screenPositionToWorldPosition(x, y);
+		if (System.currentTimeMillis() - lastClick < DOUBLEPRESSTIME) {
+			cam.setZoomSmooth(2.2f/20, 500);
+			cam.setPositionSmooth(point[0], point[1], 500);
+		}
 		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
 		redrawInfoBar();
+		lastClick = System.currentTimeMillis();
 	}
 
 
@@ -305,7 +314,7 @@ public class ViewGame extends View implements ClientListener {
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(mouseLocation)), lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString(Strings.get("Costs") + ": " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
+				g.drawString(LanguageHandler.get("Costs") + ": " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
 			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);
@@ -330,7 +339,7 @@ public class ViewGame extends View implements ClientListener {
 
 			if (f != Field.VOID) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(controller.selectedField)), 400 + lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString(Strings.get("Costs") + ": " + + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
+				g.drawString(LanguageHandler.get("Costs") + ": " + + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
 			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);

@@ -1,12 +1,12 @@
 package game.enums;
 
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 /**
  * Colors that a player can choose
  */
 public enum PlayerColor {
-	BLUE(Strings.get("Blue")), RED(Strings.get("Red")), GREEN(Strings.get("Green")), YELLOW(Strings.get("Yellow"));
+	BLUE(LanguageHandler.get("Blue")), RED(LanguageHandler.get("Red")), GREEN(LanguageHandler.get("Green")), YELLOW(LanguageHandler.get("Yellow"));
 
 	private String displayName;
 	PlayerColor(String displayName) {

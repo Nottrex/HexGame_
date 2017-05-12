@@ -5,7 +5,7 @@ import client.window.components.CustomTextField;
 import client.window.components.TextButton;
 import client.window.GUIConstants;
 import client.window.Window;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +36,7 @@ public class ViewServerConnect extends View {
 		if(background == null) background = new DynamicBackground();
 		window.getPanel().setLayout(null);
 
-		buttonConnect = new TextButton(window, Strings.get("Connect"),e ->
+		buttonConnect = new TextButton(window, LanguageHandler.get("Connect"), e ->
 		{
 			if (textFieldName.getText().isEmpty()) return;
 
@@ -52,7 +52,7 @@ public class ViewServerConnect extends View {
 
 			window.updateView(new ViewGameSetup(null, background, textFieldName.getText(), textFieldHostName.getText(), port));
 		});
-		buttonBackToMainMenu = new TextButton(window, Strings.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
+		buttonBackToMainMenu = new TextButton(window, LanguageHandler.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
 
 		textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
 		textFieldHostName = new CustomTextField("Hostname", CustomTextField.KEY_RESTRICT_NORMAL_OR_DOT);

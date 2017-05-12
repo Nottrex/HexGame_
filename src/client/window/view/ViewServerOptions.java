@@ -7,7 +7,7 @@ import client.window.components.TextLabel;
 import client.window.GUIConstants;
 import client.window.Window;
 import game.map.presets.*;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,16 +38,16 @@ public class ViewServerOptions extends View {
 
 	@Override
 	public void init(Window window, Controller controller) {
-		mapType = Strings.get("Hexagonal");
+		mapType = LanguageHandler.get("Hexagonal");
 		widthValue = calcMapVal(0.5d);
 		heightValue = calcMapVal(0.5d);
 
 		buttonMapType = new TextButton(window, mapType, e->{
 
-			if(mapType.equals(Strings.get("Hexagonal"))) mapType = Strings.get("Oval");
-			else if(mapType.equals(Strings.get("Oval"))) mapType = Strings.get("Square");
-			else if(mapType.equals(Strings.get("Square"))) mapType = "Custom";
-			else if(mapType.equals("Custom")) mapType = Strings.get("Hexagonal");
+			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mapType = LanguageHandler.get("Oval");
+			else if(mapType.equals(LanguageHandler.get("Oval"))) mapType = LanguageHandler.get("Square");
+			else if(mapType.equals(LanguageHandler.get("Square"))) mapType = "Custom";
+			else if(mapType.equals("Custom")) mapType = LanguageHandler.get("Hexagonal");
 
 			System.out.println(mapType);
 			buttonMapType.setText(mapType);
@@ -56,34 +56,34 @@ public class ViewServerOptions extends View {
 		displayWidth = new TextLabel(new TextLabel.Text() {
 			@Override
 			public String getText() {
-				return Strings.get("Width") + ": " + widthValue + "";
+				return LanguageHandler.get("Width") + ": " + widthValue + "";
 			}
 		}, false);
 
 		displayHeight = new TextLabel(new TextLabel.Text() {
 			@Override
 			public String getText() {
-				return Strings.get("Height") + ": " + heightValue + "";
+				return LanguageHandler.get("Height") + ": " + heightValue + "";
 			}
 		}, false);
 
 		mapWidth = new HorizontalSlider(0.5f, e -> widthValue = calcMapVal(mapWidth.getValue()));
 		mapHeight = new HorizontalSlider(0.5f, e -> heightValue = calcMapVal(mapHeight.getValue()));
 
-		accept = new TextButton(window, Strings.get("Accept"), e->{
+		accept = new TextButton(window, LanguageHandler.get("Accept"), e->{
 			if(widthValue % 2 == 0) widthValue += 1;
 			if(heightValue % 2 == 0) heightValue += 1;
 
 			MapPreset mp = null;
-			if(mapType.equals(Strings.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
-			else if(mapType.equals(Strings.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
-			else if(mapType.equals(Strings.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
+			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
+			else if(mapType.equals(LanguageHandler.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
+			else if(mapType.equals(LanguageHandler.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
 			else if(mapType.equals("Custom")) mp = new CustomPreset("map");
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
 
-		cancel = new TextButton(window, Strings.get("Cancel"), e -> window.updateView(prev));
+		cancel = new TextButton(window, LanguageHandler.get("Cancel"), e -> window.updateView(prev));
 
 		window.getPanel().add(cancel);
 		window.getPanel().add(accept);

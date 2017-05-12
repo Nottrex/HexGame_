@@ -6,7 +6,7 @@ import client.window.components.ImageButton;
 import client.window.components.TextButton;
 import client.window.TextureHandler;
 import client.window.Window;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,12 +46,12 @@ public class ViewMainMenu extends View {
 
 		TextureHandler.loadImagePng("Options", "ui/buttons/options");
 
-		button_quit = new TextButton(window, Strings.get("Exit Game"),e -> {
+		button_quit = new TextButton(window, LanguageHandler.get("Exit Game"), e -> {
 			Options.save();
 			System.exit(0);
 		});
-		button_start = new TextButton(window, Strings.get("Join Game"), e -> window.updateView(new ViewServerConnect(background)));
-		button_create = new TextButton(window, Strings.get("Create Game"), e -> window.updateView(new ViewServerCreate(background)));
+		button_start = new TextButton(window, LanguageHandler.get("Join Game"), e -> window.updateView(new ViewServerConnect(background)));
+		button_create = new TextButton(window, LanguageHandler.get("Create Game"), e -> window.updateView(new ViewServerCreate(background)));
 		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewOptions(window, background)));
 
 		changeSize();

@@ -9,8 +9,7 @@ import client.window.components.TextLabel;
 import client.window.GUIConstants;
 import client.window.TextureHandler;
 import client.window.Window;
-import client.i18n.LanguageLoader;
-import client.i18n.Strings;
+import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -73,7 +72,7 @@ public class ViewOptions extends View {
 
     @Override
     public void init(Window window, Controller controller) {
-        File d = new File(LanguageLoader.LANGUAGE_FOLDER);
+        File d = new File(LanguageHandler.LANGUAGE_FOLDER);
         if(d.exists()) {
             for (File f: d.listFiles()) {
                 languages.add(f.getName().split("\\.")[0]);
@@ -81,7 +80,7 @@ public class ViewOptions extends View {
         }else d.mkdirs();
 
         for(int i = 0; i < languages.size(); i++) {
-            if(languages.get(i).equals(LanguageLoader.language)) {
+            if(languages.get(i).equals(LanguageHandler.language)) {
                 langIndex = i;
                 break;
             }
@@ -100,18 +99,18 @@ public class ViewOptions extends View {
             button_change_lang.setText(languages.get(langIndex));
         });
 
-        button_accept = new TextButton(window, Strings.get("Accept"), e -> {
+        button_accept = new TextButton(window, LanguageHandler.get("Accept"), e -> {
             if(newAntialiasing != null) GUIConstants.VALUE_ANTIALIASING = newAntialiasing;
 
             AudioConstants.EFFECT_VOLUME = newEffectsVolume;
             AudioConstants.MUSIC_VOLUME = newMusicVolume;
 
-            LanguageLoader.language = languages.get(langIndex);
-            LanguageLoader.load();
+            LanguageHandler.language = languages.get(langIndex);
+            LanguageHandler.load();
 
             window.updateView(new ViewMainMenu(background));
         });
-        button_cancel = new TextButton(window, Strings.get("Cancel"),e -> window.updateView(new ViewMainMenu(background)));
+        button_cancel = new TextButton(window, LanguageHandler.get("Cancel"), e -> window.updateView(new ViewMainMenu(background)));
 
 
         box_antialising = new CheckBox(window, GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
@@ -122,7 +121,7 @@ public class ViewOptions extends View {
         text_antialiasing = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {
-                return Strings.get("Use AA");
+                return LanguageHandler.get("Use AA");
             }
         }, false);
 
@@ -130,7 +129,7 @@ public class ViewOptions extends View {
         text_volumeMusic = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {
-                return Strings.get("Music Volume");
+                return LanguageHandler.get("Music Volume");
             }
         }, false);
         volumeMusic = new HorizontalSlider( (AudioConstants.MUSIC_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
@@ -142,7 +141,7 @@ public class ViewOptions extends View {
         text_volumeEffects = new TextLabel(new TextLabel.Text() {
             @Override
             public String getText() {
-                return Strings.get("Effects Volume");
+                return LanguageHandler.get("Effects Volume");
             }
         }, false);
         volumeEffects = new HorizontalSlider( (AudioConstants.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
