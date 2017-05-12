@@ -214,7 +214,7 @@ public class ServerMain implements ServerListener {
 
 			if (players.get(s).equals(packet.getPlayer())) {
 
-				System.out.println("PlayerPickColor: " + packet.getPlayer() + " " + packet.getColor().getDisplayName());
+				System.out.println("PlayerPickColor: " + packet.getPlayer() + " " + packet.getColor());
 				playerColor.put(packet.getPlayer(), packet.getColor());
 
 				players.keySet().stream()

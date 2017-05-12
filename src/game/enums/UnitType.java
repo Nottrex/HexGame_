@@ -1,17 +1,15 @@
 package game.enums;
 
-import client.i18n.LanguageHandler;
-
 /**
  * Different types an {@link game.Unit} can have
  * Determines its stats
  */
 public enum UnitType {
-	PANZER(LanguageHandler.get("Tank"), 0.75, 5, 2, 3, false, false, true),
-	ARTILLERIE(LanguageHandler.get("Artillery"), 0.75, 2, 6, 8, false, false, true),
+	PANZER("Tank", 0.75, 5, 2, 3, false, false, true),
+	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true),
 	//FLUGABWEHR(),
-	INFANTERIE(LanguageHandler.get("Infantry"), 0.75, 3, 1, 1, false, true, true),
-	KAVALERIE(LanguageHandler.get("Cavalry"), 0.75, 4, 1, 2, false, false, false);
+	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true),
+	KAVALERIE("Cavalry", 0.75, 4, 1, 2, false, false, false);
 	//PANZER_ARTILLERIE("Tank_Artillery", 0.75, 4, 4, 6, false, false, true);
 
 	private int movementDistance;

@@ -115,8 +115,8 @@ public class ViewGame extends View implements ClientListener {
 
 			@Override
 			public String getText() {
-				return String.format(LanguageHandler.get("Round") + " %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" : controller.game
-				.getPlayerColor().getDisplayName());
+				return String.format(LanguageHandler.get("Round") + " %d   %d / %d   %s   %s", controller.game == null ? 1 : controller.game.getRound(), controller.game == null ? 1 : controller.game.getPlayerTurnID(), controller.game == null ? 1 : controller.game.getPlayerAmount(), controller.game == null ? 1 : controller.game.getPlayerTurn(), controller.game == null ? "" :
+						LanguageHandler.get(controller.game.getPlayerColor().getDisplayName()));
 			}
 		});
 
@@ -327,8 +327,8 @@ public class ViewGame extends View implements ClientListener {
 
 				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
-				g.drawString(u.getType().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
-				g.drawString(u.getPlayer().getDisplayName(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
+				g.drawString(LanguageHandler.get(u.getType().getDisplayName()), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
+				g.drawString(LanguageHandler.get(u.getPlayer().getDisplayName()), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
 				g.drawString(LanguageHandler.get("Movementrange") + ": " + u.getType().getMovementDistance(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 70);
 				g.drawString(LanguageHandler.get("Attackrange") + ": " + u.getType().getMinAttackDistance() + "-" + u.getType().getMaxAttackDistance(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 90);
 			}
@@ -352,8 +352,8 @@ public class ViewGame extends View implements ClientListener {
 
 				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
 
-				g.drawString(u.getType().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
-				g.drawString(u.getPlayer().getDisplayName(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
+				g.drawString(LanguageHandler.get(u.getType().getDisplayName()), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
+				g.drawString(LanguageHandler.get(u.getPlayer().getDisplayName()), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
 				g.drawString(LanguageHandler.get("Movementrange") + ": " + u.getType().getMovementDistance(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 70);
 				g.drawString(LanguageHandler.get("Attackrange") + ": " + u.getType().getMinAttackDistance() + "-" + u.getType().getMaxAttackDistance(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 90);
 			}

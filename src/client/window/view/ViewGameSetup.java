@@ -146,7 +146,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	private synchronized void updateInfo() {
 		String info = "";
 		for (String player: ready.keySet()) {
-			info += String.format("%s%s - %s - %b\n", player.equals(userName) ? "->" : "", player, color.get(player).getDisplayName(), ready.get(player));
+			info += String.format("%s%s - %s - %b\n", player.equals(userName) ? "->" : "", player, LanguageHandler.get(color.get(player).getDisplayName()), ready.get(player));
 		}
 
 		displayInfo = info;
