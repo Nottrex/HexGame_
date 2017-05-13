@@ -1,5 +1,6 @@
 package client.window.view;
 
+import client.Options;
 import client.game.Controller;
 import client.window.components.CustomTextField;
 import client.window.components.TextButton;
@@ -46,9 +47,9 @@ public class ViewServerConnect extends View {
 				port = Integer.valueOf(textFieldPort.getText());
 			} catch (Exception e2) {}
 
-			GUIConstants.LAST_USERNAME = textFieldName.getText();
-			GUIConstants.LAST_IP = textFieldHostName.getText();
-			GUIConstants.LAST_PORT = textFieldPort.getText();
+			Options.LAST_USERNAME = textFieldName.getText();
+			Options.LAST_IP = textFieldHostName.getText();
+			Options.LAST_PORT = textFieldPort.getText();
 
 			window.updateView(new ViewGameSetup(null, background, textFieldName.getText(), textFieldHostName.getText(), port));
 		});
@@ -58,9 +59,9 @@ public class ViewServerConnect extends View {
 		textFieldHostName = new CustomTextField("Hostname", CustomTextField.KEY_RESTRICT_NORMAL_OR_DOT);
 		textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
 
-		if(GUIConstants.LAST_PORT != null) textFieldPort.setText(GUIConstants.LAST_PORT);
-		if(GUIConstants.LAST_USERNAME != null) textFieldName.setText(GUIConstants.LAST_USERNAME);
-		if(GUIConstants.LAST_IP != null) textFieldHostName.setText(GUIConstants.LAST_IP);
+		if(Options.LAST_PORT != null) textFieldPort.setText(Options.LAST_PORT);
+		if(Options.LAST_USERNAME != null) textFieldName.setText(Options.LAST_USERNAME);
+		if(Options.LAST_IP != null) textFieldHostName.setText(Options.LAST_IP);
 
 		changeSize();
 

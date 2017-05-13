@@ -1,5 +1,6 @@
 package client.window.components;
 
+import client.Options;
 import client.window.GUIConstants;
 
 import javax.swing.*;
@@ -57,7 +58,7 @@ public class CustomTextField extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, GUIConstants.VALUE_ANTIALIASING);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, Options.VALUE_ANTIALIASING);
 		g2.setColor(GUIConstants.BUTTON_COLOR);
 
 		String text = getText();

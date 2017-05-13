@@ -1,6 +1,7 @@
 package client.i18n;
 
 import client.FileHandler;
+import client.Options;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -22,8 +23,6 @@ public class LanguageHandler {
 		dictionary = dict;
 	}
 
-	public static String language = "English";
-
 	public static void load() {
 
 		DumperOptions op = new DumperOptions();
@@ -33,11 +32,11 @@ public class LanguageHandler {
 		Map<String, String> data;
 
 		try{
-			String dataString = FileHandler.loadFile("language/" + language + ".yml");
+			String dataString = FileHandler.loadFile("language/" + Options.language + ".yml");
 			data = (Map<String, String>) yaml.load(dataString);
 		}catch(Exception e) {
 			data = new HashMap<>();
-			System.err.println("Error reading File: " + language);
+			System.err.println("Error reading File: " + Options.language);
 		}
 
 		LanguageHandler.set(data);

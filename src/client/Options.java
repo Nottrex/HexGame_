@@ -12,6 +12,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Options {
+
+    //GUI Options
+    public static Object VALUE_ANTIALIASING 				= RenderingHints.VALUE_ANTIALIAS_ON;
+    public static String LAST_USERNAME						= null;
+    public static String LAST_IP							= null;
+    public static String LAST_PORT							= null;
+
+    //Audio Options
+    public static float MUSIC_VOLUME                        = -20.0f;
+    public static float EFFECT_VOLUME 	    	    		= -20.0f;
+
+    //Language Options
+    public static String language = "English";
+
     public static final File DATA_FILE_FOLDER = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator);
     private static final File DATA_FILE = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator + "options.yml");
 
@@ -27,21 +41,21 @@ public class Options {
         Map<String, Object> data = new HashMap<>();
 
         Map<String, Float> audioData = new HashMap<>();
-        audioData.put("Music", AudioConstants.MUSIC_VOLUME);
-        audioData.put("Effects", AudioConstants.EFFECT_VOLUME);
+        audioData.put("Music", MUSIC_VOLUME);
+        audioData.put("Effects", EFFECT_VOLUME);
 
         Map<String, Boolean> guiData = new HashMap<>();
-        guiData.put("AA", GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON));
+        guiData.put("AA", VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON));
 
         Map<String, String> inputData = new HashMap<>();
-        inputData.put("Username", GUIConstants.LAST_USERNAME);
-        inputData.put("IP", GUIConstants.LAST_IP);
-        inputData.put("Port", GUIConstants.LAST_PORT);
+        inputData.put("Username", LAST_USERNAME);
+        inputData.put("IP", LAST_IP);
+        inputData.put("Port", LAST_PORT);
 
         data.put("Audio", audioData);
         data.put("Graphics", guiData);
         data.put("Inputs", inputData);
-        data.put("Language", LanguageHandler.language);
+        data.put("Language", language);
 
         try {
             yaml.dump(data, new FileWriter(DATA_FILE));
@@ -60,20 +74,20 @@ public class Options {
                 Map<String, Object> data = (Map<String, Object>) yaml.load(new FileInputStream(DATA_FILE));
 
                 Map<String, Double> audioData = (Map<String, Double>) data.get("Audio");
-                AudioConstants.MUSIC_VOLUME = audioData.get("Music").floatValue();
-                AudioConstants.EFFECT_VOLUME = audioData.get("Effects").floatValue();
+                MUSIC_VOLUME = audioData.get("Music").floatValue();
+                EFFECT_VOLUME = audioData.get("Effects").floatValue();
 
                 Map<String, Boolean> guiData = (Map<String, Boolean>)data.get("Graphics");
-                GUIConstants.VALUE_ANTIALIASING = guiData.get("AA")? RenderingHints.VALUE_ANTIALIAS_ON: RenderingHints.VALUE_ANTIALIAS_OFF;
+                VALUE_ANTIALIASING = guiData.get("AA")? RenderingHints.VALUE_ANTIALIAS_ON: RenderingHints.VALUE_ANTIALIAS_OFF;
 
                 Map<String, String> inputData = (Map<String, String>) data.get("Inputs");
                 if(inputData != null) {
-                    GUIConstants.LAST_PORT = inputData.get("Port");
-                    GUIConstants.LAST_USERNAME = inputData.get("Username");
-                    GUIConstants.LAST_IP = inputData.get("IP");
+                    LAST_PORT = inputData.get("Port");
+                    LAST_USERNAME = inputData.get("Username");
+                    LAST_IP = inputData.get("IP");
                 }
 
-                LanguageHandler.language = (String) data.get("Language");
+                language = (String) data.get("Language");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

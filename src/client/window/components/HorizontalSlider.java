@@ -1,5 +1,6 @@
 package client.window.components;
 
+import client.Options;
 import client.window.GUIConstants;
 
 import javax.swing.*;
@@ -33,7 +34,7 @@ public class HorizontalSlider extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, GUIConstants.VALUE_ANTIALIASING);
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, Options.VALUE_ANTIALIASING);
 
         int sliderHeight = getHeight()/5;
         int x = (int) Math.round(value * getWidth());

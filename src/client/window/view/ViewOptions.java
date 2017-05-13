@@ -1,6 +1,7 @@
 package client.window.view;
 
 import client.FileHandler;
+import client.Options;
 import client.game.Controller;
 import client.audio.AudioConstants;
 import client.window.components.CheckBox;
@@ -80,14 +81,14 @@ public class ViewOptions extends View {
         files.close();
 
         for(int i = 0; i < languages.size(); i++) {
-            if(languages.get(i).equals(LanguageHandler.language)) {
+            if(languages.get(i).equals(Options.language)) {
                 langIndex = i;
                 break;
             }
         }
 
-        newMusicVolume = AudioConstants.MUSIC_VOLUME;
-        newEffectsVolume = AudioConstants.EFFECT_VOLUME;
+        newMusicVolume = Options.MUSIC_VOLUME;
+        newEffectsVolume = Options.EFFECT_VOLUME;
 
         window.getPanel().setLayout(null);
 
@@ -100,12 +101,12 @@ public class ViewOptions extends View {
         });
 
         button_accept = new TextButton(window, LanguageHandler.get("Accept"), e -> {
-            if(newAntialiasing != null) GUIConstants.VALUE_ANTIALIASING = newAntialiasing;
+            if(newAntialiasing != null) Options.VALUE_ANTIALIASING = newAntialiasing;
 
-            AudioConstants.EFFECT_VOLUME = newEffectsVolume;
-            AudioConstants.MUSIC_VOLUME = newMusicVolume;
+            Options.EFFECT_VOLUME = newEffectsVolume;
+            Options.MUSIC_VOLUME = newMusicVolume;
 
-            LanguageHandler.language = languages.get(langIndex);
+            Options.language = languages.get(langIndex);
             LanguageHandler.load();
 
             window.updateView(new ViewMainMenu(background));
@@ -113,7 +114,7 @@ public class ViewOptions extends View {
         button_cancel = new TextButton(window, LanguageHandler.get("Cancel"), e -> window.updateView(new ViewMainMenu(background)));
 
 
-        box_antialising = new CheckBox(window, GUIConstants.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
+        box_antialising = new CheckBox(window, Options.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
             if(box_antialising.isChecked()) newAntialiasing = RenderingHints.VALUE_ANTIALIAS_ON;
             else newAntialiasing = RenderingHints.VALUE_ANTIALIAS_OFF;
         });
@@ -132,7 +133,7 @@ public class ViewOptions extends View {
                 return LanguageHandler.get("Music Volume");
             }
         }, false);
-        volumeMusic = new HorizontalSlider( (AudioConstants.MUSIC_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
+        volumeMusic = new HorizontalSlider( (Options.MUSIC_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
 
             float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
             newMusicVolume =(float)(musicDistance* volumeMusic.getValue() + AudioConstants.MIN_VOLUME);
@@ -144,7 +145,7 @@ public class ViewOptions extends View {
                 return LanguageHandler.get("Effects Volume");
             }
         }, false);
-        volumeEffects = new HorizontalSlider( (AudioConstants.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
+        volumeEffects = new HorizontalSlider( (Options.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
 
             float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
             newEffectsVolume =(float)(musicDistance* volumeEffects.getValue() + AudioConstants.MIN_VOLUME);

@@ -1,5 +1,7 @@
 package client.audio;
 
+import client.Options;
+
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
@@ -36,7 +38,7 @@ public class AudioPlayer {
         loops = new ArrayList<>();
 
         currentClip = AudioHandler.getMusicWav(startClip);
-        setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
+        setVolume(currentClip, Options.MUSIC_VOLUME);
         currentLoops = startloop;
 
         pausedFrame = 0;
@@ -48,7 +50,7 @@ public class AudioPlayer {
                 if(event.getType() == LineEvent.Type.STOP && !forcedStop) {
 
                     if(currentLoops > 0 || currentLoops == Clip.LOOP_CONTINUOUSLY) {
-                        setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
+                        setVolume(currentClip, Options.MUSIC_VOLUME);
                         currentClip.setFramePosition(0);
                         currentClip.start();
 
@@ -58,7 +60,7 @@ public class AudioPlayer {
                         currentClip = queue.get(0);
                         currentLoops = loops.get(0);
 
-                        setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
+                        setVolume(currentClip, Options.MUSIC_VOLUME);
                         currentClip.setFramePosition(0);
                         currentClip.start();
 
@@ -110,7 +112,7 @@ public class AudioPlayer {
         currentClip = queue.get(0);
         currentLoops = loops.get(0);
 
-        setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
+        setVolume(currentClip, Options.MUSIC_VOLUME);
         currentClip.setFramePosition(0);
         currentClip.start();
 
@@ -124,7 +126,7 @@ public class AudioPlayer {
      */
     public void playAudio(String audioName) {
         Clip c = AudioHandler.getMusicWav(audioName);
-        setVolume(c, AudioConstants.EFFECT_VOLUME);
+        setVolume(c, Options.EFFECT_VOLUME);
         c.setFramePosition(0);
         c.start();
 
@@ -147,7 +149,7 @@ public class AudioPlayer {
      */
     public void loopAudio(String audioName, int loop) {
         Clip c = AudioHandler.getMusicWav(audioName);
-        setVolume(c, AudioConstants.EFFECT_VOLUME);
+        setVolume(c, Options.EFFECT_VOLUME);
         c.loop(loop);
 
         currentlyPlaying.add(c);
@@ -194,14 +196,14 @@ public class AudioPlayer {
      * Updates volume for the current music {@link Clip} and all effects
      */
     public void updateVolume() {
-        setVolume(currentClip, AudioConstants.MUSIC_VOLUME);
+        setVolume(currentClip, Options.MUSIC_VOLUME);
         for(Clip c: removeBuffer) {
             currentlyPlaying.remove(c);
         }
         removeBuffer.clear();
 
         for(Clip c: currentlyPlaying) {
-            setVolume(c, AudioConstants.EFFECT_VOLUME);
+            setVolume(c, Options.EFFECT_VOLUME);
         }
     }
 }

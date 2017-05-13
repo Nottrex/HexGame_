@@ -1,5 +1,6 @@
 package client.window.view;
 
+import client.Options;
 import client.game.Controller;
 import client.window.components.CustomTextField;
 import client.window.components.ImageButton;
@@ -52,9 +53,9 @@ public class ViewServerCreate extends View {
                 port = Integer.valueOf(textFieldPort.getText());
             } catch (Exception e2) {}
 
-            GUIConstants.LAST_USERNAME = textFieldName.getText();
-            GUIConstants.LAST_IP = "localhost";
-            GUIConstants.LAST_PORT = textFieldPort.getText();
+            Options.LAST_USERNAME = textFieldName.getText();
+            Options.LAST_IP = "localhost";
+            Options.LAST_PORT = textFieldPort.getText();
 
             if(mp == null) window.updateView(new ViewGameSetup(new ServerMain(port), background, textFieldName.getText(), "localhost", port));
             else window.updateView(new ViewGameSetup(new ServerMain(mp, port), background, textFieldName.getText(), "localhost", port));
@@ -63,8 +64,8 @@ public class ViewServerCreate extends View {
         textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
         textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
 
-        if(GUIConstants.LAST_PORT != null) textFieldPort.setText(GUIConstants.LAST_PORT);
-        if(GUIConstants.LAST_USERNAME != null) textFieldName.setText(GUIConstants.LAST_USERNAME);
+        if(Options.LAST_PORT != null) textFieldPort.setText(Options.LAST_PORT);
+        if(Options.LAST_USERNAME != null) textFieldName.setText(Options.LAST_USERNAME);
 
         changeSize();
 
