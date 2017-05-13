@@ -74,11 +74,7 @@ public class ViewOptions extends View {
 
     @Override
     public void init(Window window, Controller controller) {
-        Scanner files = new Scanner(FileHandler.loadFile("language/languages.txt"));
-        while (files.hasNextLine()) {
-            languages.add(files.nextLine().split("\\.")[0]);
-        }
-        files.close();
+        languages = LanguageHandler.availableLanguages();
 
         for(int i = 0; i < languages.size(); i++) {
             if(languages.get(i).equals(Options.language)) {

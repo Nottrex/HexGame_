@@ -26,11 +26,11 @@ public class Options {
     //Language Options
     public static String language = "English";
 
-    public static final File DATA_FILE_FOLDER = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator);
-    private static final File DATA_FILE = new File(System.getProperty("user.dir") + File.separator + "hexgame" + File.separator + "options.yml");
+    public static final String DATA_FILE_PATH = System.getProperty("user.dir") + File.separator + "hexgame" + File.separator;
+    private static final String DATA_PATH = System.getProperty("user.dir") + File.separator + "hexgame" + File.separator + "options.yml";
 
     static {
-        DATA_FILE_FOLDER.mkdirs();
+        new File(DATA_FILE_PATH).mkdirs();
     }
 
     public static void save() {
@@ -58,7 +58,7 @@ public class Options {
         data.put("Language", language);
 
         try {
-            yaml.dump(data, new FileWriter(DATA_FILE));
+            yaml.dump(data, new FileWriter(new File(DATA_PATH)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,10 +68,10 @@ public class Options {
         DumperOptions op = new DumperOptions();
         op.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Yaml yaml = new Yaml(op);
-        if(DATA_FILE.exists()) {
+        if(new File(DATA_PATH).exists()) {
 
             try {
-                Map<String, Object> data = (Map<String, Object>) yaml.load(new FileInputStream(DATA_FILE));
+                Map<String, Object> data = (Map<String, Object>) yaml.load(new FileInputStream(new File(DATA_PATH)));
 
                 Map<String, Double> audioData = (Map<String, Double>) data.get("Audio");
                 MUSIC_VOLUME = audioData.get("Music").floatValue();
