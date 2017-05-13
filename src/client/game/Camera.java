@@ -9,8 +9,8 @@ public class Camera {
 	private boolean z2 = false;
 	private float targetX, targetY;
 	private long beginTime2 = 0, targetTime2 = 0;
-	private float a2, b2, c2, d2, v2;
-	private float a3, b3, c3, d3, v3;
+	private float a2, b2, c2, d2;
+	private float a3, b3, c3, d3;
 
 	private float tzoom;
 	private float targetZoom = tzoom;

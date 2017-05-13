@@ -5,6 +5,9 @@ import client.window.GUIConstants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 
 public class CustomTextField extends JComponent {
@@ -42,11 +45,26 @@ public class CustomTextField extends JComponent {
 					if (text.length() > 0) {
 						text = text.substring(0, text.length()-1);
 					}
-				} /*else if(e.isControlDown() && e.getKeyChar() == 'v') {
-					System.out.println("Paste");
-				} */else {
+				} else {
 					if (keyRestrict.isAllowed(e.getKeyChar())) {
 						text += e.getKeyChar();
+					}
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_V) {
+					Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+					Transferable t = c.getContents(this);
+
+					if (t == null)
+						return;
+					try {
+						text += t.getTransferData(DataFlavor.stringFlavor);
+					} catch (Exception e2) {
+						e2.printStackTrace();
+
 					}
 				}
 			}

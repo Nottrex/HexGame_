@@ -43,7 +43,6 @@ public class LanguageHandler {
 			System.err.println("No such language: " + Options.language);
 		}
 
-
 		LanguageHandler.set(data);
 	}
 
