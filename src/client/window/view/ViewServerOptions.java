@@ -46,8 +46,8 @@ public class ViewServerOptions extends View {
 
 			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mapType = LanguageHandler.get("Oval");
 			else if(mapType.equals(LanguageHandler.get("Oval"))) mapType = LanguageHandler.get("Square");
-			else if(mapType.equals(LanguageHandler.get("Square"))) mapType = "Custom";
-			else if(mapType.equals("Custom")) mapType = LanguageHandler.get("Hexagonal");
+			else if(mapType.equals(LanguageHandler.get("Square"))) mapType = LanguageHandler.get("Custom");
+			else if(mapType.equals(LanguageHandler.get("Custom"))) mapType = LanguageHandler.get("Hexagonal");
 
 			System.out.println(mapType);
 			buttonMapType.setText(mapType);
@@ -78,7 +78,7 @@ public class ViewServerOptions extends View {
 			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
 			else if(mapType.equals(LanguageHandler.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
 			else if(mapType.equals(LanguageHandler.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
-			else if(mapType.equals("Custom")) mp = new CustomPreset("map");
+			else if(mapType.equals(LanguageHandler.get("Custom"))) mp = new CustomPreset("map");
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
