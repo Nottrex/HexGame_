@@ -61,11 +61,17 @@ public class CustomTextField extends JComponent {
 					if (t == null)
 						return;
 					try {
-						text += t.getTransferData(DataFlavor.stringFlavor);
+						String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+						for (char ch: data.toCharArray()) {
+							if (keyRestrict.isAllowed(ch)) {
+								text += ch;
+							}
+						}
 					} catch (Exception e2) {
 						e2.printStackTrace();
-
 					}
+				} else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+					text = "";
 				}
 			}
 		});
@@ -91,8 +97,8 @@ public class CustomTextField extends JComponent {
 		int fWidth = (int) g.getFontMetrics(font).getStringBounds(text, g).getWidth();
 
 		int rightMove = 0;
-		if (fWidth > getWidth()-10) {
-			rightMove = fWidth-getWidth()+10;
+		if (fWidth > getWidth()-15) {
+			rightMove = fWidth-getWidth()+15;
 		}
 
 		g.drawString(text, -rightMove+5, getHeight()/2);
@@ -107,9 +113,6 @@ public class CustomTextField extends JComponent {
 		}
 
 		g2.setStroke(new BasicStroke(1));
-
-
-
 	}
 
 	/**
