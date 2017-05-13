@@ -6,9 +6,6 @@ import game.enums.Field;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.FileReader;
 import java.util.Scanner;
 
 public class CustomPreset implements MapPreset{
@@ -20,8 +17,8 @@ public class CustomPreset implements MapPreset{
         this.mapName = mapName;
         Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
 
-        this.width = Integer.parseInt(br.nextLine());
-        this.height = Integer.parseInt(br.nextLine());
+        this.width = Integer.parseInt(br.next());
+        this.height = Integer.parseInt(br.next());
         br.close();
     }
     
@@ -30,7 +27,6 @@ public class CustomPreset implements MapPreset{
         Field[][] out = new Field[width][height];
         Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
 
-        br.nextLine();
         br.nextLine();
 
         for (int x = 0; x < width; x++) {
@@ -49,10 +45,16 @@ public class CustomPreset implements MapPreset{
     public List<Location> getSpawnPoints() {
         List<Location> locations = new ArrayList<>();
 
-        locations.add(new Location(1, 1));
-        locations.add(new Location(2, 2));
-        locations.add(new Location(3, 3));
-        locations.add(new Location(4, 4));
+        Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
+        for (int i = 0; i < width+1; i++) {
+            br.nextLine();
+        }
+
+        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+        br.close();
 
         return locations;
     }
