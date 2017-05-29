@@ -21,17 +21,19 @@ public class SquarePreset implements  MapPreset{
 
     @Override
     public Field[][] getPresetMap() {
-        Field[][] out = new Field[width*2][height];
+        Field[][] out = new Field[width+(height/2)][height];
 
-        for(int  x = 0; x < width*2; x++) {
-            for(int  y = 0; y < height; y++) {
-                out[x][y] = Field.VOID;
-            }
-        }
-
-        for(int  x = 0; x < width; x++) {
-            for(int  y = 0; y < height; y++) {
-                out[x+y/2][y] = null;
+        for (int x = 0; x < (width+(height/2)); x++) {
+            for (int y = 0; y < height; y++) {
+                if (y % 2 == 0) {
+                    if (x < (y/2) || x > ((y/2)+width)-2) {
+                        out[x][y] = Field.VOID;
+                    }
+                } else {
+                   if (x < ((y+1)/2) || x > (((y+1)/2)+(width-1))-2) {
+                       out[x][y] = Field.VOID;
+                   }
+                }
             }
         }
 
@@ -42,10 +44,10 @@ public class SquarePreset implements  MapPreset{
     public List<Location> getSpawnPoints() {
         List<Location> locations = new ArrayList<>();
 
-        locations.add(new Location(2, 2));
-        locations.add(new Location(width-3 + height/2, height-3)); //TODO: Fix
-        locations.add(new Location(2 + height/2, height-3));
-        locations.add(new Location(width-2, 2));        //TODO: Fix
+        locations.add(new Location(3, 2));
+        locations.add(new Location(width-5 + height/2, height-3));
+        locations.add(new Location(1 + height/2, height-3));
+        locations.add(new Location(width-3, 2));
 
         return locations;
     }
