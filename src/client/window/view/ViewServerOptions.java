@@ -86,6 +86,8 @@ public class ViewServerOptions extends View {
 
 		cancel = new TextButton(window, LanguageHandler.get("Cancel"), e -> window.updateView(prev));
 
+		changeSize();
+
 		window.getPanel().add(cancel);
 		window.getPanel().add(accept);
 		window.getPanel().add(mapWidth);
@@ -94,7 +96,6 @@ public class ViewServerOptions extends View {
 		window.getPanel().add(displayWidth);
 		window.getPanel().add(buttonMapType);
 
-		changeSize();
 
 		started = true;
 		new Thread(new Runnable() {

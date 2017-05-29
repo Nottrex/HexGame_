@@ -27,6 +27,7 @@ public class MapGenerator {
     public Field[][] getMap() {
         Field[][] presetMap = mp.getPresetMap();
         Field[][] out = new Field[presetMap.length][presetMap[0].length];
+        float[][] heightMap = vn.getHeightMap();
         for(int x = 0; x < out.length; x++) {
             for(int y = 0; y < out[0].length; y++){
                 if(presetMap[x][y] == Field.VOID) {
@@ -34,7 +35,7 @@ public class MapGenerator {
                     continue;
                 }
 
-                float f = vn.getHeightMap()[x][y];
+                float f = heightMap[x][y];
 
                 if(f <= 1.5f/9.0f) out[x][y] = Field.WATER;
                 else if(f <= 2.4f/9.0f)out[x][y] = Field.SAND;
