@@ -53,7 +53,7 @@ public class FieldShader extends ShaderProgram {
 	protected void bindAttributes(GL2 gl) {
 		locationLocation = getAttributeLocation(gl, "location");
 		texLocationLocation = getAttributeLocation(gl, "texLocation");
-		fieldDataLocation = getAttributeLocation(gl, "fieldData");
+		fieldDataLocation = getAttributeLocation(gl, "fieldData2");
 	}
 
 	public int getLocationLocation() {

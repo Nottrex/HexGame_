@@ -47,6 +47,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 	private IntBuffer buffers = IntBuffer.allocate(4);
 	private IntBuffer vao = IntBuffer.allocate(1);
+	private IntBuffer vao2 = IntBuffer.allocate(1);
 	private int length;
 	private Texture fieldTexture;
 	private FieldShader fieldShader;
@@ -233,6 +234,9 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, buffers.get(3));
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 18*length*4, indicesBuffer, GL.GL_STATIC_DRAW);
+
+		gl.glGenVertexArrays(1, vao2);
+		gl.glBindVertexArray(vao2.get(0));
 	}
 
 	private void textureInit(GL2 gl) {
@@ -279,7 +283,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		gl.glBindVertexArray(vao.get(0));
 		gl.glDrawElements(GL.GL_TRIANGLES, length*18, GL.GL_UNSIGNED_INT, 0);
-		gl.glBindVertexArray(0);
+		gl.glBindVertexArray(vao2.get(0));
 		fieldShader.stop(gl);
 
 

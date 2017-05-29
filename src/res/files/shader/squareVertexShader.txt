@@ -13,15 +13,14 @@ uniform int texY;
 uniform int texW;
 uniform int texH;
 
-uniform vec2 vertexPos[4] = vec2[4] (vec2(0.0, 0.0), vec2(0.0, 1.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
-uniform vec2 vertexTex[4] = vec2[4] (vec2(0.0, 0.0), vec2(0.0, 1.0), vec2(1.0, 0.0), vec2(1.0, 1.0));
 out vec2 fragTex;
 
 void main() {
-    fragTex = vertexTex[gl_VertexID];
+    fragTex = vec2((gl_VertexID & 2)/2, gl_VertexID & 1);
     fragTex.x = (texX+fragTex.x*texW)/texTW;
     fragTex.y = 1-(texY+(1-fragTex.y)*texH)/texTH;
 
-    vec4 pos = vec4(vertexPos[gl_VertexID].x*width+x, vertexPos[gl_VertexID].y*height+y, 0, 1);
+    vec4 pos = vec4(((gl_VertexID & 2)/2)*width+x, (gl_VertexID & 1)*height+y, 0, 1);
+
     gl_Position = projectionMatrix * cameraMatrix * pos;
 }

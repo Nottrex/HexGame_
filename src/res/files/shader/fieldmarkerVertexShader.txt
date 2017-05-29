@@ -20,11 +20,12 @@ uniform vec2 vertexTex[6] = vec2[6] (vec2(0.5, 1.0), vec2(0.0, 0.75), vec2(1.0, 
 out vec2 fragTex;
 
 void main() {
-    fragTex = vertexTex[gl_VertexID];
+    int id = int(mod(gl_VertexID,6));
+    fragTex = vertexTex[id];
     fragTex.x = (texX+fragTex.x*texW)/texTW;
     fragTex.y = 1-(texY+(1-fragTex.y)*texH)/texTH;
 
-    vec4 pos = vec4((vertexPos[gl_VertexID].x+location.x-location.y/2)*hexWidth, (vertexPos[gl_VertexID].y)*hexHeight2-(location.y)*hexHeight2*hexHeight, 0, 1);
+    vec4 pos = vec4((vertexPos[id].x+location.x-location.y/2)*hexWidth, (vertexPos[id].y)*hexHeight2-(location.y)*hexHeight2*hexHeight, 0, 1);
 
     gl_Position = projectionMatrix * cameraMatrix * pos;
 }

@@ -98,6 +98,7 @@ public class Camera {
 
 	public void setPosition(float x, float y) {
 		z2 = false;
+		z = false;
 		this.tx = x;
 		this.ty = y;
 	}

@@ -1,5 +1,6 @@
 package client.window.view;
 
+import client.FileHandler;
 import client.game.Controller;
 import client.window.components.HorizontalSlider;
 import client.window.components.TextButton;
@@ -78,7 +79,7 @@ public class ViewServerOptions extends View {
 			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
 			else if(mapType.equals(LanguageHandler.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
 			else if(mapType.equals(LanguageHandler.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
-			else if(mapType.equals(LanguageHandler.get("Custom"))) mp = new CustomPreset("map");
+			else if(mapType.equals(LanguageHandler.get("Custom"))) mp = new CustomPreset(FileHandler.loadFile("maps/map.txt"));
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});

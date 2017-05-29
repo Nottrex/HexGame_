@@ -1,6 +1,5 @@
 package game.map.presets;
 
-import client.FileHandler;
 import game.Location;
 import game.enums.Field;
 
@@ -11,11 +10,11 @@ import java.util.Scanner;
 public class CustomPreset implements MapPreset{
 
     private int width, height;
-    private String mapName;
+    private String mapContent;
 
-    public CustomPreset(String mapName) {
-        this.mapName = mapName;
-        Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
+    public CustomPreset(String mapContent) {
+        this.mapContent = mapContent;
+        Scanner br = new Scanner(mapContent);
 
         this.width = Integer.parseInt(br.next());
         this.height = Integer.parseInt(br.next());
@@ -25,7 +24,7 @@ public class CustomPreset implements MapPreset{
     @Override
     public Field[][] getPresetMap() {
         Field[][] out = new Field[width][height];
-        Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
+        Scanner br = new Scanner(mapContent);
 
         br.nextLine();
 
@@ -45,7 +44,7 @@ public class CustomPreset implements MapPreset{
     public List<Location> getSpawnPoints() {
         List<Location> locations = new ArrayList<>();
 
-        Scanner br = new Scanner(FileHandler.loadFile("maps/" + mapName + ".txt"));
+        Scanner br = new Scanner(mapContent);
         for (int i = 0; i < width+1; i++) {
             br.nextLine();
         }
