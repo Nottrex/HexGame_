@@ -1,9 +1,11 @@
 package client.game;
 
+import client.window.GUIConstants;
+
 public class Camera {
 	public static final long ZOOM_TIME = 200;
 
-	public float zoom, x, y;
+	public float zoom, x, y, tilt;
 
 	private float tx, ty;
 	private boolean z2 = false;
@@ -18,20 +20,28 @@ public class Camera {
 	private float a, b, c, d;
 	private boolean z = false;
 
+	private float ttilt;
+	private float targetTilt = ttilt;
+	private long beginTime3 = 0, targetTime3 = 0;
+	private float a4, b4, c4, d4;
+	private boolean z3 = false;
+
 	public Camera() {
 		zoom = 3;
 		x = 0;
 		y = 0;
+		tilt = 0;
 		tzoom = zoom;
 		tx = x;
 		ty = y;
+		ttilt = tilt;
 	}
 
 	/**
 	 * Takes t-Values and put it to the inUse values
 	 */
 	public boolean update() {
-		boolean b5 = (zoom!=tzoom) || (x!=tx) || (y!=ty) || z || z2;
+		boolean b5 = (zoom!=tzoom) || (x!=tx) || (y!=ty) || z || z2 || z3 || (tilt != ttilt);
 		long time = System.currentTimeMillis()%10000000;
 
 		if (z) {
@@ -54,9 +64,19 @@ public class Camera {
 			}
 		}
 
+		if (z3) {
+			if (time > targetTime3) {
+				ttilt = targetTilt;
+				z3 = false;
+			} else {
+				ttilt = calculateFunction((time*1.0f-beginTime3)/(targetTime3-beginTime3), a4, b4, c4, d4);
+			}
+		}
+
 		zoom = tzoom;
 		x = tx;
 		y = ty;
+		tilt = ttilt;
 		return b5;
 	}
 
@@ -128,6 +148,42 @@ public class Camera {
 		targetY = y;
 
 		z2 = true;
+	}
+
+	public void updateTilt(float tilt) {
+		ttilt = tilt;
+		z3 = false;
+	}
+
+	public void updateTiltSmooth(float tilt, long time) {
+		float v = 0;
+		float t = Math.max(Math.min(tilt, GUIConstants.MAX_TILT), 0);
+		if (z3) {
+			v = calculateDerivative(((System.currentTimeMillis()%10000000)*1.0f-beginTime3)/(targetTime3-beginTime3), a4, b4, c4, d4);
+		}
+		float currentTilt = ttilt;
+
+		d4 = currentTilt;
+		c4 = v;
+		b4 = 3 * t - 2 * v - 3 * currentTilt;
+		a4 = v + 2 *currentTilt - 2 * t;
+		beginTime3 = System.currentTimeMillis()%10000000;
+		targetTime3 = System.currentTimeMillis()%10000000 + time;
+		targetTilt = t;
+
+		z3 = true;
+	}
+
+	public float getTilt() {
+		return tilt;
+	}
+
+	public void raiseTilt() {
+		updateTiltSmooth(targetTilt+GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
+	}
+
+	public void decreaseTilt() {
+		updateTiltSmooth(targetTilt-GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
 	}
 
 	public float getZoom() {

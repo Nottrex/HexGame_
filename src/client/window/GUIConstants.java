@@ -12,6 +12,9 @@ public class GUIConstants {
 	public static final double HEX_TILE_XY_RATIO			= 1.4/1.2;
 	public static final double HEX_TILE_YY_RATIO			= 1.05/1.4;
 	public static final double ZOOM							= 1.1;
+	public static final float MAX_TILT						= 0.5f;
+	public static final float TILT_STEP						= 0.05f;
+	public static final long CAMERA_TIME					= 500;
   
 	public static final double ARROW_SIZE 					= 0.5;
 

@@ -180,8 +180,8 @@ public class ViewGame extends View implements ClientListener {
 		float[] pos = center.hexPositionToWorldPosition(new Location(m.getWidth()/2, m.getHeight()/2+1));
 
 		if (startCenterCamera) {
-			cam.setZoomSmooth(2.2f/m.getHeight(), 500);
-			cam.setPositionSmooth(pos[0], pos[1], 500);
+			cam.setZoomSmooth(2.2f/m.getHeight(), GUIConstants.CAMERA_TIME);
+			cam.setPositionSmooth(pos[0], pos[1], GUIConstants.CAMERA_TIME);
 		} else {
 			cam.setZoom(2.2f/m.getHeight());
 			cam.setPosition(pos[0], pos[1]);
@@ -194,20 +194,19 @@ public class ViewGame extends View implements ClientListener {
 	public void onMouseClick(int x, int y) {
 		float[] point = center.screenPositionToWorldPosition(x, y);
 		if (System.currentTimeMillis() - lastClick < DOUBLEPRESSTIME) {
-			cam.setZoomSmooth(2.2f/20, 500);
-			cam.setPositionSmooth(point[0], point[1], 500);
+			cam.setZoomSmooth(2.2f/20, GUIConstants.CAMERA_TIME);
+			cam.setPositionSmooth(point[0], point[1], GUIConstants.CAMERA_TIME);
 		}
 		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
 		redrawInfoBar();
 		lastClick = System.currentTimeMillis();
 	}
 
+	public void onMouseDrag(int x1, int y1, int x2, int y2) {
+		float[] zero = center.screenPositionToWorldPosition(x1, y1);
+		float[] one = center.screenPositionToWorldPosition(x2, y2);
 
-	public void onMouseDrag(int dx, int dy) {
-		float[] zero = center.screenPositionToWorldPosition(0, 0);
-		float[] one = center.screenPositionToWorldPosition(1, 1);
-
-		cam.setPosition(cam.getX() + (dx*(-one[0]+zero[0])), cam.getY() + (dy*(-one[1]+zero[1])));
+		cam.setPosition(cam.getX() + (-one[0]+zero[0]), cam.getY() + (-one[1]+zero[1]));
 	}
 
 	public void onKeyType(int keyCode) {
@@ -270,8 +269,16 @@ public class ViewGame extends View implements ClientListener {
 			controller.selectedField = null;
 			controller.onMouseClick(new Location(u.getX(), u.getY()));
 
-			cam.setPositionSmooth(pos[0], pos[1], 500);
+			cam.setPositionSmooth(pos[0], pos[1], GUIConstants.CAMERA_TIME);
 			//cam.tzoom = 2.2f/15;
+		}
+
+		if (keyCode == KeyBindings.KEY_RAISE_TILT) {
+			cam.raiseTilt();
+		}
+
+		if (keyCode == KeyBindings.KEY_DECREASE_TILT) {
+			cam.decreaseTilt();
 		}
 
 		controller.onKeyType(keyCode);

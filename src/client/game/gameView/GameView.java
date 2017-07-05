@@ -489,8 +489,12 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		if (viewMatrix==null || b) {
 			float[] target = {cam.x, cam.y, 0};
-			cameraPosition = new float[] {cam.x, cam.y, 1/cam.zoom};
-			float[] up = {0, 1, 0};
+			cameraPosition = new float[] {cam.x, cam.y-cam.tilt/cam.zoom, 1/cam.zoom};
+
+			float[] dir = new float[] {cameraPosition[0] - target[0], cameraPosition[1] - target[1], cameraPosition[2] - target[2]};
+			float[] up = new float[3];
+			VectorUtil.crossVec3(up, dir, new float[] {1, 0, 0});
+			VectorUtil.normalizeVec3(up);
 
 			viewMatrix = FloatUtil.makeLookAt(new float[16], 0, cameraPosition, 0, target, 0, up, 0, new float[16]);
 

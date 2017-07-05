@@ -31,7 +31,7 @@ public class MouseInputListener extends MouseAdapter {
 		//Update dragging
 		if (mousePressedInGame) {
 			totalDistanceDragged += Math.abs(e.getX()-lastX) + Math.abs(e.getY()-lastY);
-			game.onMouseDrag(e.getX() - lastX, e.getY() - lastY);
+			game.onMouseDrag(lastX, lastY, e.getX(), e.getY());
 			lastX = e.getX();
 			lastY = e.getY();
 		}

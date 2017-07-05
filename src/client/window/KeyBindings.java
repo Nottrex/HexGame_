@@ -8,4 +8,6 @@ public class KeyBindings {
 	public static int KEY_TOGGLE_MUSIC		= KeyEvent.VK_M;
 	public static int KEY_NEXT_UNIT			= KeyEvent.VK_N;
 	public static int KEY_NEXT_PLAYER		= KeyEvent.VK_ENTER;
+	public static int KEY_RAISE_TILT		= KeyEvent.VK_UP;
+	public static int KEY_DECREASE_TILT		= KeyEvent.VK_DOWN;
 }
