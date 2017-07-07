@@ -281,6 +281,10 @@ public class ViewGame extends View implements ClientListener {
 			cam.decreaseTilt();
 		}
 
+		if (keyCode == KeyBindings.KEY_RESET_TILT) {
+			cam.setTiltSmooth(0, GUIConstants.CAMERA_TIME);
+		}
+
 		controller.onKeyType(keyCode);
 	}
 

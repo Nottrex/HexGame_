@@ -150,14 +150,14 @@ public class Camera {
 		z2 = true;
 	}
 
-	public void updateTilt(float tilt) {
+	public void setTilt(float tilt) {
 		ttilt = tilt;
 		z3 = false;
 	}
 
-	public void updateTiltSmooth(float tilt, long time) {
+	public void setTiltSmooth(float tilt, long time) {
 		float v = 0;
-		float t = Math.max(Math.min(tilt, GUIConstants.MAX_TILT), 0);
+		float t = Math.max(Math.min(tilt, GUIConstants.MAX_TILT), GUIConstants.MIN_TILT);
 		if (z3) {
 			v = calculateDerivative(((System.currentTimeMillis()%10000000)*1.0f-beginTime3)/(targetTime3-beginTime3), a4, b4, c4, d4);
 		}
@@ -179,11 +179,11 @@ public class Camera {
 	}
 
 	public void raiseTilt() {
-		updateTiltSmooth(targetTilt+GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
+		setTiltSmooth(targetTilt+GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
 	}
 
 	public void decreaseTilt() {
-		updateTiltSmooth(targetTilt-GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
+		setTiltSmooth(targetTilt-GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
 	}
 
 	public float getZoom() {

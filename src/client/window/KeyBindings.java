@@ -10,4 +10,5 @@ public class KeyBindings {
 	public static int KEY_NEXT_PLAYER		= KeyEvent.VK_ENTER;
 	public static int KEY_RAISE_TILT		= KeyEvent.VK_UP;
 	public static int KEY_DECREASE_TILT		= KeyEvent.VK_DOWN;
+	public static int KEY_RESET_TILT		= KeyEvent.VK_RIGHT;
 }
