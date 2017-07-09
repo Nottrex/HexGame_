@@ -3,8 +3,6 @@ package client.game;
 import client.window.GUIConstants;
 
 public class Camera {
-	public static final long ZOOM_TIME = 200;
-
 	public float zoom, x, y, tilt;
 
 	private float tx, ty;
@@ -81,7 +79,7 @@ public class Camera {
 	}
 
 	public void zoomSmooth(float a2) {
-		zoomSmooth(a2, ZOOM_TIME);
+		zoomSmooth(a2, GUIConstants.ZOOM_TIME);
 	}
 
 	private void zoomSmooth(float a2, long time) {
