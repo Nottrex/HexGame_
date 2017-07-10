@@ -40,10 +40,8 @@ public class MapGenerator {
         float highest = -1;
         for(int x = 0; x < heightMap.length; x++) {
             for(int y = 0; y < heightMap[0].length; y++) {
-
+                if (presetMap[x][y] == Field.VOID) continue;
                 float r = raise(x, y, presetMap.length, presetMap[0].length, max);
-
-                System.out.println(x + " " + y + " " + r);
 
                 heightMap[x][y] *= r;
                 if(heightMap[x][y] > highest) highest = heightMap[x][y];
@@ -54,6 +52,7 @@ public class MapGenerator {
             for(int y = 0; y < heightMap[0].length; y++) {
 
                 heightMap[x][y] /= highest;
+                System.out.print(heightMap[x][y] + " ");
             }
         }
 
@@ -65,14 +64,14 @@ public class MapGenerator {
                 }
 
                 float f = heightMap[x][y];
-                     if(f <= 1.4f/9.0f) out[x][y] = Field.WATER;
-                else if(f <= 2.4f/9.0f)out[x][y] = Field.SAND;
-                else if(f <= 3.8f/9.0f)out[x][y] = Field.GRASS;
-                else if(f <= 4.8f/9.0f)out[x][y] = Field.FOREST;
-                else if(f <= 5.4f/9.0f)out[x][y] = Field.GRASS_ROCK;
-                else if(f <= 6.0f/9.0f)out[x][y] = Field.DIRT;
-                else if(f <= 7.0f/9.0f)out[x][y] = Field.DIRT_ROCK;
-                else if(f <= 8.0f/9.0f)out[x][y] = Field.STONE;
+                     if(f <= 1.3/9.0f) out[x][y] = Field.WATER;
+                else if(f <= 1.75f/9.0f)out[x][y] = Field.SAND;
+                else if(f <= 2.85f/9.0f)out[x][y] = Field.GRASS;
+                else if(f <= 3.8f/9.0f)out[x][y] = Field.FOREST;
+                else if(f <= 4.4f/9.0f)out[x][y] = Field.GRASS_ROCK;
+                else if(f <= 5.3f/9.0f)out[x][y] = Field.DIRT;
+                else if(f <= 6.4f/9.0f)out[x][y] = Field.DIRT_ROCK;
+                else if(f <= 7.5f/9.0f)out[x][y] = Field.STONE;
                 else if(f <= 9.0f/9.0f)out[x][y] = Field.SNOW;
             }
         }
