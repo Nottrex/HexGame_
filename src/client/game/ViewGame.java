@@ -19,12 +19,15 @@ import game.Location;
 import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
+import game.enums.UnitState;
+import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
 import client.i18n.LanguageHandler;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
+import networking.gamePackets.gamePackets.PacketUnitSpawn;
 import networking.packets.Packet;
 import server.ServerMain;
 
@@ -283,6 +286,11 @@ public class ViewGame extends View implements ClientListener {
 
 		if (keyCode == KeyBindings.KEY_RESET_TILT) {
 			cam.setTiltSmooth(0, GUIConstants.CAMERA_TIME);
+		}
+
+		if (keyCode == KeyEvent.VK_1) {
+			Random r = new Random();
+			controller.spawnUnit(new Unit(controller.game.getPlayerColor(), UnitType.INFANTERIE, UnitState.INACTIVE, r.nextInt(50), r.nextInt(50)));
 		}
 
 		controller.onKeyType(keyCode);

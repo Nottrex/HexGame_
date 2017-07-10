@@ -4,6 +4,7 @@ import client.window.animationActions.AnimationActionRoundFinish;
 import client.window.animationActions.AnimationActionUnitMove;
 import client.window.animationActions.AnimationAction;
 import client.window.KeyBindings;
+import client.window.animationActions.AnimationActionUnitSpawn;
 import game.Game;
 import game.map.GameMap;
 import game.Location;
@@ -16,6 +17,7 @@ import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.gamePackets.PacketRoundFinished;
 import networking.gamePackets.gamePackets.PacketUnitMoved;
+import networking.gamePackets.gamePackets.PacketUnitSpawn;
 import networking.gamePackets.preGamePackets.PacketGameBegin;
 import networking.packets.Packet;
 
@@ -201,8 +203,19 @@ public class Controller implements ClientListener {
 		}
 	}
 
+	public void spawnUnit(Unit unit) {
+		this.sendPacket(new PacketUnitSpawn(userName, unit));
+		waitForPacket = true;
+	}
+
 	@Override
 	public void onReceivePacket(Packet p) {
+		if (p instanceof PacketUnitSpawn) {
+			PacketUnitSpawn packet = (PacketUnitSpawn) p;
+			waitForPacket = false;
+			addAnimationAction(new AnimationActionUnitSpawn(game, packet.getUnit()));
+		}
+
 		if (p instanceof PacketRoundFinished) {
 			PacketRoundFinished packet = (PacketRoundFinished) p;
 			waitForPacket = false;

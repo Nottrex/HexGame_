@@ -43,6 +43,10 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.PANZER, 5, 15));
 	}
 
+	public void spawnUnit(Unit unit) {
+		units.add(unit);
+	}
+
 	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap, List<Location> spawnPoints) {
 		this.map = map;
 		this.width = map.length;

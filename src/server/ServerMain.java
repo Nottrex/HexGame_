@@ -6,13 +6,13 @@ import game.enums.PlayerColor;
 import game.map.MapGenerator;
 import game.map.presets.HexPreset;
 import game.map.presets.MapPreset;
-import game.map.presets.OvalPreset;
-import game.map.presets.SquarePreset;
 import networking.ServerState;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.gamePackets.PacketRoundFinished;
+import networking.gamePackets.gamePackets.PacketUnitAttack;
 import networking.gamePackets.gamePackets.PacketUnitMoved;
+import networking.gamePackets.gamePackets.PacketUnitSpawn;
 import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
 import networking.server.Server;
@@ -158,20 +158,43 @@ public class ServerMain implements ServerListener {
 		players.keySet().stream().forEach(s -> server.sendPacket(s, new PacketGameBegin(game)));
 	}
 
-	public void onReceivePacket(Socket s, Packet p) {
+	public void onReceiveGamePacket(Socket s, Packet p) {
+		if (p instanceof PacketUnitAttack) {
+			PacketUnitAttack packet = (PacketUnitAttack) p;
+
+			if (Anticheat.legalMove(p, game, s)) {
+				System.out.printf("%s attacked Unit at %d / %d with Unit at %d / %d\n", packet.getPlayer(), packet.getUnit().getX(), packet.getUnit().getY());
+
+				players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
+			} else {
+				server.sendPacket(s, new PacketClientKicked("Hacker!"));
+			}
+		}
+
+		if (p instanceof PacketUnitSpawn) {
+			PacketUnitSpawn packet = (PacketUnitSpawn) p;
+
+			if (Anticheat.legalMove(p, game, s)) {
+				System.out.printf("%s spawned Unit at %d / %d\n", packet.getPlayer(), packet.getUnit().getX(), packet.getUnit().getY());
+				game.getMap().spawnUnit(packet.getUnit());
+				players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
+			} else {
+				server.sendPacket(s, new PacketClientKicked("Hacker!"));
+			}
+		}
+
 		if (p instanceof PacketUnitMoved) {
 			PacketUnitMoved packet = (PacketUnitMoved) p;
 
-			if (serverState == ServerState.INGAME && players.containsKey(s) && packet.getPlayer().equals(players.get(s)) && game.getPlayerTurn().equals(packet.getPlayer()) && packet.getUnit().getPlayer() == playerColor.get(players.get(s))) {
+			if (Anticheat.legalMove(p, game, s)) {
 				Optional<Unit> u = game.getMap().getUnitAt(packet.getUnit().getX(), packet.getUnit().getY());
-				if (u.isPresent()) {
-					Unit unit = u.get();
-					System.out.printf("%s moved Unit from %d / %d to %d / %d\n", packet.getPlayer(), unit.getX(), unit.getY(), packet.getTargetX(), packet.getTargetY());
-					unit.moveTo(packet.getTargetX(), packet.getTargetY());
 
-					players.keySet().stream()
-							.forEach(s2 -> server.sendPacket(s2, packet));
-				}
+				Unit unit = u.get();
+				System.out.printf("%s moved Unit from %d / %d to %d / %d\n", packet.getPlayer(), unit.getX(), unit.getY(), packet.getTargetX(), packet.getTargetY());
+				unit.moveTo(packet.getTargetX(), packet.getTargetY());
+
+				players.keySet().stream()
+						.forEach(s2 -> server.sendPacket(s2, packet));
 			} else {
 				server.sendPacket(s, new PacketClientKicked("Hacker!"));
 			}
@@ -180,7 +203,7 @@ public class ServerMain implements ServerListener {
 		if (p instanceof PacketRoundFinished) {
 			PacketRoundFinished packet = (PacketRoundFinished) p;
 
-			if (serverState == ServerState.INGAME && players.containsKey(s) && packet.getPlayer().equals(players.get(s)) && game.getPlayerTurn().equals(packet.getPlayer())) {
+			if (Anticheat.legalMove(p, game, s)) {
 				System.out.printf("%s finished his round\n", packet.getPlayer());
 				game.nextPlayer();
 				players.keySet().stream()
@@ -189,6 +212,10 @@ public class ServerMain implements ServerListener {
 				server.sendPacket(s, new PacketClientKicked("Hacker!"));
 			}
 		}
+	}
+
+	public void onReceivePacket(Socket s, Packet p) {
+		onReceiveGamePacket(s, p);
 
 		if (p instanceof PacketPlayerReady) {
 			PacketPlayerReady packet = (PacketPlayerReady) p;
