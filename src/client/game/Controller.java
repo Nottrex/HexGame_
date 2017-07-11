@@ -25,14 +25,12 @@ import java.util.Optional;
 
 public class Controller implements ClientListener {
 
-	private Client client;
-	private String userName;
-
 	public Game game;
 	public Location selectedField = null;
 	public Location hoverField = null;
 	public PossibleActions pa = null;
-
+	private Client client;
+	private String userName;
 	private ClientListener viewPacketListener;
 
 	private int waitForPacket = 0;
@@ -51,9 +49,10 @@ public class Controller implements ClientListener {
 
 	/**
 	 * Connects to server
+	 *
 	 * @param userName you want to use
 	 * @param hostName IP from the server
-	 * @param port that is forwarded and used in the server
+	 * @param port     that is forwarded and used in the server
 	 */
 	public void connect(String userName, String hostName, int port) {
 		if (client != null) client.close();
@@ -103,8 +102,9 @@ public class Controller implements ClientListener {
 
 	/**
 	 * Adds a new {@link AnimationAction animation} to the queue
+	 *
 	 * @param aa animation to add
- 	 */
+	 */
 	private void addAnimationAction(AnimationAction aa) {
 		selectedField = null;
 		animationActions.add(aa);
@@ -124,6 +124,7 @@ public class Controller implements ClientListener {
 
 	/**
 	 * Called when user clicks on a position
+	 *
 	 * @param l Clicked position
 	 */
 	public void onMouseClick(Location l) {
@@ -181,6 +182,7 @@ public class Controller implements ClientListener {
 
 	/**
 	 * Called when user types a key
+	 *
 	 * @param keyCode of the pressed keys
 	 */
 	public void onKeyType(int keyCode) {

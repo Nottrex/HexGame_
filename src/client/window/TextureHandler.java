@@ -1,26 +1,25 @@
 package client.window;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.imageio.ImageIO;
-
 public class TextureHandler {
-	private TextureHandler() {}
-	
 	public static Map<String, BufferedImage> textures_png;
 	public static Map<String, Rectangle> textures_sprite_sheet;
 	public static Map<String, String> textures_sprite_sheet_texture;
-	
+
 	static {
 		textures_png = new HashMap<>();
 		textures_sprite_sheet = new HashMap<>();
 		textures_sprite_sheet_texture = new HashMap<>();
+	}
+
+	private TextureHandler() {
 	}
 
 	public static void loadImagePng(String textureName, String fileName) {
@@ -61,14 +60,14 @@ public class TextureHandler {
 		return textures_sprite_sheet.get(textureName);
 	}
 
-	public static String getSpriteSheetImage(String textureName){
+	public static String getSpriteSheetImage(String textureName) {
 		return textures_sprite_sheet_texture.get(textureName);
 	}
 
 	public static BufferedImage getImagePng(String textureName) {
 		if (textures_png.containsKey(textureName))
 			return textures_png.get(textureName);
-		else if(textures_sprite_sheet.containsKey(textureName)) {
+		else if (textures_sprite_sheet.containsKey(textureName)) {
 			Rectangle rec = textures_sprite_sheet.get(textureName);
 			return textures_png.get(textures_sprite_sheet_texture.get(textureName)).getSubimage(rec.x, rec.y, rec.width, rec.height);
 		}

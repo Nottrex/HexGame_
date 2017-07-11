@@ -11,6 +11,7 @@ import java.util.*;
 
 public class LanguageHandler {
 	public static final String CUSTOM_LANGUAGE_PATH = Options.DATA_FILE_PATH + "languages" + File.separator;
+	private static Map<String, String> dictionary = new HashMap<>();
 
 	static {
 		new File(CUSTOM_LANGUAGE_PATH).mkdirs();
@@ -27,14 +28,14 @@ public class LanguageHandler {
 			try {
 				String dataString = FileHandler.loadFile("language/" + Options.language + ".yml");
 				data = (Map<String, String>) yaml.load(dataString);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				data = new HashMap<>();
 				System.err.println("Error reading System Language: " + Options.language);
 			}
 		} else if (availableCustomLanguages().contains(Options.language)) {
 			try {
 				data = (Map<String, String>) yaml.load(new FileInputStream(new File(CUSTOM_LANGUAGE_PATH + Options.language + ".yml")));
-			} catch(Exception e) {
+			} catch (Exception e) {
 				data = new HashMap<>();
 				System.err.println("Error reading Custom Language: " + Options.language);
 			}
@@ -67,12 +68,12 @@ public class LanguageHandler {
 		List<String> languages = new ArrayList<>();
 		File f = new File(CUSTOM_LANGUAGE_PATH);
 
-		for (File f2: f.listFiles()) {
+		for (File f2 : f.listFiles()) {
 			if (f2.isFile()) {
 				String[] parts = f2.getName().split("\\.");
-				if (parts[parts.length-1].equalsIgnoreCase("yml")) {
+				if (parts[parts.length - 1].equalsIgnoreCase("yml")) {
 					StringBuilder sb = new StringBuilder();
-					for (int i = 0; i < parts.length-1; i++) {
+					for (int i = 0; i < parts.length - 1; i++) {
 						sb.append(parts[i]);
 					}
 					languages.add(sb.toString());
@@ -83,11 +84,8 @@ public class LanguageHandler {
 		return languages;
 	}
 
-
-	private static Map<String, String> dictionary = new HashMap<>();
-
 	public static String get(String key) {
-		if(dictionary.containsKey(key)) return dictionary.get(key);
+		if (dictionary.containsKey(key)) return dictionary.get(key);
 		else return key;
 	}
 

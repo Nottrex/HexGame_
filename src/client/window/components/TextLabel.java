@@ -24,17 +24,17 @@ public class TextLabel extends JComponent {
 		String text = content.getText();
 		int lines = text.split("\n").length;
 
-		Font font = GUIConstants.FONT.deriveFont(Math.min(getHeight()*0.375f / lines, getHeight()*0.25f));
+		Font font = GUIConstants.FONT.deriveFont(Math.min(getHeight() * 0.375f / lines, getHeight() * 0.25f));
 		g.setFont(font);
 
 		int fWidth = getWidth();
 		int fHeight = g.getFontMetrics(font).getHeight();
 
-		for(int i = 0; i <  lines; i++) {
+		for (int i = 0; i < lines; i++) {
 			String toDraw = text.split("\n")[i];
 			if (centerText) fWidth = (int) g.getFontMetrics(font).getStringBounds(toDraw, g).getWidth();
-			int y = fHeight*(i + 1);
-			int x = (getWidth()-fWidth)/2;
+			int y = fHeight * (i + 1);
+			int x = (getWidth() - fWidth) / 2;
 			g.drawString(toDraw, x, y);
 		}
 	}

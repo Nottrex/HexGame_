@@ -6,46 +6,47 @@ import game.enums.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HexPreset implements MapPreset{
+public class HexPreset implements MapPreset {
 
-    private int width, height;
-    public HexPreset(int width) {
-        this.width = width;
-        this.height = width;
+	private int width, height;
 
-        if (width <= 10) {
-            throw new RuntimeException("Width to small (min 11): " + width);
-        }
-        if (width % 2 != 1) {
-            throw new RuntimeException("Width has to be odd: " + width);
-        }
-    }
+	public HexPreset(int width) {
+		this.width = width;
+		this.height = width;
 
-    @Override
-    public Field[][] getPresetMap() {
-        Field[][] out = new Field[width][height];
+		if (width <= 10) {
+			throw new RuntimeException("Width to small (min 11): " + width);
+		}
+		if (width % 2 != 1) {
+			throw new RuntimeException("Width has to be odd: " + width);
+		}
+	}
 
-        for(int x = 0; x < out.length; x++) {
-            for (int y = 0; y < out[0].length; y++) {
-                if(x < y - height/2 || x > y + height/2) out[x][y] = Field.VOID;
-            }
-        }
+	@Override
+	public Field[][] getPresetMap() {
+		Field[][] out = new Field[width][height];
 
-        return out;
-    }
+		for (int x = 0; x < out.length; x++) {
+			for (int y = 0; y < out[0].length; y++) {
+				if (x < y - height / 2 || x > y + height / 2) out[x][y] = Field.VOID;
+			}
+		}
 
-    @Override
-    public List<Location> getSpawnPoints() {
-        int a = width /2;
-        List<Location> locations = new ArrayList<>();
+		return out;
+	}
 
-        locations.add(new Location(2, 2));
-        locations.add(new Location(width-3, width-3));
-        locations.add(new Location(2, a));
-        locations.add(new Location(a, 2));
-        locations.add(new Location(width-3, a));
-        locations.add(new Location(a, width-3));
+	@Override
+	public List<Location> getSpawnPoints() {
+		int a = width / 2;
+		List<Location> locations = new ArrayList<>();
 
-        return locations;
-    }
+		locations.add(new Location(2, 2));
+		locations.add(new Location(width - 3, width - 3));
+		locations.add(new Location(2, a));
+		locations.add(new Location(a, 2));
+		locations.add(new Location(width - 3, a));
+		locations.add(new Location(a, width - 3));
+
+		return locations;
+	}
 }

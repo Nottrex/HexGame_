@@ -1,6 +1,8 @@
 package client;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class FileHandler {
 
@@ -10,7 +12,7 @@ public class FileHandler {
 
 			StringBuilder source = new StringBuilder();
 			String line;
-			while((line=reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 				source.append(line).append("\n");
 			}
 			reader.close();

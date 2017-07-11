@@ -1,16 +1,18 @@
 package client.window;
 
-import client.window.view.View;
-import client.game.Controller;
 import client.Options;
 import client.audio.AudioHandler;
 import client.audio.AudioPlayer;
+import client.game.Controller;
+import client.window.view.View;
 import client.window.view.ViewMainMenu;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -59,7 +61,6 @@ public class Window extends JFrame {
 	}
 
 	/**
-	 *
 	 * @param view to check
 	 * @return if view is current {@link View}
 	 */
@@ -69,6 +70,7 @@ public class Window extends JFrame {
 
 	/**
 	 * Switches current {@link View} to a new one
+	 *
 	 * @param newView
 	 */
 	public void updateView(View newView) {
@@ -92,8 +94,8 @@ public class Window extends JFrame {
 		AudioHandler.loadMusicWav("Click", "sounds/click");
 
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		TextureHandler.loadImagePng("cursor","ui/cursor");
-		Cursor c = toolkit.createCustomCursor(TextureHandler.getImagePng("cursor") , new Point(0, 0), "img");
+		TextureHandler.loadImagePng("cursor", "ui/cursor");
+		Cursor c = toolkit.createCustomCursor(TextureHandler.getImagePng("cursor"), new Point(0, 0), "img");
 		this.setCursor(c);
 	}
 

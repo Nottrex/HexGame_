@@ -2,6 +2,7 @@ package client.game.gameView.shader;
 
 import client.FileHandler;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES2;
 
 public abstract class ShaderProgram {
 	private int programID;
@@ -9,8 +10,8 @@ public abstract class ShaderProgram {
 	private int fragmentShaderID;
 
 	public ShaderProgram(GL2 gl, String vertexFile, String fragmentFile) {
-		vertexShaderID = loadShader(gl, vertexFile, gl.GL_VERTEX_SHADER);
-		fragmentShaderID = loadShader(gl, fragmentFile, gl.GL_FRAGMENT_SHADER);
+		vertexShaderID = loadShader(gl, vertexFile, GL2ES2.GL_VERTEX_SHADER);
+		fragmentShaderID = loadShader(gl, fragmentFile, GL2ES2.GL_FRAGMENT_SHADER);
 
 		programID = gl.glCreateProgram();
 		gl.glAttachShader(programID, vertexShaderID);
@@ -71,6 +72,15 @@ public abstract class ShaderProgram {
 		//gl.glLinkProgram(programID);
 	}
 
+	private static int loadShader(GL2 gl, String file, int type) {
+		String shaderSource = FileHandler.loadFile("shader/" + file + ".txt");
+		int shaderID = gl.glCreateShader(type);
+		gl.glShaderSource(shaderID, 1, new String[]{shaderSource}, null);
+		gl.glCompileShader(shaderID);
+
+		return shaderID;
+	}
+
 	public void start(GL2 gl) {
 		gl.glUseProgram(programID);
 	}
@@ -89,6 +99,7 @@ public abstract class ShaderProgram {
 	}
 
 	protected abstract void bindAttributes(GL2 gl);
+
 	protected abstract void getUniformLocations(GL2 gl);
 
 	protected void setUniform4f(GL2 gl, int location, float v1, float v2, float v3, float v4) {
@@ -117,15 +128,6 @@ public abstract class ShaderProgram {
 
 	protected int getAttributeLocation(GL2 gl, String variableName) {
 		return gl.glGetAttribLocation(programID, variableName);
-	}
-
-	private static int loadShader(GL2 gl, String file, int type) {
-		String shaderSource = FileHandler.loadFile("shader/" + file + ".txt");
-		int shaderID = gl.glCreateShader(type);
-		gl.glShaderSource(shaderID, 1, new String[] {shaderSource}, null);
-		gl.glCompileShader(shaderID);
-
-		return shaderID;
 	}
 
 }

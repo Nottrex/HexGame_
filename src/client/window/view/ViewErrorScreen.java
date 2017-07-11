@@ -1,10 +1,10 @@
 package client.window.view;
 
 import client.game.Controller;
+import client.i18n.LanguageHandler;
+import client.window.Window;
 import client.window.components.TextButton;
 import client.window.components.TextLabel;
-import client.window.Window;
-import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +26,7 @@ public class ViewErrorScreen extends View {
 	public ViewErrorScreen(String error) {
 		this.error = error;
 	}
+
 	public ViewErrorScreen(DynamicBackground background, String error) {
 		this.background = background;
 		this.error = error;
@@ -39,7 +40,7 @@ public class ViewErrorScreen extends View {
 		panel = window.getPanel();
 		panel.setLayout(null);
 
-		if(background == null) background = new DynamicBackground();
+		if (background == null) background = new DynamicBackground();
 
 		buttonBackToMainMenu = new TextButton(window, LanguageHandler.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
 		labelError = new TextLabel(() -> error, true);
@@ -66,11 +67,11 @@ public class ViewErrorScreen extends View {
 		int width = window.getWidth();
 		int height = window.getHeight();
 
-		int componentHeight = height/8;
+		int componentHeight = height / 8;
 		int componentWidth = componentHeight * 5;
 
-		buttonBackToMainMenu.setBounds((width-componentWidth)/2, (height+componentHeight)/2, componentWidth, componentHeight);
-		labelError.setBounds((width-componentWidth)/2, (height-componentHeight)/2, componentWidth, componentHeight);
+		buttonBackToMainMenu.setBounds((width - componentWidth) / 2, (height + componentHeight) / 2, componentWidth, componentHeight);
+		labelError.setBounds((width - componentWidth) / 2, (height - componentHeight) / 2, componentWidth, componentHeight);
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class ViewErrorScreen extends View {
 
 		Graphics g = buffer.getGraphics();
 
-		for (Component component: panel.getComponents()) {
+		for (Component component : panel.getComponents()) {
 			g.translate(component.getX(), component.getY());
 			component.update(g);
 			g.translate(-component.getX(), -component.getY());

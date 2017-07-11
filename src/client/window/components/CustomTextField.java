@@ -8,7 +8,10 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class CustomTextField extends JComponent {
 	public static int BLINK_TIME = 1000;
@@ -43,7 +46,7 @@ public class CustomTextField extends JComponent {
 			public void keyTyped(KeyEvent e) {
 				if (e.getKeyChar() == '\b') {
 					if (text.length() > 0) {
-						text = text.substring(0, text.length()-1);
+						text = text.substring(0, text.length() - 1);
 					}
 				} else {
 					if (keyRestrict.isAllowed(e.getKeyChar())) {
@@ -62,7 +65,7 @@ public class CustomTextField extends JComponent {
 						return;
 					try {
 						String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-						for (char ch: data.toCharArray()) {
+						for (char ch : data.toCharArray()) {
 							if (keyRestrict.isAllowed(ch)) {
 								text += ch;
 							}
@@ -87,7 +90,7 @@ public class CustomTextField extends JComponent {
 
 		String text = getText();
 
-		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f);
+		Font font = GUIConstants.FONT.deriveFont(getHeight() * 0.5f);
 		if (text.isEmpty() && !hasFocus()) {
 			text = backgroundText;
 			font = font.deriveFont(Font.PLAIN);
@@ -97,38 +100,38 @@ public class CustomTextField extends JComponent {
 		int fWidth = (int) g.getFontMetrics(font).getStringBounds(text, g).getWidth();
 
 		int rightMove = 0;
-		if (fWidth > getWidth()-15) {
-			rightMove = fWidth-getWidth()+15;
+		if (fWidth > getWidth() - 15) {
+			rightMove = fWidth - getWidth() + 15;
 		}
 
-		g.drawString(text, -rightMove+5, getHeight()/2);
+		g.drawString(text, -rightMove + 5, getHeight() / 2);
 
 		g2.setColor(GUIConstants.BUTTON_COLOR);
 		g2.setStroke(new BasicStroke(GUIConstants.BUTTON_LINE_WIDTH));
 
-		g2.drawLine(0, (7*this.getHeight())/10, getWidth(), (7*this.getHeight())/10);
+		g2.drawLine(0, (7 * this.getHeight()) / 10, getWidth(), (7 * this.getHeight()) / 10);
 
-		if (hasFocus() && ((System.currentTimeMillis()-time_start)/BLINK_TIME)%2 == 0) {
-			g2.drawLine(fWidth-rightMove + font.getSize()/4, 0, fWidth-rightMove+font.getSize()/4, (3*this.getHeight())/5);
+		if (hasFocus() && ((System.currentTimeMillis() - time_start) / BLINK_TIME) % 2 == 0) {
+			g2.drawLine(fWidth - rightMove + font.getSize() / 4, 0, fWidth - rightMove + font.getSize() / 4, (3 * this.getHeight()) / 5);
 		}
 
 		g2.setStroke(new BasicStroke(1));
 	}
 
 	/**
-	 * Changes the shown text
-	 * @param text that should be shown
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	/**
-	 *
 	 * @return user input on that textfield
 	 */
 	public String getText() {
 		return text;
+	}
+
+	/**
+	 * Changes the shown text
+	 *
+	 * @param text that should be shown
+	 */
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	/*

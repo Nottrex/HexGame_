@@ -29,7 +29,9 @@ public enum Field {
 		this.accessible = accessible;
 	}
 
-	public boolean isAccessible() { return accessible; }
+	public boolean isAccessible() {
+		return accessible;
+	}
 
 	public boolean isWaterTile() {
 		return waterTile;
@@ -43,6 +45,8 @@ public enum Field {
 		return displayName;
 	}
 
-	public int getDiversity() { return diversity; }
+	public int getDiversity() {
+		return diversity;
+	}
 
 }

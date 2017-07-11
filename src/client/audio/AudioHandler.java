@@ -1,22 +1,22 @@
 package client.audio;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 public class AudioHandler {
-	private AudioHandler() {}
-	
 	public static Map<String, Clip> audio_wav;
-	
+
 	static {
 		audio_wav = new HashMap<String, Clip>();
+	}
+
+	private AudioHandler() {
 	}
 
 	public static void loadMusicWav(String audioName, String fileName) {

@@ -1,12 +1,12 @@
 package client.window.view;
 
 import client.game.Controller;
+import client.game.ViewGame;
+import client.i18n.LanguageHandler;
+import client.window.Window;
 import client.window.components.TextButton;
 import client.window.components.TextLabel;
-import client.window.Window;
-import client.game.ViewGame;
 import game.enums.PlayerColor;
-import client.i18n.LanguageHandler;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.gamePackets.preGamePackets.*;
@@ -69,9 +69,13 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		displayInfo = "";
 
-		button_backToServerConnect = new TextButton(window, LanguageHandler.get("Quit"), e -> {controller.stopConnection(); window.updateView(server == null? new ViewServerConnect(background): new ViewServerCreate(background)); if(server != null) server.stop();});
+		button_backToServerConnect = new TextButton(window, LanguageHandler.get("Quit"), e -> {
+			controller.stopConnection();
+			window.updateView(server == null ? new ViewServerConnect(background) : new ViewServerCreate(background));
+			if (server != null) server.stop();
+		});
 		button_toggleReady = new TextButton(window, LanguageHandler.get("Toggle Ready"), e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
-		button_toggleColor = new TextButton(window, LanguageHandler.get("Toggle Color"), (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal()+1) % PlayerColor.values().length]))));
+		button_toggleColor = new TextButton(window, LanguageHandler.get("Toggle Color"), (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal() + 1) % PlayerColor.values().length]))));
 
 		info = new TextLabel(new TextLabel.Text() {
 			@Override
@@ -88,7 +92,7 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		window.getPanel().add(info);
 
-		if(background == null) background = new DynamicBackground();
+		if (background == null) background = new DynamicBackground();
 		started = true;
 
 		new Thread(new Runnable() {
@@ -110,13 +114,13 @@ public class ViewGameSetup extends View implements ClientListener {
 		int width = window.getPanel().getWidth();
 		int height = window.getPanel().getHeight();
 
-		int elementHeight = height/10;
-		int elementWidth  = elementHeight*5;
+		int elementHeight = height / 10;
+		int elementWidth = elementHeight * 5;
 
 		info.setBounds(0, 0, width, elementHeight * 2);
-		button_backToServerConnect.setBounds((width-elementWidth/2 - 5), (height-elementHeight/2 - 5), elementWidth / 2, elementHeight / 2);
-		button_toggleReady.setBounds((width-elementWidth)/2, (height-elementHeight)/2, elementWidth, elementHeight);
-		button_toggleColor.setBounds((width-elementWidth)/2, (height+2*elementHeight)/2, elementWidth, elementHeight);
+		button_backToServerConnect.setBounds((width - elementWidth / 2 - 5), (height - elementHeight / 2 - 5), elementWidth / 2, elementHeight / 2);
+		button_toggleReady.setBounds((width - elementWidth) / 2, (height - elementHeight) / 2, elementWidth, elementHeight);
+		button_toggleColor.setBounds((width - elementWidth) / 2, (height + 2 * elementHeight) / 2, elementWidth, elementHeight);
 	}
 
 	/**
@@ -131,7 +135,7 @@ public class ViewGameSetup extends View implements ClientListener {
 
 		Graphics g = buffer.getGraphics();
 
-		for (Component component: panel.getComponents()) {
+		for (Component component : panel.getComponents()) {
 			g.translate(component.getX(), component.getY());
 			component.update(g);
 			g.translate(-component.getX(), -component.getY());
@@ -145,7 +149,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	 */
 	private synchronized void updateInfo() {
 		String info = "";
-		for (String player: ready.keySet()) {
+		for (String player : ready.keySet()) {
 			info += String.format("%s%s - %s - %b\n", player.equals(userName) ? "->" : "", player, LanguageHandler.get(color.get(player).getDisplayName()), ready.get(player));
 		}
 

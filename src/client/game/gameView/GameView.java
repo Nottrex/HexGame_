@@ -1,15 +1,15 @@
 package client.game.gameView;
 
-import client.window.animationActions.AnimationAction;
-import client.game.Controller;
-import client.window.animationActions.AnimationActionUnitMove;
 import client.game.Camera;
-import client.window.GUIConstants;
-import client.window.TextureHandler;
+import client.game.Controller;
 import client.game.gameView.shader.FieldShader;
 import client.game.gameView.shader.FieldmarkerShader;
 import client.game.gameView.shader.SquareShader;
 import client.game.gameView.shader.UnitShader;
+import client.window.GUIConstants;
+import client.window.TextureHandler;
+import client.window.animationActions.AnimationAction;
+import client.window.animationActions.AnimationActionUnitMove;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.math.FloatUtil;
@@ -41,25 +41,24 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private static final float[][] vertexPos = {
 			{0.0f, 0.25f}, {0.0f, 0.75f}, {0.5f, 1f}, {1.0f, 0.75f}, {1.0f, 0.25f}, {0.5f, 0f}, {0.5f, 0.5f}
 	};
-
+	public FPSAnimator animator;
 	private Controller controller;
 	private Camera cam;
-
 	private IntBuffer buffers = IntBuffer.allocate(4);
 	private IntBuffer vao = IntBuffer.allocate(1);
 	private IntBuffer vao2 = IntBuffer.allocate(1);
 	private int length;
 	private Texture fieldTexture;
 	private FieldShader fieldShader;
-
 	private Texture fieldmarkerTexture;
 	private FieldmarkerShader fieldmarkerShader;
-
 	private Texture arrowTexture;
 	private SquareShader squareShader;
-
 	private Texture unitTexture;
 	private UnitShader unitShader;
+	private float[] projectionMatrix;
+	private float[] viewMatrix = null;
+	private float[] cameraPosition = null;
 
 	public GameView(GLCapabilities capabilities, Controller controller, Camera cam) {
 		super(capabilities);
@@ -69,7 +68,67 @@ public class GameView extends GLJPanel implements GLEventListener {
 		this.addGLEventListener(this);
 	}
 
-	public FPSAnimator animator;
+	private static void drawMovementArrow(GL2 gl, SquareShader squareShader, Location location, Direction d) {
+		double wx = 1;
+		double wy = GUIConstants.HEX_TILE_XY_RATIO;
+		double centerY1 = -((location.y) * (GUIConstants.HEX_TILE_YY_RATIO) * wy - wy / 2);
+		double centerX1 = (location.x) * wx - (location.y) * wy / (2 * GUIConstants.HEX_TILE_XY_RATIO) + wx / 2;
+
+		double centerY2 = -((location.y + d.getYMovement()) * (GUIConstants.HEX_TILE_YY_RATIO) * wy - wy / 2);
+		double centerX2 = (location.x + d.getXMovement()) * wx - (location.y + d.getYMovement()) * wy / (2 * GUIConstants.HEX_TILE_XY_RATIO) + wx / 2;
+
+		float[] position = null;
+		Rectangle spriteSheetPosition = null;
+		switch (d) {
+			case RIGHT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_right");
+				position = new float[]{(float) (centerX1 + wx * GUIConstants.ARROW_SIZE / 2), (float) (centerY2 - wx * GUIConstants.ARROW_SIZE / 2), (float) (wx * GUIConstants.ARROW_SIZE), (float) (GUIConstants.ARROW_SIZE * wx)};
+				break;
+			case LEFT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_left");
+				position = new float[]{(float) (centerX2 + wx * GUIConstants.ARROW_SIZE / 2), (float) (centerY2 - wx * GUIConstants.ARROW_SIZE / 2), (float) (wx * GUIConstants.ARROW_SIZE), (float) (GUIConstants.ARROW_SIZE * wx)};
+				break;
+			case UP_RIGHT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_up_right");
+				position = new float[]{(float) (centerX1 + ((centerX2 - centerX1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (centerY1 + ((centerY2 - centerY1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (wx * GUIConstants.ARROW_SIZE), (float) (wx * GUIConstants.ARROW_SIZE)};
+				break;
+			case UP_LEFT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_up_left");
+				position = new float[]{(float) (centerX1 + ((centerX2 - centerX1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (centerY1 + ((centerY2 - centerY1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (wx * GUIConstants.ARROW_SIZE), (float) (wx * GUIConstants.ARROW_SIZE)};
+				break;
+			case DOWN_LEFT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_down_left");
+				position = new float[]{(float) (centerX1 + ((centerX2 - centerX1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (centerY1 + ((centerY2 - centerY1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (wx * GUIConstants.ARROW_SIZE), (float) (wx * GUIConstants.ARROW_SIZE)};
+				break;
+			case DOWN_RIGHT:
+				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_down_right");
+				position = new float[]{(float) (centerX1 + ((centerX2 - centerX1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (centerY1 + ((centerY2 - centerY1) - wx * GUIConstants.ARROW_SIZE) / 2), (float) (wx * GUIConstants.ARROW_SIZE), (float) (wx * GUIConstants.ARROW_SIZE)};
+				break;
+			default:
+				break;
+		}
+
+		squareShader.setTextureSheetBounds(gl, spriteSheetPosition.x, spriteSheetPosition.y, spriteSheetPosition.width, spriteSheetPosition.height);
+		squareShader.setBounds(gl, position[0], position[1], position[2], position[3]);
+		gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+	}
+
+	private static TextureData toTexture(GLProfile glProfile, BufferedImage img) {
+		try {
+			final ByteArrayOutputStream output = new ByteArrayOutputStream() {
+				@Override
+				public synchronized byte[] toByteArray() {
+					return this.buf;
+				}
+			};
+			ImageIO.write(img, "png", output);
+			return TextureIO.newTextureData(glProfile, new ByteArrayInputStream(output.toByteArray(), 0, output.size()), true, "png");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		drawable.setGL((new DebugGL2(gl)));
@@ -150,10 +209,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 			}
 		}
 
-		float[] locations = new float[length*2*vertexPos.length];
-		float[] texLocations = new float[length*2*vertexPos.length];
-		byte[] fieldData = new byte[length*vertexPos.length];
-		int[] indices = new int[length*18];
+		float[] locations = new float[length * 2 * vertexPos.length];
+		float[] texLocations = new float[length * 2 * vertexPos.length];
+		byte[] fieldData = new byte[length * vertexPos.length];
+		int[] indices = new int[length * 18];
 
 		int a = 0;
 		for (int x = 0; x < map.getWidth(); x++) {
@@ -163,38 +222,38 @@ public class GameView extends GLJPanel implements GLEventListener {
 					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase() + "_" + map.getDiversityAt(x, y));
 
 					for (int i = 0; i < vertexPos.length; i++) {
-						texLocations[a*vertexPos.length*2 + 2*i] = (rec.x+vertexPos[i][0]*rec.width)/tw;
-						texLocations[a*vertexPos.length*2 + 2*i + 1] = 1-(rec.y+(1-vertexPos[i][1])*rec.height)/th;
+						texLocations[a * vertexPos.length * 2 + 2 * i] = (rec.x + vertexPos[i][0] * rec.width) / tw;
+						texLocations[a * vertexPos.length * 2 + 2 * i + 1] = 1 - (rec.y + (1 - vertexPos[i][1]) * rec.height) / th;
 
-						locations[a*vertexPos.length*2 + 2*i] = (vertexPos[i][0]+x-y/2.0f)*hexWidth;
-						locations[a*vertexPos.length*2 + 2*i + 1] = (vertexPos[i][1])*hexHeight2-(y)*hexHeight2*hexHeight;
+						locations[a * vertexPos.length * 2 + 2 * i] = (vertexPos[i][0] + x - y / 2.0f) * hexWidth;
+						locations[a * vertexPos.length * 2 + 2 * i + 1] = (vertexPos[i][1]) * hexHeight2 - (y) * hexHeight2 * hexHeight;
 
-						fieldData[a*vertexPos.length + i] = 0 | (0)| (0 << 2);
+						fieldData[a * vertexPos.length + i] = 0 | (0) | (0 << 2);
 					}
 
-					indices[a*18] = a*7;
-					indices[a*18+1] = a*7+6;
-					indices[a*18+2] = a*7+1;
+					indices[a * 18] = a * 7;
+					indices[a * 18 + 1] = a * 7 + 6;
+					indices[a * 18 + 2] = a * 7 + 1;
 
-					indices[a*18+3] = a*7+1;
-					indices[a*18+4] = a*7+6;
-					indices[a*18+5] = a*7+2;
+					indices[a * 18 + 3] = a * 7 + 1;
+					indices[a * 18 + 4] = a * 7 + 6;
+					indices[a * 18 + 5] = a * 7 + 2;
 
-					indices[a*18+6] = a*7+2;
-					indices[a*18+7] = a*7+6;
-					indices[a*18+8] = a*7+3;
+					indices[a * 18 + 6] = a * 7 + 2;
+					indices[a * 18 + 7] = a * 7 + 6;
+					indices[a * 18 + 8] = a * 7 + 3;
 
-					indices[a*18+9] = a*7+3;
-					indices[a*18+10] = a*7+6;
-					indices[a*18+11] = a*7+4;
+					indices[a * 18 + 9] = a * 7 + 3;
+					indices[a * 18 + 10] = a * 7 + 6;
+					indices[a * 18 + 11] = a * 7 + 4;
 
-					indices[a*18+12] = a*7+4;
-					indices[a*18+13] = a*7+6;
-					indices[a*18+14] = a*7+5;
+					indices[a * 18 + 12] = a * 7 + 4;
+					indices[a * 18 + 13] = a * 7 + 6;
+					indices[a * 18 + 14] = a * 7 + 5;
 
-					indices[a*18+15] = a*7+5;
-					indices[a*18+16] = a*7+6;
-					indices[a*18+17] = a*7;
+					indices[a * 18 + 15] = a * 7 + 5;
+					indices[a * 18 + 16] = a * 7 + 6;
+					indices[a * 18 + 17] = a * 7;
 
 					a++;
 				}
@@ -209,13 +268,13 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glGenBuffers(4, buffers);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(0));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*7 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4 * length * 7 * 2, locationBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4*length*7 * 2, texLocationBuffer, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4 * length * 7 * 2, texLocationBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(2));
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 1*length*7, fieldDataBuffer, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 1 * length * 7, fieldDataBuffer, GL2.GL_STATIC_DRAW);
 
 		gl.glGenVertexArrays(1, vao);
 		gl.glBindVertexArray(vao.get(0));
@@ -233,7 +292,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glVertexAttribPointer(fieldShader.getFieldDataLocation(), 1, GL.GL_BYTE, false, 0, 0);
 
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, buffers.get(3));
-		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 18*length*4, indicesBuffer, GL.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 18 * length * 4, indicesBuffer, GL.GL_STATIC_DRAW);
 
 		gl.glGenVertexArrays(1, vao2);
 		gl.glBindVertexArray(vao2.get(0));
@@ -279,10 +338,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldTexture.bind(gl);
 		fieldShader.start(gl);
-		fieldShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
+		fieldShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
 
 		gl.glBindVertexArray(vao.get(0));
-		gl.glDrawElements(GL.GL_TRIANGLES, length*18, GL.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements(GL.GL_TRIANGLES, length * 18, GL.GL_UNSIGNED_INT, 0);
 		gl.glBindVertexArray(vao2.get(0));
 		fieldShader.stop(gl);
 
@@ -291,7 +350,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldmarkerTexture.bind(gl);
 		fieldmarkerShader.start(gl);
-		fieldmarkerShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
+		fieldmarkerShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
 
 		Location selectedField = controller.selectedField;
 		if (selectedField != null) {
@@ -308,14 +367,14 @@ public class GameView extends GLJPanel implements GLEventListener {
 				}
 				PossibleActions pa = controller.pa;
 
-				for (Location target: pa.canMoveTo()) {
+				for (Location target : pa.canMoveTo()) {
 					fieldmarkerShader.setLocation(gl, target.x, target.y);
 					rec = TextureHandler.getSpriteSheetBounds("fieldmarker_normalBlue");
 					fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
 					gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 6);
 				}
 
-				for (Location target: pa.canAttack()) {
+				for (Location target : pa.canAttack()) {
 					fieldmarkerShader.setLocation(gl, target.x, target.y);
 					rec = TextureHandler.getSpriteSheetBounds("fieldmarker_normalRed");
 					fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
@@ -342,7 +401,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 				if (pa != null) {
 					arrowTexture.bind(gl);
 					squareShader.start(gl);
-					squareShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
+					squareShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
 
 					if (pa.canAttack().contains(mouseLocation)) {
 						java.util.List<Direction> movements = pa.moveToToAttack(mouseLocation);
@@ -373,21 +432,21 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		unitTexture.bind(gl);
 		unitShader.start(gl);
-		unitShader.setTime(gl, (float) (System.currentTimeMillis()%1000000));
-		for (Unit unit: map.getUnits()) {
+		unitShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
+		for (Unit unit : map.getUnits()) {
 			UnitType ut = unit.getType();
 			double w = ut.getSize();
-			double h = w*GUIConstants.UNIT_XY_RATIO;
+			double h = w * GUIConstants.UNIT_XY_RATIO;
 
-			double py = -((unit.getY())*(GUIConstants.HEX_TILE_YY_RATIO)*GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO-h)/2);
-			double px = unit.getX() - unit.getY()/2.0 + (1-w)/2;
+			double py = -((unit.getY()) * (GUIConstants.HEX_TILE_YY_RATIO) * GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO - h) / 2);
+			double px = unit.getX() - unit.getY() / 2.0 + (1 - w) / 2;
 
 			if (currentAnimation != null && currentAnimation instanceof AnimationActionUnitMove) {
 				AnimationActionUnitMove animation = (AnimationActionUnitMove) currentAnimation;
 
 				if (animation.getUnit() == unit) {
-					py = -((unit.getY()+animation.getCurrentDirection().getYMovement()*animation.interpolation())*(GUIConstants.HEX_TILE_YY_RATIO)*GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO-h)/2);
-					px = (unit.getX()+animation.getCurrentDirection().getXMovement()*animation.interpolation()) - (unit.getY()+animation.getCurrentDirection().getYMovement()*animation.interpolation())/2.0 + (1-w)/2;
+					py = -((unit.getY() + animation.getCurrentDirection().getYMovement() * animation.interpolation()) * (GUIConstants.HEX_TILE_YY_RATIO) * GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO - h) / 2);
+					px = (unit.getX() + animation.getCurrentDirection().getXMovement() * animation.interpolation()) - (unit.getY() + animation.getCurrentDirection().getYMovement() * animation.interpolation()) / 2.0 + (1 - w) / 2;
 				}
 			}
 
@@ -403,60 +462,14 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glFlush();
 	}
 
-	private static void drawMovementArrow(GL2 gl, SquareShader squareShader, Location location, Direction d) {
-		double wx = 1;
-		double wy = GUIConstants.HEX_TILE_XY_RATIO;
-		double centerY1 = -((location.y)*(GUIConstants.HEX_TILE_YY_RATIO)*wy - wy/2);
-		double centerX1 = (location.x)*wx - (location.y)*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
-
-		double centerY2 = -((location.y+d.getYMovement())*(GUIConstants.HEX_TILE_YY_RATIO)*wy - wy/2);
-		double centerX2 = (location.x+d.getXMovement())*wx - (location.y+d.getYMovement())*wy/(2* GUIConstants.HEX_TILE_XY_RATIO) + wx/2;
-
-		float[] position = null;
-		Rectangle spriteSheetPosition = null;
-		switch (d) {
-			case RIGHT:
-				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_right");
-				position = new float[] {(float) (centerX1+wx*GUIConstants.ARROW_SIZE/2), (float) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (GUIConstants.ARROW_SIZE*wx)};
-				break;
-			case LEFT:
-				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_left");
-				position = new float[]{(float) (centerX2+wx*GUIConstants.ARROW_SIZE/2), (float) (centerY2 - wx*GUIConstants.ARROW_SIZE/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (GUIConstants.ARROW_SIZE*wx)};
-				break;
-			case UP_RIGHT:
-				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_up_right");
-				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
-				break;
-			case UP_LEFT:
-				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_up_left");
-				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
-				break;
-			case DOWN_LEFT:
-				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_down_left");
-				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
-				break;
-			case DOWN_RIGHT:
-				spriteSheetPosition = TextureHandler.getSpriteSheetBounds("arrow_arrow_down_right");
-				position = new float[] {(float) (centerX1+((centerX2-centerX1)-wx*GUIConstants.ARROW_SIZE)/2), (float) (centerY1 + ((centerY2-centerY1) - wx*GUIConstants.ARROW_SIZE)/2), (float) (wx*GUIConstants.ARROW_SIZE), (float) (wx*GUIConstants.ARROW_SIZE)};
-				break;
-			default:
-				break;
-		}
-
-		squareShader.setTextureSheetBounds(gl, spriteSheetPosition.x, spriteSheetPosition.y, spriteSheetPosition.width, spriteSheetPosition.height);
-		squareShader.setBounds(gl, position[0], position[1], position[2], position[3]);
-		gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
-	}
-
-	private float[] projectionMatrix;
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL2 gl = drawable.getGL().getGL2();
-		float aspect = width*1.0f/height;
+		float aspect = width * 1.0f / height;
 		float fov = 90;
 		float near = 0.01f;
 		float far = 10000f;
 
-		projectionMatrix = FloatUtil.makePerspective(new float[16], 0, true, (float)Math.toRadians(fov), aspect, near, far);
+		projectionMatrix = FloatUtil.makePerspective(new float[16], 0, true, (float) Math.toRadians(fov), aspect, near, far);
 
 		fieldShader.start(gl);
 		fieldShader.setProjectionMatrix(gl, projectionMatrix);
@@ -478,8 +491,6 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glViewport(x, y, width, height);
 	}
 
-	private float[] viewMatrix = null;
-	private float[] cameraPosition = null;
 	private void updateCamera(GL2 gl, Camera cam) {
 		boolean b = cam.update();
 		if (cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN) {
@@ -487,13 +498,13 @@ public class GameView extends GLJPanel implements GLEventListener {
 			b = cam.update();
 		}
 
-		if (viewMatrix==null || b) {
+		if (viewMatrix == null || b) {
 			float[] target = {cam.x, cam.y, 0};
-			cameraPosition = new float[] {cam.x, cam.y-cam.tilt/cam.zoom, 1/cam.zoom};
+			cameraPosition = new float[]{cam.x, cam.y - cam.tilt / cam.zoom, 1 / cam.zoom};
 
-			float[] dir = new float[] {cameraPosition[0] - target[0], cameraPosition[1] - target[1], cameraPosition[2] - target[2]};
+			float[] dir = new float[]{cameraPosition[0] - target[0], cameraPosition[1] - target[1], cameraPosition[2] - target[2]};
 			float[] up = new float[3];
-			VectorUtil.crossVec3(up, dir, new float[] {1, 0, 0});
+			VectorUtil.crossVec3(up, dir, new float[]{1, 0, 0});
 			VectorUtil.normalizeVec3(up);
 
 			viewMatrix = FloatUtil.makeLookAt(new float[16], 0, cameraPosition, 0, target, 0, up, 0, new float[16]);
@@ -518,9 +529,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 	}
 
 	public float[] screenPositionToWorldPosition(int x, int y) {
-		if (projectionMatrix == null || viewMatrix == null || cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN) return new float[] {-1, -1};
+		if (projectionMatrix == null || viewMatrix == null || cam.zoom == Double.POSITIVE_INFINITY || cam.zoom == Double.NEGATIVE_INFINITY || cam.zoom == Double.NaN)
+			return new float[]{-1, -1};
 
-		float[] ray_nds = {(x*1.0f/getWidth())*2-1, (1-(y*1.0f/getHeight())*2), 1.0f};
+		float[] ray_nds = {(x * 1.0f / getWidth()) * 2 - 1, (1 - (y * 1.0f / getHeight()) * 2), 1.0f};
 		float[] ray_clip = {ray_nds[0], ray_nds[1], -1.0f, 1.0f};
 
 		float[] ray_eye = FloatUtil.multMatrixVec(FloatUtil.invertMatrix(projectionMatrix, new float[16]), ray_clip, new float[4]);
@@ -531,8 +543,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		float[] ray_wor = {ray_wor4[0], ray_wor4[1], ray_wor4[2]};
 		ray_wor = VectorUtil.normalizeVec3(ray_wor);
 
-		float distance = -cameraPosition[2]/ray_wor[2];
-		float[] point = {distance*ray_wor[0]+cameraPosition[0], distance*ray_wor[1]+cameraPosition[1]};
+		float distance = -cameraPosition[2] / ray_wor[2];
+		float[] point = {distance * ray_wor[0] + cameraPosition[0], distance * ray_wor[1] + cameraPosition[1]};
 
 		return point;
 	}
@@ -541,8 +553,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 		int x = hexField.x;
 		int y = hexField.y;
 
-		float fx = x * 1 - y  / 2 + 0.5f;
-		float fy = (float)(-y * GUIConstants.HEX_TILE_YY_RATIO - GUIConstants.HEX_TILE_XY_RATIO) - (float) GUIConstants.HEX_TILE_YY_RATIO/2;
+		float fx = x * 1 - y / 2 + 0.5f;
+		float fy = (float) (-y * GUIConstants.HEX_TILE_YY_RATIO - GUIConstants.HEX_TILE_XY_RATIO) - (float) GUIConstants.HEX_TILE_YY_RATIO / 2;
 
 		return new float[]{fx, fy};
 	}
@@ -550,45 +562,29 @@ public class GameView extends GLJPanel implements GLEventListener {
 	public Location getHexFieldPosition(float px, float py) {
 		py = -py;
 		py += GUIConstants.HEX_TILE_XY_RATIO;
-		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO*GUIConstants.HEX_TILE_XY_RATIO);
+		double dy = py / (GUIConstants.HEX_TILE_YY_RATIO * GUIConstants.HEX_TILE_XY_RATIO);
 
-		int	y = (int) Math.floor(dy);
-		int	x = (int) Math.floor(px + y/2.0);
-		if (((dy%1)+1)%1 <= (1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
-			double vx = (((px + y/2.0) % 1)+1)%1;
-			double vy = ((((dy%1)+1)%1) / ((1- GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)))/2;
+		int y = (int) Math.floor(dy);
+		int x = (int) Math.floor(px + y / 2.0);
+		if (((dy % 1) + 1) % 1 <= (1 - GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO)) {
+			double vx = (((px + y / 2.0) % 1) + 1) % 1;
+			double vy = ((((dy % 1) + 1) % 1) / ((1 - GUIConstants.HEX_TILE_YY_RATIO) / (GUIConstants.HEX_TILE_YY_RATIO))) / 2;
 
 			if (vx < 0.5) {
-				if (vx + vy  < 0.5) {
+				if (vx + vy < 0.5) {
 					x--;
 					y--;
 				}
 			} else {
 				vx = 1 - vx;
 
-				if (vx + vy  < 0.5) {
+				if (vx + vy < 0.5) {
 					y--;
 				}
 			}
 		}
 
 		return new Location(x, y);
-	}
-
-	private static TextureData toTexture(GLProfile glProfile, BufferedImage img) {
-		try {
-			final ByteArrayOutputStream output = new ByteArrayOutputStream() {
-				@Override
-				public synchronized byte[] toByteArray() {
-					return this.buf;
-				}
-			};
-			ImageIO.write(img, "png", output);
-			return TextureIO.newTextureData(glProfile, new ByteArrayInputStream(output.toByteArray(), 0, output.size()), true, "png");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 }

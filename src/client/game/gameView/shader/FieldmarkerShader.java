@@ -5,13 +5,11 @@ import com.jogamp.opengl.GL2;
 public class FieldmarkerShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "fieldmarkerVertexShader";
 	private static final String FRAGMENT_FILE = "fieldmarkerFragmentShader";
-
+	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, locationLocation, cameraLocation, projectionLocation;
+	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation, timeLocation;
 	public FieldmarkerShader(GL2 gl) {
 		super(gl, VERTEX_FILE, FRAGMENT_FILE);
 	}
-
-	private int texLocation, hexWidthLocation, hexHeightLocation, hexHeight2Location, locationLocation, cameraLocation, projectionLocation;
-	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation, timeLocation;
 
 	public void setTime(GL2 gl, float time) {
 		setUniform1f(gl, timeLocation, time);

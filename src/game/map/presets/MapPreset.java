@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface MapPreset {
 
-    public Field[][] getPresetMap();
+	Field[][] getPresetMap();
 
-    public List<Location> getSpawnPoints();
+	List<Location> getSpawnPoints();
 }

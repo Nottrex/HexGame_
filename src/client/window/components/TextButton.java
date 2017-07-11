@@ -51,13 +51,13 @@ public class TextButton extends JComponent {
 
 		int x = 0, y = 0, width = getWidth(), height = getHeight();
 		if (entered) {
-			x = (int) (width*(1- GUIConstants.BUTTON_HOVER_SIZE)/2);
-			y = (int) (height*(1- GUIConstants.BUTTON_HOVER_SIZE)/2);
-			width = (int) (width*GUIConstants.BUTTON_HOVER_SIZE);
-			height = (int) (height*GUIConstants.BUTTON_HOVER_SIZE);
+			x = (int) (width * (1 - GUIConstants.BUTTON_HOVER_SIZE) / 2);
+			y = (int) (height * (1 - GUIConstants.BUTTON_HOVER_SIZE) / 2);
+			width = (int) (width * GUIConstants.BUTTON_HOVER_SIZE);
+			height = (int) (height * GUIConstants.BUTTON_HOVER_SIZE);
 		}
-		x += GUIConstants.BUTTON_LINE_WIDTH/2;
-		y += GUIConstants.BUTTON_LINE_WIDTH/2;
+		x += GUIConstants.BUTTON_LINE_WIDTH / 2;
+		y += GUIConstants.BUTTON_LINE_WIDTH / 2;
 		width -= GUIConstants.BUTTON_LINE_WIDTH;
 		height -= GUIConstants.BUTTON_LINE_WIDTH;
 
@@ -66,15 +66,16 @@ public class TextButton extends JComponent {
 		g2.drawRoundRect(x, y, width, height, GUIConstants.CORNER_RADIUS, GUIConstants.CORNER_RADIUS);
 		g2.setStroke(new BasicStroke(1));
 
-		Font font = GUIConstants.FONT.deriveFont(height*0.5f);
+		Font font = GUIConstants.FONT.deriveFont(height * 0.5f);
 		g2.setFont(font);
 
 		double fWidth = g2.getFontMetrics(font).getStringBounds(text, g).getWidth();
-		g2.drawString(text, (int) ((width-fWidth)/2) + x, height*3/4+y);
+		g2.drawString(text, (int) ((width - fWidth) / 2) + x, height * 3 / 4 + y);
 	}
 
 	/**
 	 * Changes text on button
+	 *
 	 * @param text that should be displayed on the button
 	 */
 	public void setText(String text) {

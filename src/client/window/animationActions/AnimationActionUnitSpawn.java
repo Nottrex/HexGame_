@@ -5,6 +5,7 @@ import game.Unit;
 
 public class AnimationActionUnitSpawn extends AnimationAction {
 	private Unit unit;
+
 	public AnimationActionUnitSpawn(Game game, Unit unit) {
 		super(game);
 		this.unit = unit;

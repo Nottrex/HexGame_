@@ -16,13 +16,13 @@ public class MapUtil {
 		}
 
 		if (x1 >= x2) {
-			distance += y2-y1;
+			distance += y2 - y1;
 			y2 = y1;
-			distance += x1-x2;
+			distance += x1 - x2;
 			x2 = x1;
 		} else {
-			int dx = x2-x1;
-			int dy = y2-y1;
+			int dx = x2 - x1;
+			int dy = y2 - y1;
 
 			if (dy < dx) {
 				distance += dy;

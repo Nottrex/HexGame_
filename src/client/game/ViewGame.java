@@ -1,20 +1,22 @@
 package client.game;
 
+import client.audio.AudioHandler;
+import client.audio.AudioPlayer;
+import client.game.gameView.GameView;
 import client.game.overlay.ESC_Overlay;
 import client.game.overlay.OptionsOverlay;
 import client.game.overlay.Overlay;
+import client.i18n.LanguageHandler;
+import client.window.GUIConstants;
 import client.window.KeyBindings;
-import client.audio.AudioHandler;
-import client.audio.AudioPlayer;
+import client.window.TextureHandler;
+import client.window.Window;
 import client.window.components.ImageButton;
 import client.window.components.ImageTextLabel;
 import client.window.components.TextLabel;
-import client.window.*;
-import client.window.Window;
 import client.window.view.View;
 import client.window.view.ViewErrorScreen;
 import client.window.view.ViewMainMenu;
-import client.game.gameView.GameView;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -27,7 +29,6 @@ import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
-import client.i18n.LanguageHandler;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
 import networking.packets.Packet;
@@ -36,10 +37,13 @@ import server.ServerMain;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.*;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 public class ViewGame extends View implements ClientListener {
 	private static final long DOUBLEPRESSTIME = 250;
@@ -71,6 +75,9 @@ public class ViewGame extends View implements ClientListener {
 	private int width, height;
 
 	private Overlay overlay;
+	private boolean startCenterCamera = false;
+	private long lastClick;
+	private boolean drawing2 = false;
 
 	public ViewGame(ServerMain server) {
 		this.server = server;
@@ -86,14 +93,14 @@ public class ViewGame extends View implements ClientListener {
 
 		loadResources();
 
-		mouseListener 	= new MouseInputListener(this);
-		keyListener 	= new KeyInputListener(this);
+		mouseListener = new MouseInputListener(this);
+		keyListener = new KeyInputListener(this);
 
 		width = window.getWidth();
 		height = window.getHeight();
 
 		GLProfile glprofile = GLProfile.getDefault();
-		GLCapabilities glcapabilities = new GLCapabilities( glprofile );
+		GLCapabilities glcapabilities = new GLCapabilities(glprofile);
 		center = new GameView(glcapabilities, controller, cam);
 
 		center.addMouseWheelListener(mouseListener);
@@ -112,8 +119,12 @@ public class ViewGame extends View implements ClientListener {
 		button_centerCamera = new ImageButton(window, TextureHandler.getImagePng("button_centerCamera"), e -> onKeyType(KeyBindings.KEY_CENTER_CAMERA));
 		button_endTurn = new ImageButton(window, TextureHandler.getImagePng("button_endTurn"), e -> onKeyType(KeyBindings.KEY_NEXT_PLAYER));
 		button_nextUnit = new ImageButton(window, TextureHandler.getImagePng("button_nextUnit"), e -> onKeyType(KeyBindings.KEY_NEXT_UNIT));
-		button_backToMainMenu = new ImageButton(window, TextureHandler.getImagePng("button_leave"), e -> {onLeave(); if(server != null) server.stop(); window.updateView(new ViewMainMenu());});
-		fpsLabel = new TextLabel(() -> ("FPS: " + (int)center.animator.getLastFPS()), false);
+		button_backToMainMenu = new ImageButton(window, TextureHandler.getImagePng("button_leave"), e -> {
+			onLeave();
+			if (server != null) server.stop();
+			window.updateView(new ViewMainMenu());
+		});
+		fpsLabel = new TextLabel(() -> ("FPS: " + (int) center.animator.getLastFPS()), false);
 		topBar = new ImageTextLabel(new ImageTextLabel.ImageText() {
 			@Override
 			public BufferedImage getImage() {
@@ -133,17 +144,17 @@ public class ViewGame extends View implements ClientListener {
 			public void componentResized(ComponentEvent e) {
 				int height = center.getHeight();
 				int width = center.getWidth();
-				int height2 = (height+width)/2;
+				int height2 = (height + width) / 2;
 				int buttonHeight = height2 / 80 + 23;
 				int barHeight = height2 / 80 + 23;
 
 				button_audioOn.setBounds(width - buttonHeight - 5, 5, buttonHeight, buttonHeight);
-				button_musicOn.setBounds(width - buttonHeight*2 - 5*2, 5, buttonHeight, buttonHeight);
-				button_centerCamera.setBounds(width - buttonHeight*3 - 5*3, 5, buttonHeight, buttonHeight);
-				button_nextUnit.setBounds(width - buttonHeight*4 - 5*4, 5, buttonHeight, buttonHeight);
+				button_musicOn.setBounds(width - buttonHeight * 2 - 5 * 2, 5, buttonHeight, buttonHeight);
+				button_centerCamera.setBounds(width - buttonHeight * 3 - 5 * 3, 5, buttonHeight, buttonHeight);
+				button_nextUnit.setBounds(width - buttonHeight * 4 - 5 * 4, 5, buttonHeight, buttonHeight);
 				button_backToMainMenu.setBounds(5, 5, buttonHeight, buttonHeight);
-				topBar.setBounds((width-(380*barHeight)/49)/2, 5, (380*barHeight)/49, barHeight);
-				fpsLabel.setBounds(10 + buttonHeight, 5, barHeight*5, barHeight);
+				topBar.setBounds((width - (380 * barHeight) / 49) / 2, 5, (380 * barHeight) / 49, barHeight);
+				fpsLabel.setBounds(10 + buttonHeight, 5, barHeight * 5, barHeight);
 
 				button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
 			}
@@ -166,42 +177,38 @@ public class ViewGame extends View implements ClientListener {
 
 	@Override
 	public void changeSize() {
-			int widthDifference = width - window.getWidth();
-			int heightDifference = height - window.getHeight();
 
-			if(widthDifference == 0 && heightDifference == 0) return;
-			if(overlay instanceof ESC_Overlay) ((ESC_Overlay) overlay).changeSize();
-			else if(overlay instanceof OptionsOverlay) ((OptionsOverlay) overlay).changeSize();
+		if (width == window.getWidth() && height == window.getHeight()) return;
+		if (overlay instanceof ESC_Overlay) ((ESC_Overlay) overlay).changeSize();
+		else if (overlay instanceof OptionsOverlay) ((OptionsOverlay) overlay).changeSize();
 
-			width = window.getWidth();
-			height = window.getHeight();
+		width = window.getWidth();
+		height = window.getHeight();
+
 	}
 
-	private boolean startCenterCamera = false;
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
-		float[] pos = center.hexPositionToWorldPosition(new Location(m.getWidth()/2, m.getHeight()/2+1));
+		float[] pos = center.hexPositionToWorldPosition(new Location(m.getWidth() / 2, m.getHeight() / 2 + 1));
 
 		if (startCenterCamera) {
-			cam.setZoomSmooth(2.2f/m.getHeight(), GUIConstants.CAMERA_TIME);
+			cam.setZoomSmooth(2.2f / m.getHeight(), GUIConstants.CAMERA_TIME);
 			cam.setPositionSmooth(pos[0], pos[1], GUIConstants.CAMERA_TIME);
 		} else {
-			cam.setZoom(2.2f/m.getHeight());
+			cam.setZoom(2.2f / m.getHeight());
 			cam.setPosition(pos[0], pos[1]);
 			startCenterCamera = true;
 		}
 	}
 
-
-	private long lastClick;
 	public void onMouseClick(int state, int x, int y) {
 		float[] point = center.screenPositionToWorldPosition(x, y);
 		if (System.currentTimeMillis() - lastClick < DOUBLEPRESSTIME) {
-			cam.setZoomSmooth(2.2f/20, GUIConstants.CAMERA_TIME);
+			cam.setZoomSmooth(2.2f / 20, GUIConstants.CAMERA_TIME);
 			cam.setPositionSmooth(point[0], point[1], GUIConstants.CAMERA_TIME);
 		}
 
-		if(overlay != null && overlay.destroyable()) setOverlay(null);
+		if (overlay != null && overlay.destroyable()) setOverlay(null);
 
 		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
 		redrawInfoBar();
@@ -212,8 +219,8 @@ public class ViewGame extends View implements ClientListener {
 		float[] zero = center.screenPositionToWorldPosition(x1, y1);
 		float[] one = center.screenPositionToWorldPosition(x2, y2);
 
-		if(overlay != null && overlay.destroyable()) setOverlay(null);
-		cam.setPosition(cam.getX() + (-one[0]+zero[0]), cam.getY() + (-one[1]+zero[1]));
+		if (overlay != null && overlay.destroyable()) setOverlay(null);
+		cam.setPosition(cam.getX() + (-one[0] + zero[0]), cam.getY() + (-one[1] + zero[1]));
 	}
 
 	public void onKeyType(int keyCode) {
@@ -243,7 +250,7 @@ public class ViewGame extends View implements ClientListener {
 			}
 		}
 
-		if(keyCode == KeyBindings.KEY_NEXT_UNIT) {
+		if (keyCode == KeyBindings.KEY_NEXT_UNIT) {
 			List<Unit> units = controller.game.getMap().activePlayerUnits(controller.game.getPlayerColor());
 			if (units.isEmpty()) return;
 
@@ -251,7 +258,7 @@ public class ViewGame extends View implements ClientListener {
 			if (controller.selectedField != null) {
 				Optional<Unit> selected = controller.game.getMap().getUnitAt(controller.selectedField);
 				if (selected.isPresent() && units.contains(selected.get())) {
-					i = (units.indexOf(selected.get())+1)%units.size();
+					i = (units.indexOf(selected.get()) + 1) % units.size();
 				}
 			}
 			int j = i;
@@ -261,7 +268,7 @@ public class ViewGame extends View implements ClientListener {
 				PossibleActions pa = ActionUtil.getPossibleActions(controller.game, u);
 
 				if (pa.canMoveTo().isEmpty() && pa.canAttack().isEmpty()) {
-					i = (i+1) % units.size();
+					i = (i + 1) % units.size();
 				} else {
 					break;
 				}
@@ -297,13 +304,12 @@ public class ViewGame extends View implements ClientListener {
 			controller.spawnUnit(new Unit(controller.game.getPlayerColor(), UnitType.INFANTERIE, UnitState.INACTIVE, r.nextInt(50), r.nextInt(50)));
 		}
 
-		if(keyCode == KeyEvent.VK_ESCAPE) {
-			if(! (overlay instanceof ESC_Overlay)) {
+		if (keyCode == KeyEvent.VK_ESCAPE) {
+			if (!(overlay instanceof ESC_Overlay)) {
 				hideButtons();
 				setOverlay(new ESC_Overlay(window, this));
 				changeSize();
-			}
-			else {
+			} else {
 				unhideButtons();
 				setOverlay(null);
 				changeSize();
@@ -322,13 +328,13 @@ public class ViewGame extends View implements ClientListener {
 			a = 1 / GUIConstants.ZOOM;
 		}
 
-		if(overlay != null && overlay.destroyable()) setOverlay(null);
+		if (overlay != null && overlay.destroyable()) setOverlay(null);
 		cam.zoomSmooth((float) a);
 	}
 
-	private boolean drawing2 = false;
 	public void redrawInfoBar() {
-		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || controller == null || controller.game == null || drawing2) return;
+		if (bottom == null || bottom.getWidth() <= 0 || bottom.getHeight() <= 0 || controller == null || controller.game == null || drawing2)
+			return;
 		drawing2 = true;
 
 		BufferedImage buffer2 = new BufferedImage(bottom.getWidth(), bottom.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -340,7 +346,7 @@ public class ViewGame extends View implements ClientListener {
 
 
 		g.setColor(Color.WHITE);
-		int lx = (bottom.getWidth()-800)/2;
+		int lx = (bottom.getWidth() - 800) / 2;
 
 		float[] point = center.screenPositionToWorldPosition(mouseListener.getMouseX(), mouseListener.getMouseY());
 		controller.hoverField = center.getHexFieldPosition(point[0], point[1]);
@@ -350,24 +356,24 @@ public class ViewGame extends View implements ClientListener {
 			Field f = m.getFieldAt(mouseLocation);
 
 			if (f != Field.VOID) {
-				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(mouseLocation)), lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString(LanguageHandler.get("Costs") + ": " + f.getMovementCost(), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
+				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(mouseLocation)), lx + 5, 10, (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 90, null);
+				g.drawString(LanguageHandler.get("Costs") + ": " + f.getMovementCost(), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
-			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);
-			g.drawString(LanguageHandler.get(f.getDisplayName()), lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 40);
+			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 20);
+			g.drawString(LanguageHandler.get(f.getDisplayName()), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 40);
 
 			Optional<Unit> unit = m.getUnitAt(mouseLocation);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
+				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), lx + 800 / 4 + 5, 20, (int) (u.getType().getSize() * 90), (int) (u.getType().getSize() * 90 * GUIConstants.UNIT_XY_RATIO), null);
 
-				g.drawString(LanguageHandler.get(u.getType().getDisplayName()), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
-				g.drawString(LanguageHandler.get(u.getPlayer().getDisplayName()), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
-				g.drawString(LanguageHandler.get("Movementrange") + ": " + u.getType().getMovementDistance(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 70);
-				g.drawString(LanguageHandler.get("Attackrange") + ": " + u.getType().getMinAttackDistance() + "-" + u.getType().getMaxAttackDistance(), lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 90);
+				g.drawString(LanguageHandler.get(u.getType().getDisplayName()), lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 30);
+				g.drawString(LanguageHandler.get(u.getPlayer().getDisplayName()), lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 50);
+				g.drawString(LanguageHandler.get("Movementrange") + ": " + u.getType().getMovementDistance(), lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 70);
+				g.drawString(LanguageHandler.get("Attackrange") + ": " + u.getType().getMinAttackDistance() + "-" + u.getType().getMaxAttackDistance(), lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 90);
 			}
 		}
 
@@ -375,29 +381,29 @@ public class ViewGame extends View implements ClientListener {
 			Field f = m.getFieldAt(controller.selectedField);
 
 			if (f != Field.VOID) {
-				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(controller.selectedField)), 400 + lx + 5, 10, (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 90, null);
-				g.drawString(LanguageHandler.get("Costs") + ": " + + f.getMovementCost(), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 60);
+				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(controller.selectedField)), 400 + lx + 5, 10, (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 90, null);
+				g.drawString(LanguageHandler.get("Costs") + ": " + +f.getMovementCost(), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 60);
 			}
 
-			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 20);
-			g.drawString(LanguageHandler.get(f.getDisplayName()), 400 + lx + 10 + (int) (90/ GUIConstants.HEX_TILE_XY_RATIO), 40);
+			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 20);
+			g.drawString(LanguageHandler.get(f.getDisplayName()), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 40);
 
 			Optional<Unit> unit = m.getUnitAt(controller.selectedField);
 
 			if (unit.isPresent()) {
 				Unit u = unit.get();
 
-				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), 400 + lx + 800/4 + 5, 20, (int) (u.getType().getSize()*90), (int) (u.getType().getSize()*90*GUIConstants.UNIT_XY_RATIO), null);
+				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), 400 + lx + 800 / 4 + 5, 20, (int) (u.getType().getSize() * 90), (int) (u.getType().getSize() * 90 * GUIConstants.UNIT_XY_RATIO), null);
 
-				g.drawString(LanguageHandler.get(u.getType().getDisplayName()), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 30);
-				g.drawString(LanguageHandler.get(u.getPlayer().getDisplayName()), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 50);
-				g.drawString(LanguageHandler.get("Movementrange") + ": " + u.getType().getMovementDistance(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 70);
-				g.drawString(LanguageHandler.get("Attackrange") + ": " + u.getType().getMinAttackDistance() + "-" + u.getType().getMaxAttackDistance(), 400 + lx + 800/4 + 5 + (int) (u.getType().getSize()*90) + 10, 90);
+				g.drawString(LanguageHandler.get(u.getType().getDisplayName()), 400 + lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 30);
+				g.drawString(LanguageHandler.get(u.getPlayer().getDisplayName()), 400 + lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 50);
+				g.drawString(LanguageHandler.get("Movementrange") + ": " + u.getType().getMovementDistance(), 400 + lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 70);
+				g.drawString(LanguageHandler.get("Attackrange") + ": " + u.getType().getMinAttackDistance() + "-" + u.getType().getMaxAttackDistance(), 400 + lx + 800 / 4 + 5 + (int) (u.getType().getSize() * 90) + 10, 90);
 			}
 		}
 
 		g.setColor(Color.BLACK);
-		g.drawLine(lx+400, 0, lx+400, 100);
+		g.drawLine(lx + 400, 0, lx + 400, 100);
 
 		bottom.getGraphics().drawImage(buffer2, 0, 0, null);
 		drawing2 = false;
@@ -420,7 +426,7 @@ public class ViewGame extends View implements ClientListener {
 		TextureHandler.loadImagePngSpriteSheet("arrow", "arrow/arrow");
 		TextureHandler.loadImagePngSpriteSheet("unit", "units/units");
 
-		for (PlayerColor pc: PlayerColor.values()) {
+		for (PlayerColor pc : PlayerColor.values()) {
 			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());
 		}
 
@@ -441,9 +447,9 @@ public class ViewGame extends View implements ClientListener {
 	}
 
 	public void setOverlay(Overlay ov) {
-		if(overlay != null) center.remove(overlay);
+		if (overlay != null) center.remove(overlay);
 		this.overlay = ov;
-		if(ov != null) {
+		if (ov != null) {
 			center.add(ov);
 		}
 	}
@@ -488,7 +494,7 @@ public class ViewGame extends View implements ClientListener {
 	}
 
 	public int getBottomHeigth() {
-		return bottom != null? bottom.getHeight(): 0;
+		return bottom != null ? bottom.getHeight() : 0;
 	}
 
 	public AudioPlayer getPlayer() {

@@ -39,15 +39,15 @@ public class Camera {
 	 * Takes t-Values and put it to the inUse values
 	 */
 	public boolean update() {
-		boolean b5 = (zoom!=tzoom) || (x!=tx) || (y!=ty) || z || z2 || z3 || (tilt != ttilt);
-		long time = System.currentTimeMillis()%10000000;
+		boolean b5 = (zoom != tzoom) || (x != tx) || (y != ty) || z || z2 || z3 || (tilt != ttilt);
+		long time = System.currentTimeMillis() % 10000000;
 
 		if (z) {
 			if (time > targetTime) {
 				tzoom = targetZoom;
 				z = false;
 			} else {
-				tzoom = calculateFunction((time*1.0f-beginTime)/(targetTime-beginTime), a, b, c, d);
+				tzoom = calculateFunction((time * 1.0f - beginTime) / (targetTime - beginTime), a, b, c, d);
 			}
 		}
 
@@ -57,8 +57,8 @@ public class Camera {
 				ty = targetY;
 				z2 = false;
 			} else {
-				tx = calculateFunction((time*1.0f-beginTime2)/(targetTime2-beginTime2), a2, b2, c2, d2);
-				ty = calculateFunction((time*1.0f-beginTime2)/(targetTime2-beginTime2), a3, b3, c3, d3);
+				tx = calculateFunction((time * 1.0f - beginTime2) / (targetTime2 - beginTime2), a2, b2, c2, d2);
+				ty = calculateFunction((time * 1.0f - beginTime2) / (targetTime2 - beginTime2), a3, b3, c3, d3);
 			}
 		}
 
@@ -67,7 +67,7 @@ public class Camera {
 				ttilt = targetTilt;
 				z3 = false;
 			} else {
-				ttilt = calculateFunction((time*1.0f-beginTime3)/(targetTime3-beginTime3), a4, b4, c4, d4);
+				ttilt = calculateFunction((time * 1.0f - beginTime3) / (targetTime3 - beginTime3), a4, b4, c4, d4);
 			}
 		}
 
@@ -86,7 +86,7 @@ public class Camera {
 		float v = 0;
 		float t = tzoom;
 		if (z) {
-			v = calculateDerivative(((System.currentTimeMillis()%10000000)*1.0f-beginTime)/(targetTime-beginTime), a, b, c, d);
+			v = calculateDerivative(((System.currentTimeMillis() % 10000000) * 1.0f - beginTime) / (targetTime - beginTime), a, b, c, d);
 			t = targetZoom;
 		}
 		t *= a2;
@@ -96,23 +96,17 @@ public class Camera {
 		c = v;
 		b = 3 * t - 2 * v - 3 * currentZoom;
 		a = v + 2 * currentZoom - 2 * t;
-		beginTime = System.currentTimeMillis()%10000000;
-		targetTime = System.currentTimeMillis()%10000000 + time;
+		beginTime = System.currentTimeMillis() % 10000000;
+		targetTime = System.currentTimeMillis() % 10000000 + time;
 		targetZoom = t;
 
 		z = true;
 	}
 
 	public void setZoomSmooth(float tzoom, long time) {
-		zoomSmooth(tzoom/this.tzoom, time);
+		zoomSmooth(tzoom / this.tzoom, time);
 		z = true;
 	}
-
-	public void setZoom(float tzoom) {
-		z = false;
-		this.tzoom = tzoom;
-	}
-
 
 	public void setPosition(float x, float y) {
 		z2 = false;
@@ -125,8 +119,8 @@ public class Camera {
 		float v2 = 0, v3 = 0;
 		float t2 = x, t3 = y;
 		if (z2) {
-			v2 = calculateDerivative(((System.currentTimeMillis()%10000000)*1.0f-beginTime2)/(targetTime2-beginTime2), a2, b2, c2, d2);
-			v3 = calculateDerivative(((System.currentTimeMillis()%10000000)*1.0f-beginTime2)/(targetTime2-beginTime2), a3, b3, c3, d3);
+			v2 = calculateDerivative(((System.currentTimeMillis() % 10000000) * 1.0f - beginTime2) / (targetTime2 - beginTime2), a2, b2, c2, d2);
+			v3 = calculateDerivative(((System.currentTimeMillis() % 10000000) * 1.0f - beginTime2) / (targetTime2 - beginTime2), a3, b3, c3, d3);
 		}
 		float currentX = tx, currentY = ty;
 
@@ -140,33 +134,28 @@ public class Camera {
 		b3 = 3 * t3 - 2 * v3 - 3 * currentY;
 		a3 = v3 + 2 * currentY - 2 * t3;
 
-		beginTime2 = System.currentTimeMillis()%10000000;
-		targetTime2 = System.currentTimeMillis()%10000000 + time;
+		beginTime2 = System.currentTimeMillis() % 10000000;
+		targetTime2 = System.currentTimeMillis() % 10000000 + time;
 		targetX = x;
 		targetY = y;
 
 		z2 = true;
 	}
 
-	public void setTilt(float tilt) {
-		ttilt = tilt;
-		z3 = false;
-	}
-
 	public void setTiltSmooth(float tilt, long time) {
 		float v = 0;
 		float t = Math.max(Math.min(tilt, GUIConstants.MAX_TILT), GUIConstants.MIN_TILT);
 		if (z3) {
-			v = calculateDerivative(((System.currentTimeMillis()%10000000)*1.0f-beginTime3)/(targetTime3-beginTime3), a4, b4, c4, d4);
+			v = calculateDerivative(((System.currentTimeMillis() % 10000000) * 1.0f - beginTime3) / (targetTime3 - beginTime3), a4, b4, c4, d4);
 		}
 		float currentTilt = ttilt;
 
 		d4 = currentTilt;
 		c4 = v;
 		b4 = 3 * t - 2 * v - 3 * currentTilt;
-		a4 = v + 2 *currentTilt - 2 * t;
-		beginTime3 = System.currentTimeMillis()%10000000;
-		targetTime3 = System.currentTimeMillis()%10000000 + time;
+		a4 = v + 2 * currentTilt - 2 * t;
+		beginTime3 = System.currentTimeMillis() % 10000000;
+		targetTime3 = System.currentTimeMillis() % 10000000 + time;
 		targetTilt = t;
 
 		z3 = true;
@@ -176,16 +165,26 @@ public class Camera {
 		return tilt;
 	}
 
+	public void setTilt(float tilt) {
+		ttilt = tilt;
+		z3 = false;
+	}
+
 	public void raiseTilt() {
-		setTiltSmooth(targetTilt+GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
+		setTiltSmooth(targetTilt + GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
 	}
 
 	public void decreaseTilt() {
-		setTiltSmooth(targetTilt-GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
+		setTiltSmooth(targetTilt - GUIConstants.TILT_STEP, GUIConstants.CAMERA_TIME);
 	}
 
 	public float getZoom() {
 		return tzoom;
+	}
+
+	public void setZoom(float tzoom) {
+		z = false;
+		this.tzoom = tzoom;
 	}
 
 	public float getX() {
@@ -197,10 +196,10 @@ public class Camera {
 	}
 
 	private float calculateFunction(float x, float a, float b, float c, float d) {
-		return a*x*x*x + b*x*x + c*x + d;
+		return a * x * x * x + b * x * x + c * x + d;
 	}
 
 	private float calculateDerivative(float x, float a, float b, float c, float d) {
-		return 3*a*x*x + 2*b*x + c;
+		return 3 * a * x * x + 2 * b * x + c;
 	}
 }

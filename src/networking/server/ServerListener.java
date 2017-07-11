@@ -5,9 +5,9 @@ import networking.packets.Packet;
 import java.net.Socket;
 
 public interface ServerListener {
-	public void onReceivePacket(Socket s, Packet packet);
-	
-	public void onClientLeave(Socket s);
-	
-	public void onClientJoin(Socket s);
+	void onReceivePacket(Socket s, Packet packet);
+
+	void onClientLeave(Socket s);
+
+	void onClientJoin(Socket s);
 }

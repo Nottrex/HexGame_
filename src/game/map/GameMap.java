@@ -43,10 +43,6 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.RED, UnitType.PANZER, 5, 15));
 	}
 
-	public void spawnUnit(Unit unit) {
-		units.add(unit);
-	}
-
 	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap, List<Location> spawnPoints) {
 		this.map = map;
 		this.width = map.length;
@@ -57,6 +53,14 @@ public class GameMap {
 		this.units = units;
 
 		this.spawnPoints = spawnPoints;
+	}
+
+	public GameMap(String data) {
+
+	}
+
+	public void spawnUnit(Unit unit) {
+		units.add(unit);
 	}
 
 	public Field getFieldAt(Location l) {
@@ -70,6 +74,7 @@ public class GameMap {
 
 		return diversityMap[l.x][l.y];
 	}
+
 	public int getDiversityAt(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) return 0;
 
@@ -78,10 +83,10 @@ public class GameMap {
 
 	public Field getFieldAt(int x, int y) {
 		if (x < 0 || x >= width || y < 0 || y >= height) return Field.VOID;
-		
+
 		return map[x][y];
 	}
-	
+
 	public void setFieldAt(int x, int y, Field field) {
 		if (x < 0 || x >= width || y < 0 || y >= height) return;
 		map[x][y] = field;
@@ -100,7 +105,6 @@ public class GameMap {
 	}
 
 	/**
-	 *
 	 * @param player
 	 * @return all {@link Unit} of a player
 	 */
@@ -111,7 +115,6 @@ public class GameMap {
 	}
 
 	/**
-	 *
 	 * @param player
 	 * @return all active {@link Unit} of a player
 	 */
@@ -135,7 +138,7 @@ public class GameMap {
 	public int getWidth() {
 		return width;
 	}
-	
+
 	public int getHeight() {
 		return height;
 	}
@@ -151,9 +154,5 @@ public class GameMap {
 	public void attack(Unit unit, Unit target) {
 		unit.setState(UnitState.INACTIVE);
 		killUnit(target);
-	}
-
-	public GameMap(String data) {
-		
 	}
 }

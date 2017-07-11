@@ -14,8 +14,8 @@ public class Location {
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash = hash*31 + x;
-		hash = hash*31 + y;
+		hash = hash * 31 + x;
+		hash = hash * 31 + y;
 
 		return hash;
 	}

@@ -2,13 +2,13 @@ package client.window.view;
 
 import client.FileHandler;
 import client.game.Controller;
+import client.i18n.LanguageHandler;
+import client.window.GUIConstants;
+import client.window.Window;
 import client.window.components.HorizontalSlider;
 import client.window.components.TextButton;
 import client.window.components.TextLabel;
-import client.window.GUIConstants;
-import client.window.Window;
 import game.map.presets.*;
-import client.i18n.LanguageHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +31,7 @@ public class ViewServerOptions extends View {
 
 	private boolean started;
 
-	public ViewServerOptions (Window window, ViewServerCreate pre, DynamicBackground background) {
+	public ViewServerOptions(Window window, ViewServerCreate pre, DynamicBackground background) {
 		this.background = background;
 		this.window = window;
 		this.prev = pre;
@@ -43,12 +43,12 @@ public class ViewServerOptions extends View {
 		widthValue = calcMapVal(0.5d);
 		heightValue = calcMapVal(0.5d);
 
-		buttonMapType = new TextButton(window, mapType, e->{
+		buttonMapType = new TextButton(window, mapType, e -> {
 
-			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mapType = LanguageHandler.get("Oval");
-			else if(mapType.equals(LanguageHandler.get("Oval"))) mapType = LanguageHandler.get("Square");
-			else if(mapType.equals(LanguageHandler.get("Square"))) mapType = LanguageHandler.get("Custom");
-			else if(mapType.equals(LanguageHandler.get("Custom"))) mapType = LanguageHandler.get("Hexagonal");
+			if (mapType.equals(LanguageHandler.get("Hexagonal"))) mapType = LanguageHandler.get("Oval");
+			else if (mapType.equals(LanguageHandler.get("Oval"))) mapType = LanguageHandler.get("Square");
+			else if (mapType.equals(LanguageHandler.get("Square"))) mapType = LanguageHandler.get("Custom");
+			else if (mapType.equals(LanguageHandler.get("Custom"))) mapType = LanguageHandler.get("Hexagonal");
 
 			System.out.println(mapType);
 			buttonMapType.setText(mapType);
@@ -71,15 +71,16 @@ public class ViewServerOptions extends View {
 		mapWidth = new HorizontalSlider(0.5f, e -> widthValue = calcMapVal(mapWidth.getValue()));
 		mapHeight = new HorizontalSlider(0.5f, e -> heightValue = calcMapVal(mapHeight.getValue()));
 
-		accept = new TextButton(window, LanguageHandler.get("Accept"), e->{
-			if(widthValue % 2 == 0) widthValue += 1;
-			if(heightValue % 2 == 0) heightValue += 1;
+		accept = new TextButton(window, LanguageHandler.get("Accept"), e -> {
+			if (widthValue % 2 == 0) widthValue += 1;
+			if (heightValue % 2 == 0) heightValue += 1;
 
 			MapPreset mp = null;
-			if(mapType.equals(LanguageHandler.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue)/2);
-			else if(mapType.equals(LanguageHandler.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
-			else if(mapType.equals(LanguageHandler.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
-			else if(mapType.equals(LanguageHandler.get("Custom"))) mp = new CustomPreset(FileHandler.loadFile("maps/map.txt"));
+			if (mapType.equals(LanguageHandler.get("Hexagonal"))) mp = new HexPreset((widthValue + heightValue) / 2);
+			else if (mapType.equals(LanguageHandler.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
+			else if (mapType.equals(LanguageHandler.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
+			else if (mapType.equals(LanguageHandler.get("Custom")))
+				mp = new CustomPreset(FileHandler.loadFile("maps/map.txt"));
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
@@ -113,19 +114,19 @@ public class ViewServerOptions extends View {
 		int width = window.getWidth();
 		int height = window.getHeight();
 
-		int componentHeight = height/12;
+		int componentHeight = height / 12;
 		int componentWidth = componentHeight * 5;
 
-		accept.setBounds(width/2 - componentWidth - 5, height - 2*componentHeight, componentWidth, componentHeight);
-		cancel.setBounds(width/2 + 5, height - 2*componentHeight, componentWidth, componentHeight);
+		accept.setBounds(width / 2 - componentWidth - 5, height - 2 * componentHeight, componentWidth, componentHeight);
+		cancel.setBounds(width / 2 + 5, height - 2 * componentHeight, componentWidth, componentHeight);
 
-		mapWidth.setBounds(5, 5 + componentHeight/4, componentWidth, componentHeight/2);
+		mapWidth.setBounds(5, 5 + componentHeight / 4, componentWidth, componentHeight / 2);
 		displayWidth.setBounds(10 + componentWidth, 5, componentWidth, componentHeight);
 
-		mapHeight.setBounds(5, 10 + componentHeight + componentHeight/4, componentWidth, componentHeight/2);
+		mapHeight.setBounds(5, 10 + componentHeight + componentHeight / 4, componentWidth, componentHeight / 2);
 		displayHeight.setBounds(10 + componentWidth, 10 + componentHeight, componentWidth, componentHeight);
 
-		buttonMapType.setBounds(5, 15 + 2*componentHeight, componentWidth, componentHeight);
+		buttonMapType.setBounds(5, 15 + 2 * componentHeight, componentWidth, componentHeight);
 	}
 
 	public void draw() {
@@ -136,7 +137,7 @@ public class ViewServerOptions extends View {
 
 		Graphics g = buffer.getGraphics();
 
-		for (Component component: panel.getComponents()) {
+		for (Component component : panel.getComponents()) {
 			g.translate(component.getX(), component.getY());
 			component.update(g);
 			g.translate(-component.getX(), -component.getY());

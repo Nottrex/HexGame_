@@ -24,11 +24,11 @@ public class ImageTextLabel extends JComponent {
 
 		String text = content.getText();
 
-		Font font = GUIConstants.FONT.deriveFont(getHeight()*0.5f);
+		Font font = GUIConstants.FONT.deriveFont(getHeight() * 0.5f);
 		g.setFont(font);
 
 		double fWidth = g.getFontMetrics(font).getStringBounds(text, g).getWidth();
-		g.drawString(text, (int) ((getWidth()-fWidth)/2), getHeight()*3/4-5);
+		g.drawString(text, (int) ((getWidth() - fWidth) / 2), getHeight() * 3 / 4 - 5);
 	}
 
 	public void setContent(ImageText content) {
@@ -40,6 +40,7 @@ public class ImageTextLabel extends JComponent {
 	 */
 	public interface ImageText {
 		BufferedImage getImage();
+
 		String getText();
 	}
 }

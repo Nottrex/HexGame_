@@ -34,8 +34,8 @@ public class OptionComponents {
 	public OptionComponents(Window window, JComponent component, int width, int height, OptionFinishListener listener) {
 		languages = LanguageHandler.availableLanguages();
 
-		for(int i = 0; i < languages.size(); i++) {
-			if(languages.get(i).equals(Options.language)) {
+		for (int i = 0; i < languages.size(); i++) {
+			if (languages.get(i).equals(Options.language)) {
 				langIndex = i;
 				break;
 			}
@@ -49,13 +49,13 @@ public class OptionComponents {
 		TextureHandler.loadImagePng("Check", "ui/buttons/checkmark");
 
 		button_change_lang = new TextButton(window, languages.get(langIndex), e -> {
-			if(langIndex + 1 < languages.size()) langIndex+=1;
+			if (langIndex + 1 < languages.size()) langIndex += 1;
 			else langIndex = 0;
 			button_change_lang.setText(languages.get(langIndex));
 		});
 
 		button_accept = new TextButton(window, LanguageHandler.get("Accept"), e -> {
-			if(newAntialiasing != null) Options.VALUE_ANTIALIASING = newAntialiasing;
+			if (newAntialiasing != null) Options.VALUE_ANTIALIASING = newAntialiasing;
 
 			Options.EFFECT_VOLUME = newEffectsVolume;
 			Options.MUSIC_VOLUME = newMusicVolume;
@@ -69,7 +69,7 @@ public class OptionComponents {
 
 
 		box_antialiasing = new CheckBox(window, Options.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {
-			if(box_antialiasing.isChecked()) newAntialiasing = RenderingHints.VALUE_ANTIALIAS_ON;
+			if (box_antialiasing.isChecked()) newAntialiasing = RenderingHints.VALUE_ANTIALIAS_ON;
 			else newAntialiasing = RenderingHints.VALUE_ANTIALIAS_OFF;
 		});
 
@@ -87,10 +87,10 @@ public class OptionComponents {
 				return LanguageHandler.get("Music Volume");
 			}
 		}, false);
-		volumeMusic = new HorizontalSlider( (Options.MUSIC_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
+		volumeMusic = new HorizontalSlider((Options.MUSIC_VOLUME - AudioConstants.MIN_VOLUME) / Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
 
 			float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
-			newMusicVolume =(float)(musicDistance* volumeMusic.getValue() + AudioConstants.MIN_VOLUME);
+			newMusicVolume = (float) (musicDistance * volumeMusic.getValue() + AudioConstants.MIN_VOLUME);
 		});
 
 		text_volumeEffects = new TextLabel(new TextLabel.Text() {
@@ -99,10 +99,10 @@ public class OptionComponents {
 				return LanguageHandler.get("Effects Volume");
 			}
 		}, false);
-		volumeEffects = new HorizontalSlider( (Options.EFFECT_VOLUME - AudioConstants.MIN_VOLUME)/Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
+		volumeEffects = new HorizontalSlider((Options.EFFECT_VOLUME - AudioConstants.MIN_VOLUME) / Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME), e -> {
 
 			float musicDistance = Math.abs(AudioConstants.MAX_VOLUME - AudioConstants.MIN_VOLUME);
-			newEffectsVolume =(float)(musicDistance* volumeEffects.getValue() + AudioConstants.MIN_VOLUME);
+			newEffectsVolume = (float) (musicDistance * volumeEffects.getValue() + AudioConstants.MIN_VOLUME);
 		});
 
 		changeSize(width, height);
@@ -124,26 +124,27 @@ public class OptionComponents {
 	}
 
 	public void changeSize(int width, int height) {
-		int componentHeight = height/12;
+		int componentHeight = height / 12;
 		int componentWidth = componentHeight * 5;
 
 		box_antialiasing.setBounds(5, 5, componentHeight, componentHeight);
-		text_antialiasing.setBounds(10 + componentHeight, componentHeight/2 - 5, componentWidth, componentHeight);
+		text_antialiasing.setBounds(10 + componentHeight, componentHeight / 2 - 5, componentWidth, componentHeight);
 
-		button_accept.setBounds(width/2 - componentWidth - 5, height - 2*componentHeight, componentWidth, componentHeight);
-		button_cancel.setBounds(width/2 + 5, height - 2*componentHeight, componentWidth, componentHeight);
+		button_accept.setBounds(width / 2 - componentWidth - 5, height - 2 * componentHeight, componentWidth, componentHeight);
+		button_cancel.setBounds(width / 2 + 5, height - 2 * componentHeight, componentWidth, componentHeight);
 
-		text_volumeMusic.setBounds(10 + componentWidth, 10+componentHeight, componentWidth/2, componentHeight);
-		volumeMusic.setBounds(5, 10 + componentHeight, componentWidth, componentHeight/2);
+		text_volumeMusic.setBounds(10 + componentWidth, 10 + componentHeight, componentWidth / 2, componentHeight);
+		volumeMusic.setBounds(5, 10 + componentHeight, componentWidth, componentHeight / 2);
 
-		text_volumeEffects.setBounds((int)(2.5f*componentWidth+20), 10+componentHeight, componentWidth/2, componentHeight);
-		volumeEffects.setBounds((int)(1.5f*componentWidth + 15), 10 + componentHeight, componentWidth, componentHeight/2);
+		text_volumeEffects.setBounds((int) (2.5f * componentWidth + 20), 10 + componentHeight, componentWidth / 2, componentHeight);
+		volumeEffects.setBounds((int) (1.5f * componentWidth + 15), 10 + componentHeight, componentWidth, componentHeight / 2);
 
-		button_change_lang.setBounds(5, 15 + 2* componentHeight, componentWidth, componentHeight);
+		button_change_lang.setBounds(5, 15 + 2 * componentHeight, componentWidth, componentHeight);
 	}
 
 	public interface OptionFinishListener {
 		void onOptionsAccept();
+
 		void onOptionsCancel();
 	}
 }

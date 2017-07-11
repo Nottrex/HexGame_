@@ -5,5 +5,5 @@ package game.enums;
  * Determines wether it can attack or be moved
  */
 public enum UnitState {
-	ACTIVE, MOVED, INACTIVE;
+	ACTIVE, MOVED, INACTIVE
 }

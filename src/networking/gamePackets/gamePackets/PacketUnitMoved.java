@@ -48,7 +48,7 @@ public class PacketUnitMoved implements Packet {
 		pb.addInt(targetY);
 
 		pb.addInt(directions.size());
-		for (Direction d: directions) {
+		for (Direction d : directions) {
 			pb.addByte((byte) d.ordinal());
 		}
 

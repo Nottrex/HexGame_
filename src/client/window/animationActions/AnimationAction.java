@@ -11,6 +11,7 @@ public abstract class AnimationAction {
 
 	/**
 	 * Can be called multiple times during drawing to calculate progress of animation
+	 *
 	 * @param currentTime after beginning of the animation
 	 */
 	public void update(long currentTime) {

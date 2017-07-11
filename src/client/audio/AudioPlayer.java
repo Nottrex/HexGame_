@@ -11,199 +11,206 @@ import java.util.List;
 
 public class AudioPlayer {
 
-    private List<Clip> removeBuffer;
-    private List<Clip> currentlyPlaying;
-    private List<Clip> queue;
-    private List<Integer> loops;
+	private List<Clip> removeBuffer;
+	private List<Clip> currentlyPlaying;
+	private List<Clip> queue;
+	private List<Integer> loops;
 
-    private Clip currentClip;
-    private int currentLoops;
+	private Clip currentClip;
+	private int currentLoops;
 
-    private int pausedFrame;
-    private boolean forcedStop;
+	private int pausedFrame;
+	private boolean forcedStop;
 
-    public AudioPlayer() {
-        removeBuffer = new ArrayList<>();
-        currentlyPlaying = new ArrayList<>();
-        queue = new ArrayList<>();
-        loops = new ArrayList<>();
-    }
-    public AudioPlayer(String startClip) {
-        this(startClip, 1);
-    }
-    public AudioPlayer(String startClip, int startloop) {
-        removeBuffer = new ArrayList<>();
-        currentlyPlaying = new ArrayList<>();
-        queue = new ArrayList<>();
-        loops = new ArrayList<>();
+	public AudioPlayer() {
+		removeBuffer = new ArrayList<>();
+		currentlyPlaying = new ArrayList<>();
+		queue = new ArrayList<>();
+		loops = new ArrayList<>();
+	}
 
-        currentClip = AudioHandler.getMusicWav(startClip);
-        setVolume(currentClip, Options.MUSIC_VOLUME);
-        currentLoops = startloop;
+	public AudioPlayer(String startClip) {
+		this(startClip, 1);
+	}
 
-        pausedFrame = 0;
-        forcedStop = false;
+	public AudioPlayer(String startClip, int startloop) {
+		removeBuffer = new ArrayList<>();
+		currentlyPlaying = new ArrayList<>();
+		queue = new ArrayList<>();
+		loops = new ArrayList<>();
 
-        currentClip.addLineListener(new LineListener() {
-            @Override
-            public void update(LineEvent event) {
-                if(event.getType() == LineEvent.Type.STOP && !forcedStop) {
+		currentClip = AudioHandler.getMusicWav(startClip);
+		setVolume(currentClip, Options.MUSIC_VOLUME);
+		currentLoops = startloop;
 
-                    if(currentLoops > 0 || currentLoops == Clip.LOOP_CONTINUOUSLY) {
-                        setVolume(currentClip, Options.MUSIC_VOLUME);
-                        currentClip.setFramePosition(0);
-                        currentClip.start();
+		pausedFrame = 0;
+		forcedStop = false;
 
-                        if(currentLoops > 0)currentLoops -= 1;
-                    }else if(currentLoops == 0) {
+		currentClip.addLineListener(new LineListener() {
+			@Override
+			public void update(LineEvent event) {
+				if (event.getType() == LineEvent.Type.STOP && !forcedStop) {
 
-                        currentClip = queue.get(0);
-                        currentLoops = loops.get(0);
+					if (currentLoops > 0 || currentLoops == Clip.LOOP_CONTINUOUSLY) {
+						setVolume(currentClip, Options.MUSIC_VOLUME);
+						currentClip.setFramePosition(0);
+						currentClip.start();
 
-                        setVolume(currentClip, Options.MUSIC_VOLUME);
-                        currentClip.setFramePosition(0);
-                        currentClip.start();
+						if (currentLoops > 0) currentLoops -= 1;
+					} else if (currentLoops == 0) {
 
-                        queue.remove(0);
-                        loops.remove(0);
-                    }
-                }
-            }
-        });
-    }
+						currentClip = queue.get(0);
+						currentLoops = loops.get(0);
 
-    /**
-     * Starts current {@link Clip} from its beginning
-     */
-    public void start() {
-        currentClip.start();
+						setVolume(currentClip, Options.MUSIC_VOLUME);
+						currentClip.setFramePosition(0);
+						currentClip.start();
 
-        if(!forcedStop && currentLoops != Clip.LOOP_CONTINUOUSLY) currentLoops--;
-        forcedStop = false;
-    }
+						queue.remove(0);
+						loops.remove(0);
+					}
+				}
+			}
+		});
+	}
 
-    /**
-     * Stops current {@link Clip}. Current position is not safed.
-     */
-    public void stop() {
-        pausedFrame = 0;
-        forcedStop = true;
-        currentClip.stop();
-    }
+	/**
+	 * Starts current {@link Clip} from its beginning
+	 */
+	public void start() {
+		currentClip.start();
 
-    /**
-     * Stops current {@link Clip}. It will resume where it stopped.
-     */
-    public void pause() {
-        pausedFrame = currentClip.getFramePosition();
-        forcedStop = true;
-        currentClip.stop();
-    }
+		if (!forcedStop && currentLoops != Clip.LOOP_CONTINUOUSLY) currentLoops--;
+		forcedStop = false;
+	}
 
-    /**
-     * Plays current {@link Clip} at the position where it stopped.
-     */
-    public void resume() {
-        currentClip.setFramePosition(pausedFrame);
-        start();
-    }
+	/**
+	 * Stops current {@link Clip}. Current position is not safed.
+	 */
+	public void stop() {
+		pausedFrame = 0;
+		forcedStop = true;
+		currentClip.stop();
+	}
 
-    public void next() {
-        currentClip = queue.get(0);
-        currentLoops = loops.get(0);
+	/**
+	 * Stops current {@link Clip}. It will resume where it stopped.
+	 */
+	public void pause() {
+		pausedFrame = currentClip.getFramePosition();
+		forcedStop = true;
+		currentClip.stop();
+	}
 
-        setVolume(currentClip, Options.MUSIC_VOLUME);
-        currentClip.setFramePosition(0);
-        currentClip.start();
+	/**
+	 * Plays current {@link Clip} at the position where it stopped.
+	 */
+	public void resume() {
+		currentClip.setFramePosition(pausedFrame);
+		start();
+	}
 
-        queue.remove(0);
-        loops.remove(0);
-    }
+	public void next() {
+		currentClip = queue.get(0);
+		currentLoops = loops.get(0);
 
-    /**
-     * Plays a {@link Clip} once
-     * @param audioName to get AudioFile from {@link AudioHandler}
-     */
-    public void playAudio(String audioName) {
-        Clip c = AudioHandler.getMusicWav(audioName);
-        setVolume(c, Options.EFFECT_VOLUME);
-        c.setFramePosition(0);
-        c.start();
+		setVolume(currentClip, Options.MUSIC_VOLUME);
+		currentClip.setFramePosition(0);
+		currentClip.start();
 
-       currentlyPlaying.add(c);
-        c.addLineListener(new LineListener() {
-            @Override
-            public void update(LineEvent event) {
-                if(event.getType() == LineEvent.Type.STOP) {
+		queue.remove(0);
+		loops.remove(0);
+	}
 
-                    removeBuffer.add(c);
-                }
-            }
-        });
-    }
+	/**
+	 * Plays a {@link Clip} once
+	 *
+	 * @param audioName to get AudioFile from {@link AudioHandler}
+	 */
+	public void playAudio(String audioName) {
+		Clip c = AudioHandler.getMusicWav(audioName);
+		setVolume(c, Options.EFFECT_VOLUME);
+		c.setFramePosition(0);
+		c.start();
 
-    /**
-     * Loops a {@link Clip} multiple times
-     * @param audioName to get AudioFile from {@link AudioHandler}
-     * @param loop Number of loops
-     */
-    public void loopAudio(String audioName, int loop) {
-        Clip c = AudioHandler.getMusicWav(audioName);
-        setVolume(c, Options.EFFECT_VOLUME);
-        c.loop(loop);
+		currentlyPlaying.add(c);
+		c.addLineListener(new LineListener() {
+			@Override
+			public void update(LineEvent event) {
+				if (event.getType() == LineEvent.Type.STOP) {
 
-        currentlyPlaying.add(c);
-        c.addLineListener(new LineListener() {
-            @Override
-            public void update(LineEvent event) {
-                if(event.getType() == LineEvent.Type.STOP) {
-                    removeBuffer.add(c);
-                    c.close();
-                }
-            }
-        });
-    }
+					removeBuffer.add(c);
+				}
+			}
+		});
+	}
 
-    /**
-     * Adds a {@link Clip} to the playing queue
-     * @param audioName to get AudioFile from {@link AudioHandler}
-     */
-    public void addMusic(String audioName) {
-        addMusic(audioName, 1);
-    }
+	/**
+	 * Loops a {@link Clip} multiple times
+	 *
+	 * @param audioName to get AudioFile from {@link AudioHandler}
+	 * @param loop      Number of loops
+	 */
+	public void loopAudio(String audioName, int loop) {
+		Clip c = AudioHandler.getMusicWav(audioName);
+		setVolume(c, Options.EFFECT_VOLUME);
+		c.loop(loop);
 
-    /**
-     * Adds a {@link Clip} to the playing queue to be played multiple times
-     * @param audioName to get AudioFile from {@link AudioHandler}
-     * @param loop Number of loops
-     */
-    public void addMusic(String audioName, int loop) {
-        queue.add(AudioHandler.getMusicWav(audioName));
-        loops.add(loop);
-    }
+		currentlyPlaying.add(c);
+		c.addLineListener(new LineListener() {
+			@Override
+			public void update(LineEvent event) {
+				if (event.getType() == LineEvent.Type.STOP) {
+					removeBuffer.add(c);
+					c.close();
+				}
+			}
+		});
+	}
 
-    /**
-     * Sets the volume of a {@link Clip} to the given value
-     * @param c Clip which volume should be updated
-     * @param volume the new volume
-     */
-    private void setVolume(Clip c, float volume) {
-        FloatControl fc = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
-        fc.setValue(volume);
-    }
+	/**
+	 * Adds a {@link Clip} to the playing queue
+	 *
+	 * @param audioName to get AudioFile from {@link AudioHandler}
+	 */
+	public void addMusic(String audioName) {
+		addMusic(audioName, 1);
+	}
 
-    /**
-     * Updates volume for the current music {@link Clip} and all effects
-     */
-    public void updateVolume() {
-        setVolume(currentClip, Options.MUSIC_VOLUME);
-        for(Clip c: removeBuffer) {
-            currentlyPlaying.remove(c);
-        }
-        removeBuffer.clear();
+	/**
+	 * Adds a {@link Clip} to the playing queue to be played multiple times
+	 *
+	 * @param audioName to get AudioFile from {@link AudioHandler}
+	 * @param loop      Number of loops
+	 */
+	public void addMusic(String audioName, int loop) {
+		queue.add(AudioHandler.getMusicWav(audioName));
+		loops.add(loop);
+	}
 
-        for(Clip c: currentlyPlaying) {
-            setVolume(c, Options.EFFECT_VOLUME);
-        }
-    }
+	/**
+	 * Sets the volume of a {@link Clip} to the given value
+	 *
+	 * @param c      Clip which volume should be updated
+	 * @param volume the new volume
+	 */
+	private void setVolume(Clip c, float volume) {
+		FloatControl fc = (FloatControl) c.getControl(FloatControl.Type.MASTER_GAIN);
+		fc.setValue(volume);
+	}
+
+	/**
+	 * Updates volume for the current music {@link Clip} and all effects
+	 */
+	public void updateVolume() {
+		setVolume(currentClip, Options.MUSIC_VOLUME);
+		for (Clip c : removeBuffer) {
+			currentlyPlaying.remove(c);
+		}
+		removeBuffer.clear();
+
+		for (Clip c : currentlyPlaying) {
+			setVolume(c, Options.EFFECT_VOLUME);
+		}
+	}
 }

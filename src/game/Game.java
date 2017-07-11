@@ -2,14 +2,10 @@ package game;
 
 import game.enums.PlayerColor;
 import game.enums.UnitState;
-import game.enums.UnitType;
 import game.map.GameMap;
 import game.map.MapGenerator;
-import game.map.presets.HexPreset;
-import game.map.presets.OvalPreset;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class Game {
 	public static final String VERSION = "0.3";
@@ -25,7 +21,7 @@ public class Game {
 		this(map, players);
 
 		this.round = round;
-		this.playerTurn = playerTurn-1;
+		this.playerTurn = playerTurn - 1;
 	}
 
 	public Game(GameMap map, Map<String, PlayerColor> players) {
@@ -38,6 +34,10 @@ public class Game {
 		this.map = new GameMap(generator);
 		this.players = players;
 		playerAmount = players.keySet().size();
+	}
+
+	public Game(String data) {
+
 	}
 
 	public void nextRound() {
@@ -81,14 +81,10 @@ public class Game {
 	}
 
 	public int getPlayerTurnID() {
-		return playerTurn+1;
+		return playerTurn + 1;
 	}
 
 	public String save() {
 		return null;
-	}
-
-	public Game(String data) {
-
 	}
 }

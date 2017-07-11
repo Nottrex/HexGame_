@@ -11,6 +11,9 @@ import networking.gamePackets.preGamePackets.*;
 public class PacketHandler {
 
 	private static Class<? extends Packet>[] packets = new Class[256];
+	@SuppressWarnings("unchecked")
+
+	private static int id = 0;
 
 	static {
 		addPacket(PacketClientInfo.class);
@@ -30,13 +33,13 @@ public class PacketHandler {
 		addPacket(PacketUnitAttack.class);
 	}
 
-	@SuppressWarnings("unchecked")
+	private PacketHandler() {
+	}
 
-	private static int id = 0;
 	private static void addPacket(Class<? extends Packet> packet) {
 		packets[id++] = packet;
 	}
-	
+
 	public static Class<? extends Packet> getPacket(int packetID) {
 		return packets[packetID];
 	}
@@ -48,6 +51,4 @@ public class PacketHandler {
 		return -1;
 	}
 
-	private PacketHandler() {}
-	
 }

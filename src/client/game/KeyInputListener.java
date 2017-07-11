@@ -14,7 +14,6 @@ public class KeyInputListener extends KeyAdapter {
 	}
 
 	/**
-	 *
 	 * @param i {@link KeyEvent KeyCode} of a char
 	 * @return whether the related button is pressed or not
 	 */

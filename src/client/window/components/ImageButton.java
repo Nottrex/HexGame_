@@ -3,7 +3,6 @@ package client.window.components;
 import client.window.GUIConstants;
 import client.window.Window;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -48,7 +47,7 @@ public class ImageButton extends JComponent {
 		super.paintComponent(g);
 
 		if (entered) {
-			g.drawImage(image, (int) (getWidth()*(1 - GUIConstants.BUTTON_HOVER_SIZE)/2), (int) (getHeight()*(1 - GUIConstants.BUTTON_HOVER_SIZE)/2), (int) (getWidth() * GUIConstants.BUTTON_HOVER_SIZE), (int) (getHeight() * GUIConstants.BUTTON_HOVER_SIZE), null);
+			g.drawImage(image, (int) (getWidth() * (1 - GUIConstants.BUTTON_HOVER_SIZE) / 2), (int) (getHeight() * (1 - GUIConstants.BUTTON_HOVER_SIZE) / 2), (int) (getWidth() * GUIConstants.BUTTON_HOVER_SIZE), (int) (getHeight() * GUIConstants.BUTTON_HOVER_SIZE), null);
 		} else {
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		}
@@ -56,6 +55,7 @@ public class ImageButton extends JComponent {
 
 	/**
 	 * Changes the shown image
+	 *
 	 * @param image that should be shown
 	 */
 	public void setImage(BufferedImage image) {

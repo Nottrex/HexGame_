@@ -5,8 +5,6 @@ import game.Location;
 import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
-import game.enums.UnitState;
-import game.enums.UnitType;
 import game.map.GameMap;
 import networking.gamePackets.util.PacketBuilderUtil;
 import networking.gamePackets.util.PacketDecrypterUtil;
@@ -14,7 +12,10 @@ import networking.packets.Packet;
 import networking.packets.PacketBuilder;
 import networking.packets.PacketDecrypter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PacketGameBegin implements Packet {
 	private Game game;
@@ -76,7 +77,7 @@ public class PacketGameBegin implements Packet {
 
 		pb.addInt(players.size());
 
-		for (String s: players.keySet()) {
+		for (String s : players.keySet()) {
 			pb.addString(s);
 			pb.addByte((byte) players.get(s).ordinal());
 		}
@@ -93,13 +94,13 @@ public class PacketGameBegin implements Packet {
 		}
 
 		pb.addInt(map.getMaxPlayers());
-		for (Location l: map.getSpawnPoints()) {
+		for (Location l : map.getSpawnPoints()) {
 			pb.addInt(l.x);
 			pb.addInt(l.y);
 		}
 
 		pb.addInt(map.getUnits().size());
-		for (Unit u: map.getUnits()) {
+		for (Unit u : map.getUnits()) {
 			PacketBuilderUtil.addUnit(pb, u);
 		}
 

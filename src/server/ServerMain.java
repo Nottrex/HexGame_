@@ -51,7 +51,7 @@ public class ServerMain implements ServerListener {
 		while (port == -1) {
 			try {
 				port = Integer.valueOf(s.nextLine());
-			} catch(Exception e) {
+			} catch (Exception e) {
 				System.out.print("The port must be a number\nPort: ");
 			}
 		}
@@ -94,6 +94,10 @@ public class ServerMain implements ServerListener {
 		server = new Server(port, this);
 	}
 
+	public static void main(String[] args) {
+		new ServerMain();
+	}
+
 	public void playerQuit(String player) {
 		Socket s = getPlayerSocket(player);
 
@@ -130,12 +134,12 @@ public class ServerMain implements ServerListener {
 		players.keySet().stream()
 				.forEach(s -> server.sendPacket(s, packet1));
 
-		for (String s: players.values()) {
+		for (String s : players.values()) {
 			boolean f = false;
 			do {
 				f = false;
 
-				for (String s2: players.values()) {
+				for (String s2 : players.values()) {
 					if (s2.equals(s)) break;
 
 					if (playerColor.get(s2) == playerColor.get(s)) {
@@ -144,7 +148,7 @@ public class ServerMain implements ServerListener {
 				}
 
 				if (f) {
-					playerColor.put(s, PlayerColor.values()[(int) (Math.random()*PlayerColor.values().length)]);
+					playerColor.put(s, PlayerColor.values()[(int) (Math.random() * PlayerColor.values().length)]);
 				}
 			} while (f);
 		}
@@ -276,9 +280,9 @@ public class ServerMain implements ServerListener {
 	}
 
 	public Socket getPlayerSocket(String player) {
-		for (Socket s: players.keySet()) {
+		for (Socket s : players.keySet()) {
 			if (players.get(s).equals(player)) return s;
- 		}
+		}
 		return null;
 	}
 
@@ -291,15 +295,11 @@ public class ServerMain implements ServerListener {
 	}
 
 	public void stop() {
-		for(Socket s: players.keySet()) server.kickClient(s);
+		for (Socket s : players.keySet()) server.kickClient(s);
 		server.close();
 	}
 
 	public void onClientJoin(Socket s) {
 		System.out.println("Connected: " + s.getInetAddress());
-	}
-
-	public static void main(String[] args) {
-		new ServerMain();
 	}
 }

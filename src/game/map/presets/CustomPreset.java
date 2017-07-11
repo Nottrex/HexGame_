@@ -7,54 +7,54 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CustomPreset implements MapPreset{
+public class CustomPreset implements MapPreset {
 
-    private int width, height;
-    private String mapContent;
+	private int width, height;
+	private String mapContent;
 
-    public CustomPreset(String mapContent) {
-        this.mapContent = mapContent;
-        Scanner br = new Scanner(mapContent);
+	public CustomPreset(String mapContent) {
+		this.mapContent = mapContent;
+		Scanner br = new Scanner(mapContent);
 
-        this.width = Integer.parseInt(br.next());
-        this.height = Integer.parseInt(br.next());
-        br.close();
-    }
-    
-    @Override
-    public Field[][] getPresetMap() {
-        Field[][] out = new Field[width][height];
-        Scanner br = new Scanner(mapContent);
+		this.width = Integer.parseInt(br.next());
+		this.height = Integer.parseInt(br.next());
+		br.close();
+	}
 
-        br.nextLine();
+	@Override
+	public Field[][] getPresetMap() {
+		Field[][] out = new Field[width][height];
+		Scanner br = new Scanner(mapContent);
 
-        for (int x = 0; x < width; x++) {
-            String line = br.nextLine();
-            for (int y = 0; y < height; y++) {
-                char character = line.charAt(y);
-                if (character == '0') out[x][y] = Field.VOID;
-            }
-        }
-        br.close();
+		br.nextLine();
 
-        return out;
-    }
+		for (int x = 0; x < width; x++) {
+			String line = br.nextLine();
+			for (int y = 0; y < height; y++) {
+				char character = line.charAt(y);
+				if (character == '0') out[x][y] = Field.VOID;
+			}
+		}
+		br.close();
 
-    @Override
-    public List<Location> getSpawnPoints() {
-        List<Location> locations = new ArrayList<>();
+		return out;
+	}
 
-        Scanner br = new Scanner(mapContent);
-        for (int i = 0; i < width+1; i++) {
-            br.nextLine();
-        }
+	@Override
+	public List<Location> getSpawnPoints() {
+		List<Location> locations = new ArrayList<>();
 
-        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
-        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
-        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
-        locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
-        br.close();
+		Scanner br = new Scanner(mapContent);
+		for (int i = 0; i < width + 1; i++) {
+			br.nextLine();
+		}
 
-        return locations;
-    }
+		locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+		locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+		locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+		locations.add(new Location(Integer.parseInt(br.next()), Integer.parseInt(br.next())));
+		br.close();
+
+		return locations;
+	}
 }

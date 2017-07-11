@@ -1,12 +1,12 @@
 package client.window.view;
 
-import client.game.Controller;
 import client.Options;
-import client.window.components.ImageButton;
-import client.window.components.TextButton;
+import client.game.Controller;
+import client.i18n.LanguageHandler;
 import client.window.TextureHandler;
 import client.window.Window;
-import client.i18n.LanguageHandler;
+import client.window.components.ImageButton;
+import client.window.components.TextButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +38,7 @@ public class ViewMainMenu extends View {
 		this.window = window;
 		this.controller = controller;
 
-		if(background == null) background = new DynamicBackground();
+		if (background == null) background = new DynamicBackground();
 
 		panel = window.getPanel();
 
@@ -80,13 +80,13 @@ public class ViewMainMenu extends View {
 		int width = window.getPanel().getWidth();
 		int height = window.getPanel().getHeight();
 
-		int buttonHeight = height/8;
-		int buttonWidth = buttonHeight*5;
+		int buttonHeight = height / 8;
+		int buttonWidth = buttonHeight * 5;
 
-		button_create.setBounds((width-buttonWidth)/2, (height-buttonHeight)/2, buttonWidth, buttonHeight);
-		button_start.setBounds((width-buttonWidth)/2, (height+2*buttonHeight)/2, buttonWidth, buttonHeight);
-		button_quit.setBounds((width-buttonWidth)/2, (height+5*buttonHeight)/2, buttonWidth, buttonHeight);
-		button_options.setBounds(5, 5, 2*buttonHeight/3, 2*buttonHeight/3);
+		button_create.setBounds((width - buttonWidth) / 2, (height - buttonHeight) / 2, buttonWidth, buttonHeight);
+		button_start.setBounds((width - buttonWidth) / 2, (height + 2 * buttonHeight) / 2, buttonWidth, buttonHeight);
+		button_quit.setBounds((width - buttonWidth) / 2, (height + 5 * buttonHeight) / 2, buttonWidth, buttonHeight);
+		button_options.setBounds(5, 5, 2 * buttonHeight / 3, 2 * buttonHeight / 3);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class ViewMainMenu extends View {
 
 		Graphics g = buffer.getGraphics();
 
-		for (Component component: panel.getComponents()) {
+		for (Component component : panel.getComponents()) {
 			g.translate(component.getX(), component.getY());
 			component.update(g);
 			g.translate(-component.getX(), -component.getY());

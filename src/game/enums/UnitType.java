@@ -15,7 +15,7 @@ public enum UnitType {
 	private int movementDistance;
 	private int minAttackDistance, maxAttackDistance;
 	private double size;
-	private String  displayName;
+	private String displayName;
 	private boolean flying;
 	private boolean swimming;
 	private boolean walking;

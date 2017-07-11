@@ -5,13 +5,12 @@ import com.jogamp.opengl.GL2;
 public class SquareShader extends ShaderProgram {
 	private static final String VERTEX_FILE = "squareVertexShader";
 	private static final String FRAGMENT_FILE = "squareFragmentShader";
-
+	private int texLocation, xLocation, yLocation, widthLocation, heightLocation, cameraLocation, projectionLocation;
+	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation, timeLocation;
 	public SquareShader(GL2 gl) {
 		super(gl, VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	private int texLocation, xLocation, yLocation, widthLocation, heightLocation, cameraLocation, projectionLocation;
-	private int texXLocation, texYLocation, texTWLocation, texTHLocation, texWLocation, texHLocation, timeLocation;
 	@Override
 	protected void getUniformLocations(GL2 gl) {
 		texLocation = getUniformLocation(gl, "tex");

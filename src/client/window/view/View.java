@@ -1,7 +1,7 @@
 package client.window.view;
 
-import client.window.Window;
 import client.game.Controller;
+import client.window.Window;
 
 public abstract class View {
 	public abstract void init(Window window, Controller controller);
