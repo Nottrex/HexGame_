@@ -53,6 +53,8 @@ public class Window extends JFrame {
 
 		controller = new Controller();
 		updateView(new ViewMainMenu());
+
+
 	}
 
 

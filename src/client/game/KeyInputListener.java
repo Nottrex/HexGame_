@@ -17,7 +17,7 @@ public class KeyInputListener extends KeyAdapter {
 	 * @param i {@link KeyEvent KeyCode} of a char
 	 * @return whether the related button is pressed or not
 	 */
-	private boolean isPressed(int i) {
+	public boolean isPressed(int i) {
 		return pressed.containsKey(i) ? pressed.get(i) : false;
 	}
 

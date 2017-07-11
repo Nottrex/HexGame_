@@ -112,7 +112,6 @@ public class ViewGame extends View implements ClientListener {
 		bottom.setPreferredSize(new Dimension(800, 100));
 		bottom.setBackground(GUIConstants.COLOR_INFOBAR_BACKGROUND);
 
-
 		center.setBackground(GUIConstants.COLOR_GAME_BACKGROUND);
 		button_audioOn = new ImageButton(window, TextureHandler.getImagePng("button_audioOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_AUDIO));
 		button_musicOn = new ImageButton(window, TextureHandler.getImagePng("button_musicOn"), e -> onKeyType(KeyBindings.KEY_TOGGLE_MUSIC));
@@ -157,6 +156,9 @@ public class ViewGame extends View implements ClientListener {
 				fpsLabel.setBounds(10 + buttonHeight, 5, barHeight * 5, barHeight);
 
 				button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
+
+				if (overlay instanceof ESC_Overlay) ((ESC_Overlay) overlay).changeSize();
+				else if (overlay instanceof OptionsOverlay) ((OptionsOverlay) overlay).changeSize();
 			}
 		});
 
@@ -179,12 +181,9 @@ public class ViewGame extends View implements ClientListener {
 	public void changeSize() {
 
 		if (width == window.getWidth() && height == window.getHeight()) return;
-		if (overlay instanceof ESC_Overlay) ((ESC_Overlay) overlay).changeSize();
-		else if (overlay instanceof OptionsOverlay) ((OptionsOverlay) overlay).changeSize();
 
 		width = window.getWidth();
 		height = window.getHeight();
-
 	}
 
 	private void centerCamera() {
