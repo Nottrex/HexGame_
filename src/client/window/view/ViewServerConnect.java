@@ -2,8 +2,10 @@ package client.window.view;
 
 import client.Options;
 import client.game.Controller;
+import client.window.TextureHandler;
 import client.window.components.CustomTextField;
 import client.window.components.TextButton;
+import client.window.components.ImageButton;
 import client.window.GUIConstants;
 import client.window.Window;
 import client.i18n.LanguageHandler;
@@ -17,6 +19,7 @@ public class ViewServerConnect extends View {
 	private Window window;
 	private Controller controller;
 
+	private ImageButton buttonOptions;
 	private TextButton buttonConnect, buttonBackToMainMenu;
 	private CustomTextField textFieldName, textFieldHostName, textFieldPort;
 
@@ -55,6 +58,7 @@ public class ViewServerConnect extends View {
 		});
 		buttonBackToMainMenu = new TextButton(window, LanguageHandler.get("Back to Mainmenu"), e -> window.updateView(new ViewMainMenu(background)));
 
+		buttonOptions = new ImageButton(window, TextureHandler.getImagePng("Options"), e->window.updateView(new ViewOptions(window, background, this)));
 		textFieldName = new CustomTextField("Name", CustomTextField.KEY_RESTRICT_NORMAL);
 		textFieldHostName = new CustomTextField("Hostname", CustomTextField.KEY_RESTRICT_NORMAL_OR_DOT);
 		textFieldPort = new CustomTextField("Port", CustomTextField.KEY_RESTRICT_ONLY_DIGITS);
@@ -69,6 +73,7 @@ public class ViewServerConnect extends View {
 		window.getPanel().add(textFieldHostName);
 		window.getPanel().add(textFieldPort);
 		window.getPanel().add(buttonConnect);
+		window.getPanel().add(buttonOptions);
 		window.getPanel().add(buttonBackToMainMenu);
 
 		started = true;
@@ -91,6 +96,7 @@ public class ViewServerConnect extends View {
 		int elementHeight = height/10;
 		int elementWidth  = elementHeight*5;
 
+		buttonOptions.setBounds(5, 5, height/12, height/12);
 		textFieldName.setBounds((width-elementWidth)/2, (height-5*elementHeight)/2, elementWidth, elementHeight);
 		textFieldHostName.setBounds((width-elementWidth)/2, (height-3*elementHeight)/2, elementWidth, elementHeight);
 		textFieldPort.setBounds((width-elementWidth)/2, (height-elementHeight)/2, elementWidth, elementHeight);

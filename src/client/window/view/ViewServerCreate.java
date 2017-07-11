@@ -21,7 +21,7 @@ public class ViewServerCreate extends View {
     private Controller controller;
 
     private ImageButton buttonOptions;
-    private TextButton buttonConnect, buttonBackToMainMenu;
+    private TextButton buttonConnect, buttonBackToMainMenu, buttonServerOptions;
     private CustomTextField textFieldName, textFieldPort;
 
     private JPanel panel;
@@ -42,7 +42,8 @@ public class ViewServerCreate extends View {
         if(background == null) background = new DynamicBackground();
         window.getPanel().setLayout(null);
 
-        buttonOptions = new ImageButton(window, TextureHandler.getImagePng("Options"), e->window.updateView(new ViewServerOptions(window, this, background)));
+        buttonOptions = new ImageButton(window, TextureHandler.getImagePng("Options"), e->window.updateView(new ViewOptions(window, background, this)));
+        buttonServerOptions = new TextButton(window, LanguageHandler.get("Advanced Settings"), e->window.updateView(new ViewServerOptions(window, this, background)));
         buttonConnect = new TextButton(window, LanguageHandler.get("Create Game"), e ->
         {
             if (textFieldName.getText().isEmpty()) return;
@@ -73,6 +74,7 @@ public class ViewServerCreate extends View {
         window.getPanel().add(textFieldPort);
         window.getPanel().add(buttonConnect);
         window.getPanel().add(buttonOptions);
+        window.getPanel().add(buttonServerOptions);
         window.getPanel().add(buttonBackToMainMenu);
 
         started = true;
@@ -96,10 +98,12 @@ public class ViewServerCreate extends View {
         int elementWidth  = elementHeight*5;
 
         buttonOptions.setBounds(5, 5, height/12, height/12);
+        buttonServerOptions.setBounds(5, 500, height/12, height/12);
         textFieldName.setBounds((width-elementWidth)/2, (height-5*elementHeight)/2, elementWidth, elementHeight);
         textFieldPort.setBounds((width-elementWidth)/2, (height-3*elementHeight)/2, elementWidth, elementHeight);
         buttonConnect.setBounds((width-elementWidth)/2, (height-elementHeight)/2, elementWidth, elementHeight);
-        buttonBackToMainMenu.setBounds((width-elementWidth)/2, (height+2*elementHeight)/2, elementWidth, elementHeight);
+        buttonServerOptions.setBounds((width-elementWidth)/2, (height+2*elementHeight)/2, elementWidth, elementHeight);
+        buttonBackToMainMenu.setBounds((width-elementWidth)/2, (height+5*elementHeight)/2, elementWidth, elementHeight);
     }
 
     /**

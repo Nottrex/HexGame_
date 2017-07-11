@@ -52,7 +52,7 @@ public class ViewMainMenu extends View {
 		});
 		button_start = new TextButton(window, LanguageHandler.get("Join Game"), e -> window.updateView(new ViewServerConnect(background)));
 		button_create = new TextButton(window, LanguageHandler.get("Create Game"), e -> window.updateView(new ViewServerCreate(background)));
-		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewOptions(window, background)));
+		button_options = new ImageButton(window, TextureHandler.getImagePng("Options"), e -> window.updateView(new ViewOptions(window, background, this)));
 
 		changeSize();
 

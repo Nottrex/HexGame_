@@ -25,6 +25,7 @@ public class ViewOptions extends View {
 
     private Window window;
     private DynamicBackground background;
+    private View previousView;
 
     private TextButton button_accept, button_cancel;
 
@@ -47,9 +48,10 @@ public class ViewOptions extends View {
     private List<String> languages;
     private int langIndex;
 
-    public ViewOptions (Window window, DynamicBackground background) {
+    public ViewOptions (Window window, DynamicBackground background, View previousView) {
         this.background = background;
         this.window = window;
+        this.previousView = previousView;
 
         languages = new ArrayList<>();
         langIndex = 0;
@@ -105,9 +107,9 @@ public class ViewOptions extends View {
             Options.language = languages.get(langIndex);
             LanguageHandler.load();
 
-            window.updateView(new ViewMainMenu(background));
+            window.updateView(this.previousView);
         });
-        button_cancel = new TextButton(window, LanguageHandler.get("Cancel"), e -> window.updateView(new ViewMainMenu(background)));
+        button_cancel = new TextButton(window, LanguageHandler.get("Cancel"), e -> window.updateView(this.previousView));
 
 
         box_antialising = new CheckBox(window, Options.VALUE_ANTIALIASING.equals(RenderingHints.VALUE_ANTIALIAS_ON), e -> {

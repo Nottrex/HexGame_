@@ -15,7 +15,8 @@ public class Main {
 				"Dirt", "Snow", "Sand", "Stone", "Grass_Rock", "Dirt_Rock", "Grass", "Void", "Red",
 				"Green", "Yellow", "Blue", "Join Game", "Create Game", "Connect", "Back to Mainemnu",
 				"Toggle Ready", "Toggle Color", "Quit", "Exit Game", "Accept", "Cancel", "Square", "Oval",
-				"Hexagonal", "Effects Volume", "Music Volume", "Use AA", "Width", "Height", "Round", "Costs", "Movementrange", "Attackrange", "Custom"};
+				"Hexagonal", "Effects Volume", "Music Volume", "Use AA", "Width", "Height", "Round", "Costs",
+				"Movementrange", "Attackrange", "Custom", "Advanced Settings"};
 
 		Map<String, String> data = new HashMap<>();
 		Scanner s = new Scanner(System.in);
