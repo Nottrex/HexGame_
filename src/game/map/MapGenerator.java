@@ -52,7 +52,6 @@ public class MapGenerator {
             for(int y = 0; y < heightMap[0].length; y++) {
 
                 heightMap[x][y] /= highest;
-                System.out.print(heightMap[x][y] + " ");
             }
         }
 

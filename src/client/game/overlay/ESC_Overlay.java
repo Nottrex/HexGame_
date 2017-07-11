@@ -33,7 +33,7 @@ public class ESC_Overlay extends  Overlay{
         button_ToOptions = new TextButton(w, LanguageHandler.get("Options"), e -> {g.setOverlay(new OptionsOverlay(w, g));});
         this.add(button_ToOptions);
 
-        button_quit = new TextButton(w, LanguageHandler.get("Back to Mainemnu"), e -> {w.updateView(new ViewMainMenu());});
+        button_quit = new TextButton(w, LanguageHandler.get("Back to Mainmenu"), e -> {w.updateView(new ViewMainMenu());});
         this.add(button_quit);
         changeSize();
 
