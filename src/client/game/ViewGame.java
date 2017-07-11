@@ -315,6 +315,10 @@ public class ViewGame extends View implements ClientListener {
 			}
 		}
 
+		if (keyCode == KeyEvent.VK_L) {
+			cam.addScreenshake(0.01f);
+		}
+
 		controller.onKeyType(keyCode);
 	}
 

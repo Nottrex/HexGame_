@@ -2,8 +2,34 @@ package client.game;
 
 import client.window.GUIConstants;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Camera {
+	private static final int TIME_FRAC = 25;
+	private static final float MIN_AMP = 0.0001f;
+	private static final float DECAY = 0.8f;
+
 	public float zoom, x, y, tilt;
+
+	private List<Screenshake> screenshakeList;
+
+	private class Screenshake {
+		private Screenshake(long startTime, float decay, float amp_x, float amp_y, float phase_x, float phase_y, float freq_x, float freq_y) {
+			this.startTime = startTime;
+			this.decay = decay;
+			this.amp_x = amp_x;
+			this.amp_y = amp_y;
+			this.phase_x = phase_x;
+			this.phase_y = phase_y;
+			this.freq_x = freq_x;
+			this.freq_y = freq_y;
+		}
+
+		long startTime;
+		float decay;
+		float amp_x, amp_y, phase_x, phase_y, freq_x, freq_y;
+	}
 
 	private float tx, ty;
 	private boolean z2 = false;
@@ -33,13 +59,15 @@ public class Camera {
 		tx = x;
 		ty = y;
 		ttilt = tilt;
+
+		screenshakeList = new LinkedList<>();
 	}
 
 	/**
 	 * Takes t-Values and put it to the inUse values
 	 */
 	public boolean update() {
-		boolean b5 = (zoom != tzoom) || (x != tx) || (y != ty) || z || z2 || z3 || (tilt != ttilt);
+		boolean b5 = (zoom != tzoom) || (x != tx) || (y != ty) || z || z2 || z3 || (tilt != ttilt) || !screenshakeList.isEmpty();
 		long time = System.currentTimeMillis() % 10000000;
 
 		if (z) {
@@ -71,11 +99,28 @@ public class Camera {
 			}
 		}
 
+		float sx = 0, sy = 0;
+		for (int i = 0; i < screenshakeList.size(); i++) {
+			Screenshake s = screenshakeList.get(i);
+			double d = Math.pow(s.decay, (time - s.startTime)/TIME_FRAC);
+			if (d * s.amp_x < MIN_AMP && d * s.amp_y < MIN_AMP) {
+				screenshakeList.remove(s);
+			} else {
+				sx += d * s.amp_x * Math.cos(s.freq_x * (time-s.startTime) / TIME_FRAC + s.phase_x);
+				sy += d * s.amp_y * Math.cos(s.freq_y * (time-s.startTime) / TIME_FRAC + s.phase_y);
+			}
+		}
+
+
 		zoom = tzoom;
-		x = tx;
-		y = ty;
+		x = tx + sx / zoom;
+		y = ty + sy / zoom;
 		tilt = ttilt;
 		return b5;
+	}
+
+	public void addScreenshake(float strength) {
+		screenshakeList.add(new Screenshake(System.currentTimeMillis() % 10000000, (float) DECAY, strength, strength, (float) (Math.random() * 2 * Math.PI), (float) (Math.random() * 2 * Math.PI), 1, 1));
 	}
 
 	public void zoomSmooth(float a2) {
