@@ -21,7 +21,6 @@ import networking.server.ServerListener;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class ServerMain implements ServerListener {
@@ -159,63 +158,56 @@ public class ServerMain implements ServerListener {
 	}
 
 	public void onReceiveGamePacket(Socket s, Packet p) {
+		if (!Anticheat.legalMove(p, game, players.get(s))) {
+			server.sendPacket(s, new PacketClientKicked("Hacker!"));
+			return;
+		}
+
 		if (p instanceof PacketUnitAttack) {
 			PacketUnitAttack packet = (PacketUnitAttack) p;
-
-			if (Anticheat.legalMove(p, game, s)) {
-				System.out.printf("%s attacked Unit at %d / %d with Unit at %d / %d\n", packet.getPlayer(), packet.getUnit().getX(), packet.getUnit().getY());
-
-				players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
-			} else {
-				server.sendPacket(s, new PacketClientKicked("Hacker!"));
+			Unit unit = game.getMap().getGameUnit(packet.getUnit());
+			Unit target = game.getMap().getGameUnit(packet.getTarget());
+			if (!packet.getDirections().isEmpty()) {
+				System.out.printf("moved Unit from %d / %d to %d / %d\n", packet.getUnit().getX(), packet.getUnit().getY(), packet.getTargetX(), packet.getTargetY());
+				unit.moveTo(packet.getTargetX(), packet.getTargetY());
 			}
+
+			System.out.printf("attacked Unit at %d / %d with Unit at %d / %d\n", packet.getTarget().getX(), packet.getTarget().getY(), packet.getUnit().getX(), packet.getUnit().getY());
+			game.getMap().attack(unit, target);
+			players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
 		}
 
 		if (p instanceof PacketUnitSpawn) {
 			PacketUnitSpawn packet = (PacketUnitSpawn) p;
 
-			if (Anticheat.legalMove(p, game, s)) {
-				System.out.printf("%s spawned Unit at %d / %d\n", packet.getPlayer(), packet.getUnit().getX(), packet.getUnit().getY());
-				game.getMap().spawnUnit(packet.getUnit());
-				players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
-			} else {
-				server.sendPacket(s, new PacketClientKicked("Hacker!"));
-			}
+			System.out.printf("spawned Unit at %d / %d\n", packet.getUnit().getX(), packet.getUnit().getY());
+			game.getMap().spawnUnit(packet.getUnit());
+			players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
 		}
 
 		if (p instanceof PacketUnitMoved) {
 			PacketUnitMoved packet = (PacketUnitMoved) p;
 
-			if (Anticheat.legalMove(p, game, s)) {
-				Optional<Unit> u = game.getMap().getUnitAt(packet.getUnit().getX(), packet.getUnit().getY());
+			Unit unit = game.getMap().getGameUnit(packet.getUnit());
+			System.out.printf("moved Unit from %d / %d to %d / %d\n", unit.getX(), unit.getY(), packet.getTargetX(), packet.getTargetY());
+			unit.moveTo(packet.getTargetX(), packet.getTargetY());
 
-				Unit unit = u.get();
-				System.out.printf("%s moved Unit from %d / %d to %d / %d\n", packet.getPlayer(), unit.getX(), unit.getY(), packet.getTargetX(), packet.getTargetY());
-				unit.moveTo(packet.getTargetX(), packet.getTargetY());
-
-				players.keySet().stream()
-						.forEach(s2 -> server.sendPacket(s2, packet));
-			} else {
-				server.sendPacket(s, new PacketClientKicked("Hacker!"));
-			}
+			players.keySet().stream()
+					.forEach(s2 -> server.sendPacket(s2, packet));
 		}
 
 		if (p instanceof PacketRoundFinished) {
 			PacketRoundFinished packet = (PacketRoundFinished) p;
 
-			if (Anticheat.legalMove(p, game, s)) {
-				System.out.printf("%s finished his round\n", packet.getPlayer());
-				game.nextPlayer();
-				players.keySet().stream()
-						.forEach(s2 -> server.sendPacket(s2, packet));
-			} else {
-				server.sendPacket(s, new PacketClientKicked("Hacker!"));
-			}
+			System.out.printf("finished his round\n");
+			game.nextPlayer();
+			players.keySet().stream()
+					.forEach(s2 -> server.sendPacket(s2, packet));
 		}
 	}
 
 	public void onReceivePacket(Socket s, Packet p) {
-		onReceiveGamePacket(s, p);
+		if (serverState == ServerState.INGAME && players.containsKey(s)) onReceiveGamePacket(s, p);
 
 		if (p instanceof PacketPlayerReady) {
 			PacketPlayerReady packet = (PacketPlayerReady) p;

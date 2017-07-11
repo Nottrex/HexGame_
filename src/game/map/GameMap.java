@@ -95,6 +95,10 @@ public class GameMap {
 		return units.stream().filter(u -> u.getX() == x && u.getY() == y).findAny();
 	}
 
+	public void killUnit(Unit unit) {
+		units = units.stream().filter(u -> !(u.getX() == unit.getX() && u.getY() == unit.getY() && u.getType() == unit.getType() && u.getPlayer() == unit.getPlayer())).collect(Collectors.toList());
+	}
+
 	/**
 	 *
 	 * @param player
@@ -122,6 +126,12 @@ public class GameMap {
 		return units;
 	}
 
+	public Unit getGameUnit(Unit unit) {
+		Optional<Unit> u = getUnitAt(unit.getX(), unit.getY());
+		if (u.isPresent()) return u.get();
+		return null;
+	}
+
 	public int getWidth() {
 		return width;
 	}
@@ -136,6 +146,11 @@ public class GameMap {
 
 	public int getMaxPlayers() {
 		return spawnPoints.size();
+	}
+
+	public void attack(Unit unit, Unit target) {
+		unit.setState(UnitState.INACTIVE);
+		killUnit(target);
 	}
 
 	public GameMap(String data) {
