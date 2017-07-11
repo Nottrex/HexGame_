@@ -24,6 +24,7 @@ public class OptionsOverlay extends Overlay{
             @Override
             public void onOptionsAccept() {
                 game.setOverlay(new ESC_Overlay(w, game));
+                game.getPlayer().updateVolume();
             }
 
             @Override

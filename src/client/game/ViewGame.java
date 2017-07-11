@@ -490,4 +490,8 @@ public class ViewGame extends View implements ClientListener {
 	public int getBottomHeigth() {
 		return bottom != null? bottom.getHeight(): 0;
 	}
+
+	public AudioPlayer getPlayer() {
+		return audioPlayer;
+	}
 }
