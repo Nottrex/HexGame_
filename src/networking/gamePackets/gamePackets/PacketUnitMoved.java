@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PacketUnitMoved implements Packet {
-	private String player;
 	private Unit unit;
 	private int targetX, targetY;
 	private List<Direction> directions;
 
-	public PacketUnitMoved(String player, Unit unit, int targetX, int targetY, List<Direction> directions) {
-		this.player = player;
+	public PacketUnitMoved(Unit unit, int targetX, int targetY, List<Direction> directions) {
 		this.unit = unit;
 		this.targetX = targetX;
 		this.targetY = targetY;
@@ -27,8 +25,6 @@ public class PacketUnitMoved implements Packet {
 
 	public PacketUnitMoved(byte[] data) {
 		PacketDecrypter pd = new PacketDecrypter(data);
-
-		player = pd.readString();
 
 		unit = PacketDecrypterUtil.getUnit(pd);
 
@@ -46,8 +42,6 @@ public class PacketUnitMoved implements Packet {
 	public byte[] getData() {
 		PacketBuilder pb = new PacketBuilder();
 
-		pb.addString(player);
-
 		PacketBuilderUtil.addUnit(pb, unit);
 
 		pb.addInt(targetX);
@@ -59,10 +53,6 @@ public class PacketUnitMoved implements Packet {
 		}
 
 		return pb.build();
-	}
-
-	public String getPlayer() {
-		return player;
 	}
 
 	public Unit getUnit() {

@@ -19,7 +19,7 @@ public class AnimationActionUnitMove extends AnimationAction {
 	public AnimationActionUnitMove(Game game, Unit unit, int targetX, int targetY, List<Direction> movements) {
 		super(game);
 
-		this.unit = unit;
+		this.unit = game.getMap().getGameUnit(unit);
 		this.targetX = targetX;
 		this.targetY = targetY;
 		this.movements = movements;
