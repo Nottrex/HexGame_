@@ -66,7 +66,7 @@ public class MouseInputListener extends MouseAdapter {
 		int x = e.getX();
 		int y = e.getY();
 		if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
-			game.onMouseClick(x - game.getCenter().getX(), y - game.getCenter().getY());
+			game.onMouseClick(e.getButton(),x - game.getCenter().getX(), y - game.getCenter().getY());
 		}
 	}
 
@@ -93,7 +93,7 @@ public class MouseInputListener extends MouseAdapter {
 				int x = e.getX();
 				int y = e.getY();
 				if (x >= game.getCenter().getX() && x < (game.getCenter().getX() + game.getCenter().getWidth()) && y >= game.getCenter().getY() && y < (game.getCenter().getY() + game.getCenter().getHeight())) {
-					game.onMouseClick(x - game.getCenter().getX(), y - game.getCenter().getY());
+					game.onMouseClick(e.getButton(),x - game.getCenter().getX(), y - game.getCenter().getY());
 				}
 			}
 

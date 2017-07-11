@@ -1,5 +1,7 @@
 package client.game;
 
+import client.game.overlay.ESC_Overlay;
+import client.game.overlay.Overlay;
 import client.window.KeyBindings;
 import client.audio.AudioHandler;
 import client.audio.AudioPlayer;
@@ -27,7 +29,6 @@ import game.util.PossibleActions;
 import client.i18n.LanguageHandler;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientKicked;
-import networking.gamePackets.gamePackets.PacketUnitSpawn;
 import networking.packets.Packet;
 import server.ServerMain;
 
@@ -67,6 +68,8 @@ public class ViewGame extends View implements ClientListener {
 	private boolean musicOn = true;
 
 	private int width, height;
+
+	private Overlay overlay;
 
 	public ViewGame(ServerMain server) {
 		this.server = server;
@@ -123,14 +126,7 @@ public class ViewGame extends View implements ClientListener {
 			}
 		});
 
-		center.add(button_audioOn);
-		center.add(button_musicOn);
-		center.add(button_centerCamera);
-		center.add(button_endTurn);
-		center.add(button_backToMainMenu);
-		center.add(button_nextUnit);
-		center.add(topBar);
-		center.add(fpsLabel);
+		unhideButtons();
 		center.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -173,6 +169,7 @@ public class ViewGame extends View implements ClientListener {
 			int heightDifference = height - window.getHeight();
 
 			if(widthDifference == 0 && heightDifference == 0) return;
+			if(overlay instanceof ESC_Overlay) ((ESC_Overlay) overlay).changeSize();
 
 			width = window.getWidth();
 			height = window.getHeight();
@@ -194,12 +191,15 @@ public class ViewGame extends View implements ClientListener {
 
 
 	private long lastClick;
-	public void onMouseClick(int x, int y) {
+	public void onMouseClick(int state, int x, int y) {
 		float[] point = center.screenPositionToWorldPosition(x, y);
 		if (System.currentTimeMillis() - lastClick < DOUBLEPRESSTIME) {
 			cam.setZoomSmooth(2.2f/20, GUIConstants.CAMERA_TIME);
 			cam.setPositionSmooth(point[0], point[1], GUIConstants.CAMERA_TIME);
 		}
+
+		setOverlay(null);
+
 		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
 		redrawInfoBar();
 		lastClick = System.currentTimeMillis();
@@ -209,6 +209,7 @@ public class ViewGame extends View implements ClientListener {
 		float[] zero = center.screenPositionToWorldPosition(x1, y1);
 		float[] one = center.screenPositionToWorldPosition(x2, y2);
 
+		setOverlay(null);
 		cam.setPosition(cam.getX() + (-one[0]+zero[0]), cam.getY() + (-one[1]+zero[1]));
 	}
 
@@ -293,6 +294,19 @@ public class ViewGame extends View implements ClientListener {
 			controller.spawnUnit(new Unit(controller.game.getPlayerColor(), UnitType.INFANTERIE, UnitState.INACTIVE, r.nextInt(50), r.nextInt(50)));
 		}
 
+		if(keyCode == KeyEvent.VK_ESCAPE) {
+			if(! (overlay instanceof ESC_Overlay)) {
+				hideButtons();
+				setOverlay(new ESC_Overlay(window, this));
+				changeSize();
+			}
+			else {
+				unhideButtons();
+				setOverlay(null);
+				changeSize();
+			}
+		}
+
 		controller.onKeyType(keyCode);
 	}
 
@@ -305,6 +319,7 @@ public class ViewGame extends View implements ClientListener {
 			a = 1 / GUIConstants.ZOOM;
 		}
 
+		setOverlay(null);
 		cam.zoomSmooth((float) a);
 	}
 
@@ -394,7 +409,6 @@ public class ViewGame extends View implements ClientListener {
 		center.removeKeyListener(keyListener);
 		if (audioPlayer != null) audioPlayer.stop();
 		controller.stopConnection();
-
 	}
 
 	private void loadResources() {
@@ -423,6 +437,14 @@ public class ViewGame extends View implements ClientListener {
 		AudioHandler.loadMusicWav("EP", "music/EP");
 	}
 
+	public void setOverlay(Overlay ov) {
+		if(overlay != null) center.remove(overlay);
+		this.overlay = ov;
+		if(ov != null) {
+			center.add(ov);
+		}
+	}
+
 
 	@Override
 	public void onReceivePacket(Packet p) {
@@ -438,5 +460,27 @@ public class ViewGame extends View implements ClientListener {
 			controller.stopConnection();
 			window.updateView(new ViewErrorScreen("Connection lost!"));
 		}
+	}
+
+	public void hideButtons() {
+		center.remove(button_audioOn);
+		center.remove(button_musicOn);
+		center.remove(button_centerCamera);
+		center.remove(button_endTurn);
+		center.remove(button_backToMainMenu);
+		center.remove(button_nextUnit);
+		center.remove(topBar);
+		center.remove(fpsLabel);
+	}
+
+	public void unhideButtons() {
+		center.add(button_audioOn);
+		center.add(button_musicOn);
+		center.add(button_centerCamera);
+		center.add(button_endTurn);
+		center.add(button_backToMainMenu);
+		center.add(button_nextUnit);
+		center.add(topBar);
+		center.add(fpsLabel);
 	}
 }
