@@ -18,7 +18,6 @@ public class OptionsOverlay extends Overlay {
 	public OptionsOverlay(Window window, ViewGame game) {
 		this.w = window;
 		this.game = game;
-		setBounds(0, 0, w.getPanel().getWidth(), w.getPanel().getHeight());
 
 		options = new OptionComponents(w, this, game.getCenter().getWidth(), game.getCenter().getHeight(), new OptionComponents.OptionFinishListener() {
 			@Override
@@ -56,7 +55,10 @@ public class OptionsOverlay extends Overlay {
 	}
 
 	public void changeSize() {
-		options.changeSize(w.getPanel().getWidth(), w.getPanel().getHeight() - game.getBottomHeigth());
+		int width = w.getPanel().getWidth();
+		int height = w.getPanel().getHeight() - game.getBottomHeigth();
+		setBounds(0, 0, width, height);
+		options.changeSize(width, height);
 	}
 
 }

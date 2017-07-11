@@ -63,7 +63,7 @@ public class ESC_Overlay extends Overlay {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.setColor(new Color(0, 0, 0, 100));
-		g.fillRect(0, 0, w.getPanel().getWidth(), w.getHeight());
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 	}
 
 	public void changeSize() {
