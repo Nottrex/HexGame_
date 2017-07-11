@@ -1,6 +1,7 @@
 package client.game;
 
 import client.game.overlay.ESC_Overlay;
+import client.game.overlay.OptionsOverlay;
 import client.game.overlay.Overlay;
 import client.window.KeyBindings;
 import client.audio.AudioHandler;
@@ -170,10 +171,12 @@ public class ViewGame extends View implements ClientListener {
 
 			if(widthDifference == 0 && heightDifference == 0) return;
 			if(overlay instanceof ESC_Overlay) ((ESC_Overlay) overlay).changeSize();
+			else if(overlay instanceof OptionsOverlay) ((OptionsOverlay) overlay).changeSize();
 
 			width = window.getWidth();
 			height = window.getHeight();
 	}
+
 	private boolean startCenterCamera = false;
 	private void centerCamera() {
 		GameMap m = controller.game.getMap();
@@ -198,7 +201,7 @@ public class ViewGame extends View implements ClientListener {
 			cam.setPositionSmooth(point[0], point[1], GUIConstants.CAMERA_TIME);
 		}
 
-		setOverlay(null);
+		if(overlay != null && overlay.destroyable()) setOverlay(null);
 
 		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
 		redrawInfoBar();
@@ -209,7 +212,7 @@ public class ViewGame extends View implements ClientListener {
 		float[] zero = center.screenPositionToWorldPosition(x1, y1);
 		float[] one = center.screenPositionToWorldPosition(x2, y2);
 
-		setOverlay(null);
+		if(overlay != null && overlay.destroyable()) setOverlay(null);
 		cam.setPosition(cam.getX() + (-one[0]+zero[0]), cam.getY() + (-one[1]+zero[1]));
 	}
 
@@ -319,7 +322,7 @@ public class ViewGame extends View implements ClientListener {
 			a = 1 / GUIConstants.ZOOM;
 		}
 
-		setOverlay(null);
+		if(overlay != null && overlay.destroyable()) setOverlay(null);
 		cam.zoomSmooth((float) a);
 	}
 
@@ -482,5 +485,9 @@ public class ViewGame extends View implements ClientListener {
 		center.add(button_nextUnit);
 		center.add(topBar);
 		center.add(fpsLabel);
+	}
+
+	public int getBottomHeigth() {
+		return bottom != null? bottom.getHeight(): 0;
 	}
 }

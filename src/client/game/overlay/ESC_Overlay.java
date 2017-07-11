@@ -11,24 +11,26 @@ import client.window.view.ViewOptions;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 public class ESC_Overlay extends  Overlay{
 
     private Window w;
+    private ViewGame game;
 
     private TextButton button_BackToGame;
     private TextButton button_ToOptions;
     private TextButton button_quit;
 
     public ESC_Overlay(Window w, ViewGame g) {
-
         this.w = w;
+        this.game = g;
         setBounds(0, 0, w.getPanel().getWidth(), w.getPanel().getHeight());
 
         button_BackToGame = new TextButton(w, LanguageHandler.get("Back"), e -> {g.setOverlay(null); g.unhideButtons();});
         this.add(button_BackToGame);
 
-        button_ToOptions = new TextButton(w, LanguageHandler.get("Options"), e -> {w.updateView(new ViewOptions(w, new DynamicBackground()));});
+        button_ToOptions = new TextButton(w, LanguageHandler.get("Options"), e -> {g.setOverlay(new OptionsOverlay(w, g));});
         this.add(button_ToOptions);
 
         button_quit = new TextButton(w, LanguageHandler.get("Back to Mainemnu"), e -> {w.updateView(new ViewMainMenu());});
@@ -40,6 +42,17 @@ public class ESC_Overlay extends  Overlay{
             public void mouseReleased(MouseEvent e) {
             }
         });
+
+        this.addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+            }
+        });
+    }
+
+    @Override
+    public boolean destroyable() {
+        return false;
     }
 
     @Override
@@ -53,7 +66,7 @@ public class ESC_Overlay extends  Overlay{
         if (button_ToOptions == null || button_BackToGame == null) return;
 
         int width = w.getPanel().getWidth();
-        int height = w.getPanel().getHeight();
+        int height = w.getPanel().getHeight() - game.getBottomHeigth();
 
         int buttonHeight = height/8;
         int buttonWidth = buttonHeight*5;
