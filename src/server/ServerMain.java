@@ -159,6 +159,7 @@ public class ServerMain implements ServerListener {
 		System.out.println("StartGame");
 
 		players.keySet().stream().forEach(s -> server.sendPacket(s, new PacketGameBegin(game)));
+		autoRoundFinished(game.getPlayerTurn(), game.getRound());
 	}
 
 	public void onReceiveGamePacket(Socket s, Packet p) {
@@ -203,10 +204,11 @@ public class ServerMain implements ServerListener {
 		if (p instanceof PacketRoundFinished) {
 			PacketRoundFinished packet = (PacketRoundFinished) p;
 
-			System.out.printf("finished his round\n");
+			System.out.printf(game.getPlayerTurn() + " finished his round\n");
 			game.nextPlayer();
 			players.keySet().stream()
 					.forEach(s2 -> server.sendPacket(s2, packet));
+			autoRoundFinished(game.getPlayerTurn(), game.getRound());
 		}
 	}
 
@@ -277,6 +279,24 @@ public class ServerMain implements ServerListener {
 			players.put(s, packet.getClientName());
 			playerJoined(packet.getClientName());
 		}
+	}
+
+	public void autoRoundFinished(String player, int round) {
+		new Thread (new Runnable(){
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(120000);
+				} catch (Exception e) {}
+				if (game.getRound() == round || game.getPlayerTurn().equals(player)) {
+					System.out.printf(game.getPlayerTurn() + " finished his round - time ran up\n");
+					game.nextPlayer();
+					players.keySet().stream()
+							.forEach(s2 -> server.sendPacket(s2, new PacketRoundFinished()));
+					autoRoundFinished(game.getPlayerTurn(), game.getRound());
+				}
+			}
+		}).start();
 	}
 
 	public Socket getPlayerSocket(String player) {

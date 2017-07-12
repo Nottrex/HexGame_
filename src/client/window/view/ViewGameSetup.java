@@ -1,5 +1,6 @@
 package client.window.view;
 
+import client.Options;
 import client.game.Controller;
 import client.game.ViewGame;
 import client.i18n.LanguageHandler;
@@ -33,10 +34,10 @@ public class ViewGameSetup extends View implements ClientListener {
 
 	private String displayInfo;
 	private TextLabel info;
-	private TextButton button_backToServerConnect, button_toggleReady, button_toggleColor;
+	private TextButton button_backToServerConnect, button_toggleReady, button_toggleColor, button_addPlayer;
 
 	private DynamicBackground background;
-	private boolean started = false;
+	private boolean started, isAddedLocal;
 
 	private ServerMain server;
 
@@ -49,6 +50,21 @@ public class ViewGameSetup extends View implements ClientListener {
 		this.background = background;
 		this.ready = new HashMap<>();
 		this.color = new HashMap<>();
+		this.started = false;
+		this.isAddedLocal = false;
+	}
+
+	public ViewGameSetup(String userName, String hostName, int port) {
+		this.server = null;
+		this.userName = userName;
+		this.hostName = hostName;
+		this.port = port;
+
+		this.background = new DynamicBackground();
+		this.ready = new HashMap<>();
+		this.color = new HashMap<>();
+		this.started = false;
+		this.isAddedLocal = true;
 	}
 
 	public ViewGameSetup(ServerMain server, DynamicBackground background, String userName, String hostName, int port) {
@@ -76,6 +92,7 @@ public class ViewGameSetup extends View implements ClientListener {
 		});
 		button_toggleReady = new TextButton(window, LanguageHandler.get("Toggle Ready"), e -> controller.sendPacket(new PacketPlayerReady(userName, !ready.get(userName))));
 		button_toggleColor = new TextButton(window, LanguageHandler.get("Toggle Color"), (e -> controller.sendPacket(new PacketPlayerPickColor(userName, PlayerColor.values()[(color.get(userName).ordinal() + 1) % PlayerColor.values().length]))));
+		button_addPlayer = new TextButton(window, LanguageHandler.get("Add Player"), (e -> addPlayer()));
 
 		info = new TextLabel(new TextLabel.Text() {
 			@Override
@@ -89,6 +106,7 @@ public class ViewGameSetup extends View implements ClientListener {
 		window.getPanel().add(button_backToServerConnect);
 		window.getPanel().add(button_toggleReady);
 		window.getPanel().add(button_toggleColor);
+		window.getPanel().add(button_addPlayer);
 
 		window.getPanel().add(info);
 
@@ -109,6 +127,17 @@ public class ViewGameSetup extends View implements ClientListener {
 
 	}
 
+	public void addPlayer() {
+		Options.load();
+		Window window = new Window();
+		long localID = System.currentTimeMillis()%100000000;
+		if (this.isAddedLocal) {
+			window.updateView(new ViewGameSetup(this.userName.substring(0, this.userName.length()-8) + localID, this.hostName, this.port));
+		} else {
+			window.updateView(new ViewGameSetup(this.userName + localID, this.hostName, this.port));
+		}
+	}
+
 	@Override
 	public void changeSize() {
 		int width = window.getPanel().getWidth();
@@ -121,6 +150,7 @@ public class ViewGameSetup extends View implements ClientListener {
 		button_backToServerConnect.setBounds((width - elementWidth / 2 - 5), (height - elementHeight / 2 - 5), elementWidth / 2, elementHeight / 2);
 		button_toggleReady.setBounds((width - elementWidth) / 2, (height - elementHeight) / 2, elementWidth, elementHeight);
 		button_toggleColor.setBounds((width - elementWidth) / 2, (height + 2 * elementHeight) / 2, elementWidth, elementHeight);
+		button_addPlayer.setBounds((width - elementWidth) / 2, (height + 5 * elementHeight) / 2, elementWidth, elementHeight);
 	}
 
 	/**
@@ -162,6 +192,7 @@ public class ViewGameSetup extends View implements ClientListener {
 	private void onAllPlayersReady() {
 		button_toggleReady.setEnabled(false);
 		button_toggleColor.setEnabled(false);
+		button_addPlayer.setEnabled(false);
 	}
 
 	@Override
