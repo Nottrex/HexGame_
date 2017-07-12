@@ -2,6 +2,7 @@ package client.game.overlay;
 
 import client.game.ViewGame;
 import client.i18n.LanguageHandler;
+import client.window.GUIConstants;
 import client.window.Window;
 import client.window.components.TextButton;
 import client.window.view.ViewMainMenu;
@@ -62,7 +63,7 @@ public class ESC_Overlay extends Overlay {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(new Color(0, 0, 0, 100));
+		g.setColor(GUIConstants.COLOR_OVERLAY_BACKGROUND);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 	}
 

@@ -5,6 +5,7 @@ import java.awt.*;
 public class GUIConstants {
 	public static final Color COLOR_GAME_BACKGROUND = new Color(135, 206, 235);
 	public static final Color COLOR_INFOBAR_BACKGROUND = Color.DARK_GRAY;
+	public static final Color COLOR_OVERLAY_BACKGROUND = new Color(0, 0, 0, 100);
 
 	public static final int MAXIMUM_DRAG_DISTANCE_FOR_CLICK = 10;
 
@@ -12,6 +13,8 @@ public class GUIConstants {
 	public static final double HEX_TILE_XY_RATIO = 1.4 / 1.2;
 	public static final double HEX_TILE_YY_RATIO = 1.05 / 1.4;
 	public static final double ZOOM = 1.1;
+
+	public static final float UNIT_SPAWN_RANGE = 0.075f;
 
 	public static final float MIN_TILT = -0.5f;
 	public static final float MAX_TILT = 0.5f;

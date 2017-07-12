@@ -9,7 +9,7 @@ public enum UnitType {
 	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true, 1, 1, 1, 1),
 	//FLUGABWEHR(),
 	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true, 1, 1, 1, 1),
-	KAVALERIE("Cavalry", 0.75, 4, 1, 2, false, false, false, 1, 1, 1, 1);
+	KAVALLERIE("Cavalry", 0.75, 4, 1, 2, false, false, false, 1, 1, 1, 1);
 	//PANZER_ARTILLERIE("Tank_Artillery", 0.75, 4, 4, 6, false, false, true);
 
 	private int movementDistance;

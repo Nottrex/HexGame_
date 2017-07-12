@@ -6,6 +6,7 @@ import client.game.gameView.GameView;
 import client.game.overlay.ESC_Overlay;
 import client.game.overlay.OptionsOverlay;
 import client.game.overlay.Overlay;
+import client.game.overlay.UnitSpawnOverlay;
 import client.i18n.LanguageHandler;
 import client.window.GUIConstants;
 import client.window.KeyBindings;
@@ -202,16 +203,25 @@ public class ViewGame extends View implements ClientListener {
 
 	public void onMouseClick(int state, int x, int y) {
 		float[] point = center.screenPositionToWorldPosition(x, y);
-		if (System.currentTimeMillis() - lastClick < DOUBLEPRESSTIME) {
-			cam.setZoomSmooth(2.2f / 20, GUIConstants.CAMERA_TIME);
-			cam.setPositionSmooth(point[0], point[1], GUIConstants.CAMERA_TIME);
-		}
 
 		if (overlay != null && overlay.destroyable()) setOverlay(null);
+		if (state == 3) {
+			if (cam.getZoom() > GUIConstants.UNIT_SPAWN_RANGE) {
+				Location b = center.getHexFieldPosition(point[0], point[1]);
 
-		controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
-		redrawInfoBar();
-		lastClick = System.currentTimeMillis();
+				if(controller.playersTurn() && !controller.game.getMap().getUnitAt(b.x, b.y). isPresent())setOverlay(new UnitSpawnOverlay(window, this, controller, x, y));
+				else cam.addScreenshake(0.005f);
+			}
+		} else {
+			if (System.currentTimeMillis() - lastClick < DOUBLEPRESSTIME) {
+				cam.setZoomSmooth(2.2f / 20, GUIConstants.CAMERA_TIME);
+				cam.setPositionSmooth(point[0], point[1], GUIConstants.CAMERA_TIME);
+			}
+
+			controller.onMouseClick(center.getHexFieldPosition(point[0], point[1]));
+			redrawInfoBar();
+			lastClick = System.currentTimeMillis();
+		}
 	}
 
 	public void onMouseDrag(int x1, int y1, int x2, int y2) {

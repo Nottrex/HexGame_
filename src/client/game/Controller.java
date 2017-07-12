@@ -243,6 +243,10 @@ public class Controller implements ClientListener {
 		if (viewPacketListener != null) viewPacketListener.onReceivePacket(p);
 	}
 
+	public boolean playersTurn() {
+		return userName.equals(game.getPlayerTurn());
+	}
+
 	@Override
 	public void onLeave() {
 		if (viewPacketListener != null) viewPacketListener.onLeave();

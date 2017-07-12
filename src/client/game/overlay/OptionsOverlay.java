@@ -1,6 +1,7 @@
 package client.game.overlay;
 
 import client.game.ViewGame;
+import client.window.GUIConstants;
 import client.window.OptionComponents;
 import client.window.Window;
 
@@ -50,7 +51,7 @@ public class OptionsOverlay extends Overlay {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(new Color(0, 0, 0, 100));
+		g.setColor(GUIConstants.COLOR_OVERLAY_BACKGROUND);
 		g.fillRect(0, 0, w.getPanel().getWidth(), w.getPanel().getHeight());
 	}
 
