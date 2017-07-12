@@ -66,24 +66,25 @@ public class UnitSpawnOverlay extends Overlay {
 			@Override
 			public void mouseExited(MouseEvent e) {
 				int x = e.getX(), y = e.getY();
-				if(x <= 0 || x >= 120 + 15 || y <= 0 || y >= 140 + 15) selType = null;
-				else if(x < 120/2 + 5 && y < 140/2 + 5) selType = UnitType.PANZER;
-				else if(x >= 120/2 + 5 && y < 140/2 + 5) selType = UnitType.ARTILLERIE;
-				else if(x < 120/2 + 5 && y >= 140/2 + 5) selType = UnitType.INFANTERIE;
-				else if(x >= 120/2 + 5 && y >= 140/2 + 5) selType = UnitType.KAVALLERIE;
+				if (x <= 0 || x >= 120 + 15 || y <= 0 || y >= 140 + 15) selType = null;
+				else if (x < 120 / 2 + 5 && y < 140 / 2 + 5) selType = UnitType.PANZER;
+				else if (x >= 120 / 2 + 5 && y < 140 / 2 + 5) selType = UnitType.ARTILLERIE;
+				else if (x < 120 / 2 + 5 && y >= 140 / 2 + 5) selType = UnitType.INFANTERIE;
+				else if (x >= 120 / 2 + 5 && y >= 140 / 2 + 5) selType = UnitType.KAVALLERIE;
 			}
 		});
 
 		this.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				int x = e.getX(); int y = e.getY();
-				if(x < 0 || x > 120 + 15 || y < 0 || y > 140 + 15) selType = null;
+				int x = e.getX();
+				int y = e.getY();
+				if (x < 0 || x > 120 + 15 || y < 0 || y > 140 + 15) selType = null;
 
-				else if(x < 120/2 + 5 && y < 140/2 + 5) selType = UnitType.PANZER;
-				else if(x >= 120/2 + 5 && y < 140/2 + 5) selType = UnitType.ARTILLERIE;
-				else if(x < 120/2 + 5 && y >= 140/2 + 5) selType = UnitType.INFANTERIE;
-				else if(x >= 120/2 + 5 && y >= 140/2 + 5) selType = UnitType.KAVALLERIE;
+				else if (x < 120 / 2 + 5 && y < 140 / 2 + 5) selType = UnitType.PANZER;
+				else if (x >= 120 / 2 + 5 && y < 140 / 2 + 5) selType = UnitType.ARTILLERIE;
+				else if (x < 120 / 2 + 5 && y >= 140 / 2 + 5) selType = UnitType.INFANTERIE;
+				else if (x >= 120 / 2 + 5 && y >= 140 / 2 + 5) selType = UnitType.KAVALLERIE;
 			}
 		});
 	}
@@ -93,7 +94,7 @@ public class UnitSpawnOverlay extends Overlay {
 		g.setColor(GUIConstants.COLOR_OVERLAY_BACKGROUND);
 		g.fillRect(0, 0, 120 + 15, getHeight());
 
-		if(selType != null) {
+		if (selType != null) {
 			g.fillRect(120 + 20, 0, 100, getHeight());
 			g.setColor(Color.BLACK);
 			g.drawString(LanguageHandler.get(selType.getDisplayName()), 120 + 20, 20);
