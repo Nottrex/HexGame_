@@ -35,19 +35,19 @@ public class UnitSpawnOverlay extends Overlay {
 		setBounds(x, y, 120 + 20 + 100, 140 + 15);
 		spawnTank = new ImageButton(w, TextureHandler.getImagePng("unit_" + c.game.getPlayerColor().toString().toLowerCase() + "_panzer"), e -> {
 			game.setOverlay(null);
-			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.PANZER, UnitState.INACTIVE, b.x, b.y));
+			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.PANZER, 1, UnitState.INACTIVE, b.x, b.y));
 		});
 		spawnArtillerie = new ImageButton(w, TextureHandler.getImagePng("unit_" + c.game.getPlayerColor().toString().toLowerCase() + "_artillerie"), e -> {
 			game.setOverlay(null);
-			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.ARTILLERIE, UnitState.INACTIVE, b.x, b.y));
+			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.ARTILLERIE, 1, UnitState.INACTIVE, b.x, b.y));
 		});
 		spawnKavallerie = new ImageButton(w, TextureHandler.getImagePng("unit_" + c.game.getPlayerColor().toString().toLowerCase() + "_kavallerie"), e -> {
 			game.setOverlay(null);
-			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.KAVALLERIE, UnitState.INACTIVE, b.x, b.y));
+			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.KAVALLERIE, 1, UnitState.INACTIVE, b.x, b.y));
 		});
 		spawnInfanterie = new ImageButton(w, TextureHandler.getImagePng("unit_" + c.game.getPlayerColor().toString().toLowerCase() + "_infanterie"), e -> {
 			game.setOverlay(null);
-			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.INFANTERIE, UnitState.INACTIVE, b.x, b.y));
+			c.spawnUnit(new Unit(c.game.getPlayerColor(), UnitType.INFANTERIE, 1, UnitState.INACTIVE, b.x, b.y));
 		});
 
 		this.add(spawnTank);

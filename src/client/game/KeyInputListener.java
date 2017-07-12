@@ -29,7 +29,7 @@ public class KeyInputListener extends KeyAdapter {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (!isPressed(e.getKeyCode())) {
-			game.onKeyType(e.getKeyCode());
+			new Thread(() -> game.onKeyType(e.getKeyCode())).start();
 		}
 
 		pressed.put(e.getKeyCode(), true);

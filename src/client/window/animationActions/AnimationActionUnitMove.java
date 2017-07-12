@@ -1,5 +1,6 @@
 package client.window.animationActions;
 
+import client.game.Camera;
 import game.Game;
 import game.Location;
 import game.Unit;
@@ -16,9 +17,10 @@ public class AnimationActionUnitMove extends AnimationAction {
 	private boolean finish = false;
 	private int z;
 	private double last = 0;
+	private double lastScreenshake = 0;
 
-	public AnimationActionUnitMove(Game game, Unit unit, int targetX, int targetY, List<Direction> movements) {
-		super(game);
+	public AnimationActionUnitMove(Game game, Camera camera, Unit unit, int targetX, int targetY, List<Direction> movements) {
+		super(game, camera);
 
 		this.unit = game.getMap().getGameUnit(unit);
 		this.targetX = targetX;
@@ -36,6 +38,11 @@ public class AnimationActionUnitMove extends AnimationAction {
 	@Override
 	public void update(long currentTime) {
 		double current = getDistance(currentTime);
+
+		while (currentTime - lastScreenshake > 50) {
+			camera.addScreenshake(0.0005f);
+			lastScreenshake += 50;
+		}
 
 		for (int i = (int) (last / TILE_TIME); i < (int) (current / TILE_TIME); i++) {
 			Location newField = movements.get(i).applyMovement(new Location(unit.getX(), unit.getY()));

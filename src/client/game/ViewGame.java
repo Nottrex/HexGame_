@@ -25,8 +25,6 @@ import game.Location;
 import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
-import game.enums.UnitState;
-import game.enums.UnitType;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -44,7 +42,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class ViewGame extends View implements ClientListener {
 	private static final long DOUBLEPRESSTIME = 250;
@@ -91,6 +88,7 @@ public class ViewGame extends View implements ClientListener {
 		controller.setViewPacketListener(this);
 
 		cam = new Camera();
+		controller.setCamera(cam);
 
 		loadResources();
 

@@ -153,6 +153,7 @@ public class GameMap {
 
 	public void attack(Unit unit, Unit target) {
 		unit.setState(UnitState.INACTIVE);
-		killUnit(target);
+		if (target.attackThisUnit(unit))
+			killUnit(target);
 	}
 }

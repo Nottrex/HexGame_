@@ -8,20 +8,23 @@ public class Unit {
 	private PlayerColor player;
 	private UnitType type;
 	private UnitState state;
+	private int stackSize;
 	private int x, y;
 
 	public Unit(PlayerColor player, UnitType type, int x, int y) {
 		this.player = player;
 		this.type = type;
 		this.state = UnitState.ACTIVE;
+		this.stackSize = 1;
 		this.x = x;
 		this.y = y;
 	}
 
-	public Unit(PlayerColor player, UnitType type, UnitState state, int x, int y) {
+	public Unit(PlayerColor player, UnitType type, int stackSize, UnitState state, int x, int y) {
 		this.player = player;
 		this.type = type;
 		this.state = state;
+		this.stackSize = stackSize;
 		this.x = x;
 		this.y = y;
 	}
@@ -30,6 +33,23 @@ public class Unit {
 		this.x = x;
 		this.y = y;
 		this.state = UnitState.MOVED;
+	}
+
+	public int getStackSize() {
+		return stackSize;
+	}
+
+	public void setStackSize(int stackSize) {
+		this.stackSize = stackSize;
+	}
+
+	public boolean attackThisUnit(Unit attacker) {
+		int damage = attacker.getStackSize() * (attacker.getType().getAttack() - this.getType().getDefence());
+		if (damage > 0) {
+			this.stackSize -= damage / this.getType().getHealth();
+			return stackSize <= 0;
+		}
+		return false;
 	}
 
 	public PlayerColor getPlayer() {

@@ -5,11 +5,11 @@ package game.enums;
  * Determines its stats
  */
 public enum UnitType {
-	PANZER("Tank", 0.75, 5, 2, 3, false, false, true, 1, 1, 1, 1),
-	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true, 1, 1, 1, 1),
+	PANZER("Tank", 0.75, 5, 2, 3, false, false, true, 1, 1, 2, 1),
+	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true, 1, 1, 2, 1),
 	//FLUGABWEHR(),
-	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true, 1, 1, 1, 1),
-	KAVALLERIE("Cavalry", 0.75, 4, 1, 2, false, false, false, 1, 1, 1, 1);
+	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true, 1, 1, 2, 1),
+	KAVALLERIE("Cavalry", 0.75, 4, 1, 2, false, false, false, 1, 1, 2, 1);
 	//PANZER_ARTILLERIE("Tank_Artillery", 0.75, 4, 4, 6, false, false, true);
 
 	private int movementDistance;
@@ -70,5 +70,21 @@ public enum UnitType {
 
 	public double getSize() {
 		return size;
+	}
+
+	public int getHealth() {
+		return health;
+	}
+
+	public int getDefence() {
+		return def;
+	}
+
+	public int getAttack() {
+		return att;
+	}
+
+	public int getMaxStackSize() {
+		return maxStackSize;
 	}
 }

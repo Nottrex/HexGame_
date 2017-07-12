@@ -1,12 +1,15 @@
 package client.window.animationActions;
 
+import client.game.Camera;
 import game.Game;
 
 public abstract class AnimationAction {
 	protected Game game;
+	protected Camera camera;
 
-	public AnimationAction(Game game) {
+	public AnimationAction(Game game, Camera camera) {
 		this.game = game;
+		this.camera = camera;
 	}
 
 	/**

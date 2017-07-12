@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class Controller implements ClientListener {
-
 	public Game game;
+	private Camera camera;
 	public Location selectedField = null;
 	public Location hoverField = null;
 	public PossibleActions pa = null;
@@ -36,6 +36,10 @@ public class Controller implements ClientListener {
 	private int waitForPacket = 0;
 	private List<AnimationAction> animationActions = new ArrayList<>();
 	private long animationActionStart;
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
 
 	/**
 	 * Disconnects from server
@@ -211,27 +215,27 @@ public class Controller implements ClientListener {
 		if (p instanceof PacketUnitAttack) {
 			PacketUnitAttack packet = (PacketUnitAttack) p;
 			if (!packet.getDirections().isEmpty())
-				addAnimationAction(new AnimationActionUnitMove(game, packet.getUnit(), packet.getTargetX(), packet.getTargetY(), packet.getDirections()));
-			addAnimationAction(new AnimationActionUnitAttack(game, packet.getUnit(), packet.getTarget()));
+				addAnimationAction(new AnimationActionUnitMove(game, camera, packet.getUnit(), packet.getTargetX(), packet.getTargetY(), packet.getDirections()));
+			addAnimationAction(new AnimationActionUnitAttack(game, camera, game.getMap().getGameUnit(packet.getUnit()), game.getMap().getGameUnit(packet.getTarget())));
 			waitForPacket--;
 		}
 
 
 		if (p instanceof PacketUnitSpawn) {
 			PacketUnitSpawn packet = (PacketUnitSpawn) p;
-			addAnimationAction(new AnimationActionUnitSpawn(game, packet.getUnit()));
+			addAnimationAction(new AnimationActionUnitSpawn(game, camera, packet.getUnit()));
 			waitForPacket--;
 		}
 
 		if (p instanceof PacketRoundFinished) {
 			PacketRoundFinished packet = (PacketRoundFinished) p;
-			addAnimationAction(new AnimationActionRoundFinish(game));
+			addAnimationAction(new AnimationActionRoundFinish(game, camera));
 			waitForPacket--;
 		}
 
 		if (p instanceof PacketUnitMoved) {
 			PacketUnitMoved packet = (PacketUnitMoved) p;
-			addAnimationAction(new AnimationActionUnitMove(game, packet.getUnit(), packet.getTargetX(), packet.getTargetY(), packet.getDirections()));
+			addAnimationAction(new AnimationActionUnitMove(game, camera, packet.getUnit(), packet.getTargetX(), packet.getTargetY(), packet.getDirections()));
 			waitForPacket--;
 		}
 

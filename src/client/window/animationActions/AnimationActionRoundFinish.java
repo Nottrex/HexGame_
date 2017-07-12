@@ -1,5 +1,6 @@
 package client.window.animationActions;
 
+import client.game.Camera;
 import game.Game;
 
 /*
@@ -7,8 +8,8 @@ import game.Game;
  */
 
 public class AnimationActionRoundFinish extends AnimationAction {
-	public AnimationActionRoundFinish(Game game) {
-		super(game);
+	public AnimationActionRoundFinish(Game game, Camera camera) {
+		super(game, camera);
 	}
 
 	@Override

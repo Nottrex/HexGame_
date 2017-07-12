@@ -11,6 +11,7 @@ public class PacketBuilderUtil {
 		pb.addByte((byte) unit.getType().ordinal());
 		pb.addInt(unit.getX());
 		pb.addInt(unit.getY());
+		pb.addInt(unit.getStackSize());
 	}
 
 
