@@ -288,7 +288,7 @@ public class ServerMain implements ServerListener {
 				try {
 					Thread.sleep(120000);
 				} catch (Exception e) {}
-				if (game.getRound() == round || game.getPlayerTurn().equals(player)) {
+				if (game.getRound() == round && game.getPlayerTurn().equals(player)) {
 					System.out.printf(game.getPlayerTurn() + " finished his round - time ran up\n");
 					game.nextPlayer();
 					players.keySet().stream()
