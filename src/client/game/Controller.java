@@ -35,7 +35,7 @@ public class Controller implements ClientListener {
 
 	private int waitForPacket = 0;
 	private List<AnimationAction> animationActions = new ArrayList<>();
-	private long animationActionStart;
+	private long animationActionStart, roundStartTime;
 
 	public void setCamera(Camera camera) {
 		this.camera = camera;
@@ -231,6 +231,7 @@ public class Controller implements ClientListener {
 			PacketRoundFinished packet = (PacketRoundFinished) p;
 			addAnimationAction(new AnimationActionRoundFinish(game, camera));
 			waitForPacket--;
+			this.roundStartTime = System.currentTimeMillis();
 		}
 
 		if (p instanceof PacketUnitMoved) {
@@ -242,6 +243,8 @@ public class Controller implements ClientListener {
 		if (p instanceof PacketGameBegin) {
 			PacketGameBegin packet = (PacketGameBegin) p;
 			game = packet.getGame();
+			this.roundStartTime = System.currentTimeMillis();
+
 		}
 
 		if (viewPacketListener != null) viewPacketListener.onReceivePacket(p);
@@ -249,6 +252,10 @@ public class Controller implements ClientListener {
 
 	public boolean playersTurn() {
 		return userName.equals(game.getPlayerTurn());
+	}
+
+	public String getTime() {
+		return "" + (int) (120-(System.currentTimeMillis() - this.roundStartTime)/1000);
 	}
 
 	@Override

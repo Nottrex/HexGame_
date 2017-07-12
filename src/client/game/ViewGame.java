@@ -63,7 +63,7 @@ public class ViewGame extends View implements ClientListener {
 	private ImageButton button_endTurn;
 	private ImageButton button_backToMainMenu;
 	private ImageButton button_nextUnit;
-	private ImageTextLabel topBar;
+	private ImageTextLabel topBar, timer;
 	private TextLabel fpsLabel;
 
 	private AudioPlayer audioPlayer;
@@ -135,6 +135,17 @@ public class ViewGame extends View implements ClientListener {
 						LanguageHandler.get(controller.game.getPlayerColor().getDisplayName()));
 			}
 		});
+		timer = new ImageTextLabel(new ImageTextLabel.ImageText() {
+			@Override
+			public BufferedImage getImage() {
+				return TextureHandler.getImagePng(controller.game == null ? "" : "bar_" + controller.game.getPlayerColor().toString().toLowerCase());
+			}
+
+			@Override
+			public String getText() {
+				return controller.getTime();
+			}
+		});
 
 		unhideButtons();
 		center.addComponentListener(new ComponentAdapter() {
@@ -152,6 +163,7 @@ public class ViewGame extends View implements ClientListener {
 				button_nextUnit.setBounds(width - buttonHeight * 4 - 5 * 4, 5, buttonHeight, buttonHeight);
 				button_backToMainMenu.setBounds(5, 5, buttonHeight, buttonHeight);
 				topBar.setBounds((width - (380 * barHeight) / 49) / 2, 5, (380 * barHeight) / 49, barHeight);
+				timer.setBounds((width - (380 * barHeight) / 49) / 2, 50, (380 * barHeight) / 49, barHeight);
 				fpsLabel.setBounds(10 + buttonHeight, 5, barHeight * 5, barHeight);
 
 				button_endTurn.setBounds(width - buttonHeight - 5, center.getHeight() - buttonHeight - 5, buttonHeight, buttonHeight);
@@ -486,6 +498,7 @@ public class ViewGame extends View implements ClientListener {
 		center.remove(button_nextUnit);
 		center.remove(topBar);
 		center.remove(fpsLabel);
+		center.remove(timer);
 	}
 
 	public void unhideButtons() {
@@ -497,6 +510,7 @@ public class ViewGame extends View implements ClientListener {
 		center.add(button_nextUnit);
 		center.add(topBar);
 		center.add(fpsLabel);
+		center.add(timer);
 	}
 
 	public int getBottomHeigth() {
