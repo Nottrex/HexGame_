@@ -298,11 +298,6 @@ public class ViewGame extends View implements ClientListener {
 			cam.setTiltSmooth(0, GUIConstants.CAMERA_TIME);
 		}
 
-		if (keyCode == KeyEvent.VK_1) {
-			Random r = new Random();
-			controller.spawnUnit(new Unit(controller.game.getPlayerColor(), UnitType.INFANTERIE, UnitState.INACTIVE, r.nextInt(50), r.nextInt(50)));
-		}
-
 		if (keyCode == KeyEvent.VK_ESCAPE) {
 			if (!(overlay instanceof ESC_Overlay)) {
 				hideButtons();
