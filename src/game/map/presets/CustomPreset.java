@@ -28,10 +28,10 @@ public class CustomPreset implements MapPreset {
 
 		br.nextLine();
 
-		for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
 			String line = br.nextLine();
-			for (int y = 0; y < height; y++) {
-				char character = line.charAt(y);
+			for (int x = 0; x < width; x++) {
+				char character = line.charAt(x);
 				if (character == '0') out[x][y] = Field.VOID;
 			}
 		}
@@ -45,7 +45,7 @@ public class CustomPreset implements MapPreset {
 		List<Location> locations = new ArrayList<>();
 
 		Scanner br = new Scanner(mapContent);
-		for (int i = 0; i < width + 1; i++) {
+		for (int i = 0; i < height + 1; i++) {
 			br.nextLine();
 		}
 
