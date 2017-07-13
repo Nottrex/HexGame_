@@ -80,7 +80,7 @@ public class ViewServerOptions extends View {
 			else if (mapType.equals(LanguageHandler.get("Oval"))) mp = new OvalPreset(widthValue, heightValue);
 			else if (mapType.equals(LanguageHandler.get("Square"))) mp = new SquarePreset(widthValue, heightValue);
 			else if (mapType.equals(LanguageHandler.get("Custom")))
-				mp = new CustomPreset(FileHandler.loadFile("maps/map.txt"));
+				mp = new CustomPreset(FileHandler.loadFile("maps/europe.txt"));
 			prev.setPreset(mp);
 			window.updateView(prev);
 		});
