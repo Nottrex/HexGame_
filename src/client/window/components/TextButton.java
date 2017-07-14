@@ -15,10 +15,17 @@ public class TextButton extends JComponent {
 	private String text;
 
 	private boolean entered = false;
+	private boolean drawEdge;
 
 	public TextButton(Window w, String text, ActionListener actionListener) {
+		this(w, text, true, actionListener);
+	}
+
+	public TextButton(Window w, String text, boolean drawEdge, ActionListener actionListener) {
 		this.text = text;
 		this.setPreferredSize(new Dimension(300, 50));
+
+		this.drawEdge = drawEdge;
 
 		this.addMouseListener(new MouseAdapter() {
 
@@ -42,7 +49,6 @@ public class TextButton extends JComponent {
 		});
 	}
 
-
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -63,7 +69,7 @@ public class TextButton extends JComponent {
 
 		g2.setStroke(new BasicStroke(GUIConstants.BUTTON_LINE_WIDTH));
 		g2.setColor(GUIConstants.BUTTON_COLOR);
-		g2.drawRoundRect(x, y, width, height, GUIConstants.CORNER_RADIUS, GUIConstants.CORNER_RADIUS);
+		if(drawEdge) g2.drawRoundRect(x, y, width, height, GUIConstants.CORNER_RADIUS, GUIConstants.CORNER_RADIUS);
 		g2.setStroke(new BasicStroke(1));
 
 		Font font = GUIConstants.FONT.deriveFont(height * 0.5f);
@@ -71,6 +77,10 @@ public class TextButton extends JComponent {
 
 		double fWidth = g2.getFontMetrics(font).getStringBounds(text, g).getWidth();
 		g2.drawString(text, (int) ((width - fWidth) / 2) + x, height * 3 / 4 + y);
+	}
+
+	public void setEdgeDrawing(boolean drawEdge) {
+		this.drawEdge = drawEdge;
 	}
 
 	/**

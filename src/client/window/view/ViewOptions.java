@@ -46,7 +46,7 @@ public class ViewOptions extends View {
 	public void init(Window window, Controller controller) {
 		started = true;
 
-		options = new OptionComponents(window, window.getPanel(), window.getWidth(), window.getHeight(), new OptionComponents.OptionFinishListener() {
+		options = new OptionComponents(window, window.getPanel(), window.getPanel().getWidth(), window.getPanel().getHeight(), new OptionComponents.OptionFinishListener() {
 			@Override
 			public void onOptionsAccept() {
 				window.updateView(previousView);
