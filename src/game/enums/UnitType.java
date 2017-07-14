@@ -5,7 +5,7 @@ package game.enums;
  * Determines its stats
  */
 public enum UnitType {
-	PANZER("Tank", 0.75, 5, 2, 3, false, false, true, 1, 1, 2, 1),
+	PANZER("Tank", 0.75, 5, 2, 3, false, false, true, 1, 1, 2, 5),
 	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true, 1, 1, 2, 1),
 	//FLUGABWEHR(),
 	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true, 1, 1, 2, 1),

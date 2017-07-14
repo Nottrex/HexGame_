@@ -1,0 +1,14 @@
+#version 130
+#define fac 4
+#define width 0.08
+
+in vec2 fragTex;
+
+uniform float health;
+uniform float time;
+
+out vec4 finalColor;
+
+void main() {
+    finalColor = mix(vec4(0, 0, 0, 1), mix(vec4(0.85,0.85,0.85,0.8), vec4(1-health, health, 0, 1), step(fragTex.x, (1+2*width)*health-width)), (1-step(0.98, fragTex.x)) * step(0.02, fragTex.x) * step(0.08, fragTex.y) * (1-step(0.92, fragTex.y)));
+}

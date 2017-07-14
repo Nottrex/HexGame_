@@ -15,7 +15,7 @@ public class PacketDecrypterUtil {
 		int x = pd.readInt();
 		int y = pd.readInt();
 		int stackSize = pd.readInt();
-
-		return new Unit(player, type, stackSize, state, x, y);
+		float health = pd.readFloat();
+		return new Unit(player, type, health, stackSize, state, x, y);
 	}
 }

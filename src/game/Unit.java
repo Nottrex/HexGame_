@@ -10,6 +10,7 @@ public class Unit {
 	private UnitState state;
 	private int stackSize;
 	private int x, y;
+	private float health;
 
 	public Unit(PlayerColor player, UnitType type, int x, int y) {
 		this.player = player;
@@ -18,6 +19,7 @@ public class Unit {
 		this.stackSize = 1;
 		this.x = x;
 		this.y = y;
+		this.health = type.getHealth();
 	}
 
 	public Unit(PlayerColor player, UnitType type, int stackSize, UnitState state, int x, int y) {
@@ -25,6 +27,17 @@ public class Unit {
 		this.type = type;
 		this.state = state;
 		this.stackSize = stackSize;
+		this.health = type.getHealth();
+		this.x = x;
+		this.y = y;
+	}
+
+	public Unit(PlayerColor player, UnitType type, float health, int stackSize, UnitState state, int x, int y) {
+		this.player = player;
+		this.type = type;
+		this.state = state;
+		this.stackSize = stackSize;
+		this.health = Math.min(health, type.getHealth());
 		this.x = x;
 		this.y = y;
 	}
@@ -44,10 +57,20 @@ public class Unit {
 	}
 
 	public boolean attackThisUnit(Unit attacker) {
-		int damage = attacker.getStackSize() * (attacker.getType().getAttack() - this.getType().getDefence());
-		if (damage > 0) {
-			this.stackSize -= damage / this.getType().getHealth();
-			return stackSize <= 0;
+		float damage = 1.0f * attacker.getStackSize() * attacker.getType().getAttack() / (this.getType().getDefence() * this.getStackSize());
+		while (damage > 0) {
+			if (stackSize <= 0) {
+				return true;
+			}
+
+			if (damage >= health) {
+				damage -= health;
+				health = type.getHealth();
+				stackSize--;
+			} else {
+				health -= damage;
+				damage = 0;
+			}
 		}
 		return false;
 	}
@@ -90,5 +113,9 @@ public class Unit {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public float getHealth() {
+		return health;
 	}
 }

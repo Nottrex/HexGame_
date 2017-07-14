@@ -12,6 +12,7 @@ public class PacketBuilderUtil {
 		pb.addInt(unit.getX());
 		pb.addInt(unit.getY());
 		pb.addInt(unit.getStackSize());
+		pb.addFloat(unit.getHealth());
 	}
 
 

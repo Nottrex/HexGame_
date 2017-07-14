@@ -2,10 +2,7 @@ package client.game.gameView;
 
 import client.game.Camera;
 import client.game.Controller;
-import client.game.gameView.shader.FieldShader;
-import client.game.gameView.shader.FieldmarkerShader;
-import client.game.gameView.shader.SquareShader;
-import client.game.gameView.shader.UnitShader;
+import client.game.gameView.shader.*;
 import client.window.GUIConstants;
 import client.window.TextureHandler;
 import client.window.animationActions.AnimationAction;
@@ -52,6 +49,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private FieldShader fieldShader;
 	private Texture fieldmarkerTexture;
 	private FieldmarkerShader fieldmarkerShader;
+	private HealthBarShader healthBarShader;
 	private Texture arrowTexture;
 	private SquareShader squareShader;
 	private Texture unitTexture;
@@ -173,6 +171,11 @@ public class GameView extends GLJPanel implements GLEventListener {
 		img = TextureHandler.getImagePng("unit");
 		unitShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
 		unitShader.stop(gl);
+
+		healthBarShader = new HealthBarShader(gl);
+
+		healthBarShader.start(gl);
+		healthBarShader.stop(gl);
 
 		textureInit(gl);
 
@@ -326,11 +329,17 @@ public class GameView extends GLJPanel implements GLEventListener {
 		GL2 gl = drawable.getGL().getGL2();
 
 		fieldShader.cleanUp(gl);
+		healthBarShader.cleanUp(gl);
+		fieldmarkerShader.cleanUp(gl);
+		squareShader.cleanUp(gl);
+		unitShader.cleanUp(gl);
 	}
 
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+		long time = (System.currentTimeMillis() % 100000000);
 
 		controller.updateAnimationActions();
 		AnimationAction currentAnimation = controller.getAnimationAction();
@@ -338,7 +347,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldTexture.bind(gl);
 		fieldShader.start(gl);
-		fieldShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
+		fieldShader.setTime(gl, (float) time);
 
 		gl.glBindVertexArray(vao.get(0));
 		gl.glDrawElements(GL.GL_TRIANGLES, length * 18, GL.GL_UNSIGNED_INT, 0);
@@ -350,7 +359,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldmarkerTexture.bind(gl);
 		fieldmarkerShader.start(gl);
-		fieldmarkerShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
+		fieldmarkerShader.setTime(gl, (float) time);
 
 		Location selectedField = controller.selectedField;
 		if (selectedField != null) {
@@ -401,7 +410,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 				if (pa != null) {
 					arrowTexture.bind(gl);
 					squareShader.start(gl);
-					squareShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
+					squareShader.setTime(gl, (float) time);
 
 					if (pa.canAttack().contains(mouseLocation)) {
 						java.util.List<Direction> movements = pa.moveToToAttack(mouseLocation);
@@ -432,25 +441,12 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		unitTexture.bind(gl);
 		unitShader.start(gl);
-		unitShader.setTime(gl, (float) (System.currentTimeMillis() % 1000000));
+		unitShader.setTime(gl, (float) time);
 		for (Unit unit : map.getUnits()) {
 			UnitType ut = unit.getType();
-			double w = ut.getSize();
-			double h = w * GUIConstants.UNIT_XY_RATIO;
 
-			double py = -((unit.getY()) * (GUIConstants.HEX_TILE_YY_RATIO) * GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO - h) / 2);
-			double px = unit.getX() - unit.getY() / 2.0 + (1 - w) / 2;
-
-			if (currentAnimation != null && currentAnimation instanceof AnimationActionUnitMove) {
-				AnimationActionUnitMove animation = (AnimationActionUnitMove) currentAnimation;
-
-				if (animation.getUnit() == unit) {
-					py = -((unit.getY() + animation.getCurrentDirection().getYMovement() * animation.interpolation()) * (GUIConstants.HEX_TILE_YY_RATIO) * GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO - h) / 2);
-					px = (unit.getX() + animation.getCurrentDirection().getXMovement() * animation.interpolation()) - (unit.getY() + animation.getCurrentDirection().getYMovement() * animation.interpolation()) / 2.0 + (1 - w) / 2;
-				}
-			}
-
-			unitShader.setBounds(gl, (float) px, (float) py, (float) w, (float) h);
+			double[] pos = getUnitPosition(unit, currentAnimation);
+			unitShader.setBounds(gl, (float) pos[0], (float) pos[1], (float) pos[2], (float) pos[3]);
 			Rectangle rec = TextureHandler.getSpriteSheetBounds("unit_" + unit.getPlayer().toString().toLowerCase() + "_" + ut.toString().toLowerCase());
 			unitShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
 
@@ -459,7 +455,37 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		unitShader.stop(gl);
 
+		healthBarShader.start(gl);
+		healthBarShader.setTime(gl, (float) time);
+		for (Unit unit : map.getUnits()) {
+			double[] pos = getUnitPosition(unit, currentAnimation);
+
+			healthBarShader.setBounds(gl, (float) pos[0] + (float) pos[2] / 6f, (float) pos[1] + (float) pos[3] / 5, (float) pos[2] / 1.5f, (float) pos[3] / 6);
+			healthBarShader.setHealth(gl, unit.getHealth() / unit.getType().getHealth());
+			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+		}
+		healthBarShader.stop(gl);
+
 		gl.glFlush();
+	}
+
+	private double[] getUnitPosition(Unit unit, AnimationAction currentAnimation) {
+		UnitType ut = unit.getType();
+		double w = ut.getSize();
+		double h = w * GUIConstants.UNIT_XY_RATIO;
+
+		double py = -((unit.getY()) * (GUIConstants.HEX_TILE_YY_RATIO) * GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO - h) / 2);
+		double px = unit.getX() - unit.getY() / 2.0 + (1 - w) / 2;
+
+		if (currentAnimation != null && currentAnimation instanceof AnimationActionUnitMove) {
+			AnimationActionUnitMove animation = (AnimationActionUnitMove) currentAnimation;
+
+			if (animation.getUnit() == unit) {
+				py = -((unit.getY() + animation.getCurrentDirection().getYMovement() * animation.interpolation()) * (GUIConstants.HEX_TILE_YY_RATIO) * GUIConstants.HEX_TILE_XY_RATIO - (GUIConstants.HEX_TILE_XY_RATIO - h) / 2);
+				px = (unit.getX() + animation.getCurrentDirection().getXMovement() * animation.interpolation()) - (unit.getY() + animation.getCurrentDirection().getYMovement() * animation.interpolation()) / 2.0 + (1 - w) / 2;
+			}
+		}
+		return new double[]{px, py, w, h};
 	}
 
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -486,6 +512,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 		unitShader.start(gl);
 		unitShader.setProjectionMatrix(gl, projectionMatrix);
 		unitShader.stop(gl);
+
+		healthBarShader.start(gl);
+		healthBarShader.setProjectionMatrix(gl, projectionMatrix);
+		healthBarShader.stop(gl);
 
 		textureInit(gl);
 		gl.glViewport(x, y, width, height);
@@ -525,6 +555,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 			unitShader.start(gl);
 			unitShader.setCamera(gl, viewMatrix);
 			unitShader.stop(gl);
+
+			healthBarShader.start(gl);
+			healthBarShader.setCamera(gl, viewMatrix);
+			healthBarShader.stop(gl);
 		}
 	}
 
