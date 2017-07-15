@@ -6,6 +6,7 @@ import game.Game;
 import game.Location;
 import game.Unit;
 import game.enums.Direction;
+import game.enums.PlayerColor;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -205,8 +206,17 @@ public class Controller implements ClientListener {
 	}
 
 	public void spawnUnit(Unit unit) {
-		this.sendPacket(new PacketUnitSpawn(unit));
-		waitForPacket++;
+		if (game.getPlayerMoney(getPlayerColor()) < unit.getType().getCost()) {
+			camera.addScreenshake(0.01f);
+		} else if (!userName.equals(game.getPlayerTurn())) {
+			camera.addScreenshake(0.01f);
+		} else if (!game.getMap().getFieldAt(unit.getX(), unit.getY()).isAccessible()) {
+			camera.addScreenshake(0.01f);
+		} else {
+			this.sendPacket(new PacketUnitSpawn(unit));
+			waitForPacket++;
+			game.editPlayerMoney(getPlayerColor(), -unit.getType().getCost());
+		}
 	}
 
 	@Override
@@ -250,12 +260,16 @@ public class Controller implements ClientListener {
 		if (viewPacketListener != null) viewPacketListener.onReceivePacket(p);
 	}
 
+	public PlayerColor getPlayerColor() {
+		return game.getPlayers().get(userName);
+	}
+
 	public boolean playersTurn() {
 		return userName.equals(game.getPlayerTurn());
 	}
 
 	public String getTime() {
-		return "" + (int) (120-(System.currentTimeMillis() - this.roundStartTime)/1000);
+		return "" + (int) (120 - (System.currentTimeMillis() - this.roundStartTime) / 1000);
 	}
 
 	@Override

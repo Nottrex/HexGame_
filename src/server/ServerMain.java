@@ -154,7 +154,6 @@ public class ServerMain implements ServerListener {
 		}
 
 		game = new Game(new MapGenerator(preset), playerColor);
-		game.nextRound();
 
 		System.out.println("StartGame");
 
@@ -184,10 +183,10 @@ public class ServerMain implements ServerListener {
 
 		if (p instanceof PacketUnitSpawn) {
 			PacketUnitSpawn packet = (PacketUnitSpawn) p;
-
 			System.out.printf("spawned Unit at %d / %d\n", packet.getUnit().getX(), packet.getUnit().getY());
 			game.getMap().spawnUnit(packet.getUnit());
 			players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
+			game.editPlayerMoney(playerColor.get(players.get(s)), -packet.getUnit().getType().getCost());
 		}
 
 		if (p instanceof PacketUnitMoved) {
@@ -282,12 +281,13 @@ public class ServerMain implements ServerListener {
 	}
 
 	public void autoRoundFinished(String player, int round) {
-		new Thread (new Runnable(){
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					Thread.sleep(120000);
-				} catch (Exception e) {}
+				} catch (Exception e) {
+				}
 				if (game.getRound() == round && game.getPlayerTurn().equals(player)) {
 					System.out.printf(game.getPlayerTurn() + " finished his round - time ran up\n");
 					game.nextPlayer();

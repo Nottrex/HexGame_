@@ -18,6 +18,8 @@ public class Anticheat {
 			if (game.getMap().getUnitAt(packet.getUnit().getX(), packet.getUnit().getY()).isPresent()) return false;
 			if (!game.getMap().getFieldAt(packet.getUnit().getX(), packet.getUnit().getY()).isAccessible())
 				return false;
+			if (game.getPlayerMoney(game.getPlayers().get(player)) < packet.getUnit().getType().getCost()) return false;
+			if (!player.equals(game.getPlayerTurn())) return false;
 		}
 
 		if (p instanceof PacketUnitMoved) {

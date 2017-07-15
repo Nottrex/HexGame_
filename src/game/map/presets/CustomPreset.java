@@ -32,7 +32,8 @@ public class CustomPreset implements MapPreset {
 			String line = br.nextLine();
 			for (int x = 0; x < width; x++) {
 				char character = line.charAt(x);
-				if (character == '0') out[x][y] = Field.VOID;
+				if (character == '0') out[x][y] = Field.WATER;
+				if (character == '1') out[x][y] = Field.GRASS;
 			}
 		}
 		br.close();

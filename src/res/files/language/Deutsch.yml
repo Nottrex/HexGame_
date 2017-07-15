@@ -46,3 +46,9 @@ Add Player: Spieler hinzufügen
 Key: Steuerung
 Audio: Laustärke
 Graphics: Graphik
+Health: Leben
+Attack: Angriff
+Defence: Verteidigung
+Attack Range: Angriffsreichweite
+Movement Range: Bewegungsreichweite
+Stack Size: Stapelgröße

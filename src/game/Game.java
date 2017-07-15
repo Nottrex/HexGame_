@@ -5,6 +5,7 @@ import game.enums.UnitState;
 import game.map.GameMap;
 import game.map.MapGenerator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Game {
@@ -13,6 +14,7 @@ public class Game {
 	private GameMap map;
 	private int playerAmount;
 	private Map<String, PlayerColor> players;
+	private Map<PlayerColor, Integer> money;
 
 	private int round;
 	private int playerTurn;
@@ -28,12 +30,22 @@ public class Game {
 		this.map = map;
 		playerAmount = players.keySet().size();
 		this.players = players;
+		this.round = 1;
+		this.money = new HashMap<>();
+		for (PlayerColor p : players.values()) {
+			money.put(p, 500);
+		}
 	}
 
 	public Game(MapGenerator generator, Map<String, PlayerColor> players) {
 		this.map = new GameMap(generator);
 		this.players = players;
 		playerAmount = players.keySet().size();
+		this.round = 1;
+		this.money = new HashMap<>();
+		for (PlayerColor p : players.values()) {
+			money.put(p, 500);
+		}
 	}
 
 	public Game(String data) {
@@ -43,6 +55,9 @@ public class Game {
 	public void nextRound() {
 		round++;
 		playerTurn = 0;
+		for (PlayerColor p : players.values()) {
+			money.put(p, money.get(p) + 100);
+		}
 	}
 
 	public void nextPlayer() {
@@ -82,6 +97,14 @@ public class Game {
 
 	public int getPlayerTurnID() {
 		return playerTurn + 1;
+	}
+
+	public int getPlayerMoney(PlayerColor color) {
+		return money.get(color);
+	}
+
+	public void editPlayerMoney(PlayerColor color, int newMoney) {
+		money.put(color, money.get(color) + newMoney);
 	}
 
 	public String save() {

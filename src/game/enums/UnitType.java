@@ -5,11 +5,11 @@ package game.enums;
  * Determines its stats
  */
 public enum UnitType {
-	PANZER("Tank", 0.75, 5, 2, 3, false, false, true, 1, 1, 2, 5),
-	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true, 1, 1, 2, 1),
+	PANZER("Tank", 0.75, 5, 2, 3, false, false, true, 1, 1, 2, 5, 200),
+	ARTILLERIE("Artillery", 0.75, 2, 6, 8, false, false, true, 1, 1, 2, 1, 150),
 	//FLUGABWEHR(),
-	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true, 1, 1, 2, 1),
-	KAVALLERIE("Cavalry", 0.75, 4, 1, 2, false, false, false, 1, 1, 2, 1);
+	INFANTERIE("Infantry", 0.75, 3, 1, 1, false, true, true, 1, 1, 2, 1, 50),
+	KAVALLERIE("Cavalry", 0.75, 4, 1, 2, false, false, false, 1, 1, 2, 1, 150);
 	//PANZER_ARTILLERIE("Tank_Artillery", 0.75, 4, 4, 6, false, false, true);
 
 	private int movementDistance;
@@ -22,8 +22,9 @@ public enum UnitType {
 
 	private int maxStackSize;
 	private int health, att, def;
+	private int cost;
 
-	UnitType(String displayName, double size, int movementDistance, int minAttackDistance, int maxAttackDistance, boolean flying, boolean swimming, boolean walking, int stackSize, int hp, int att, int def) {
+	UnitType(String displayName, double size, int movementDistance, int minAttackDistance, int maxAttackDistance, boolean flying, boolean swimming, boolean walking, int stackSize, int hp, int att, int def, int cost) {
 		this.movementDistance = movementDistance;
 		this.displayName = displayName;
 		this.size = size;
@@ -38,6 +39,7 @@ public enum UnitType {
 		this.health = hp;
 		this.att = att;
 		this.def = def;
+		this.cost = cost;
 	}
 
 	public boolean isWalking() {
@@ -86,5 +88,9 @@ public enum UnitType {
 
 	public int getMaxStackSize() {
 		return maxStackSize;
+	}
+
+	public int getCost() {
+		return cost;
 	}
 }

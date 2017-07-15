@@ -95,9 +95,18 @@ public class UnitSpawnOverlay extends Overlay {
 		g.fillRect(0, 0, 120 + 15, getHeight());
 
 		if (selType != null) {
-			g.fillRect(120 + 20, 0, 100, getHeight());
-			g.setColor(Color.BLACK);
-			g.drawString(LanguageHandler.get(selType.getDisplayName()), 120 + 20, 20);
+			g.fillRect(120 + 20, 0, 130, getHeight());
+			g.setColor(Color.WHITE);
+			int spacing = 17;
+			g.drawString(LanguageHandler.get(selType.getDisplayName()), 120 + 20, spacing);
+			g.drawString(LanguageHandler.get("Attack") + ": " + selType.getAttack(), 120 + 20, 2 * spacing);
+			g.drawString(LanguageHandler.get("Defence") + ": " + selType.getDefence(), 120 + 20, 3 * spacing);
+			g.drawString(LanguageHandler.get("Health") + ": " + selType.getHealth(), 120 + 20, 4 * spacing);
+			g.drawString(LanguageHandler.get("Costs") + ": " + selType.getCost(), 120 + 20, 5 * spacing);
+			g.drawString(LanguageHandler.get("Attack Range") + ": " + selType.getMinAttackDistance() + " - " + selType.getMaxAttackDistance(), 120 + 20, 6 * spacing);
+			g.drawString(LanguageHandler.get("Movement Range") + ": " + selType.getMovementDistance(), 120 + 20, 7 * spacing);
+			g.drawString(LanguageHandler.get("Stack Size") + ": " + selType.getMaxStackSize(), 120 + 20, 8 * spacing);
+
 		}
 	}
 

@@ -143,7 +143,7 @@ public class ViewGame extends View implements ClientListener {
 
 			@Override
 			public String getText() {
-				return controller.getTime();
+				return controller.getTime() + " " + controller.game.getPlayerMoney(controller.getPlayerColor());
 			}
 		});
 
@@ -219,7 +219,8 @@ public class ViewGame extends View implements ClientListener {
 			if (cam.getZoom() > GUIConstants.UNIT_SPAWN_RANGE) {
 				Location b = center.getHexFieldPosition(point[0], point[1]);
 
-				if(controller.playersTurn() && !controller.game.getMap().getUnitAt(b.x, b.y). isPresent())setOverlay(new UnitSpawnOverlay(window, this, controller, x, y));
+				if (controller.playersTurn() && !controller.game.getMap().getUnitAt(b.x, b.y).isPresent())
+					setOverlay(new UnitSpawnOverlay(window, this, controller, x, y));
 				else cam.addScreenshake(0.005f);
 			}
 		} else {

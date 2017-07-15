@@ -31,7 +31,7 @@ public class MapGenerator {
 		float max = -1;
 		for (int x = 0; x < heightMap.length; x++) {
 			for (int y = 0; y < heightMap[0].length; y++) {
-				if (presetMap[x][y] == Field.VOID) continue;
+				if (presetMap[x][y] != null) continue;
 				float d = distance(new Location(x, y), new Location(presetMap.length / 2, presetMap[0].length / 2));
 				if (d > max) max = d;
 			}
@@ -39,7 +39,7 @@ public class MapGenerator {
 		float highest = -1;
 		for (int x = 0; x < heightMap.length; x++) {
 			for (int y = 0; y < heightMap[0].length; y++) {
-				if (presetMap[x][y] == Field.VOID) continue;
+				if (presetMap[x][y] != null) continue;
 				float r = raise(x, y, presetMap.length, presetMap[0].length, max);
 
 				heightMap[x][y] *= r;
@@ -56,8 +56,8 @@ public class MapGenerator {
 
 		for (int x = 0; x < out.length; x++) {
 			for (int y = 0; y < out[0].length; y++) {
-				if (presetMap[x][y] == Field.VOID) {
-					out[x][y] = Field.VOID;
+				if (presetMap[x][y] != null) {
+					out[x][y] = presetMap[x][y];
 					continue;
 				}
 
