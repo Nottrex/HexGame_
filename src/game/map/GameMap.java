@@ -1,16 +1,12 @@
 package game.map;
 
+import game.Game;
 import game.Location;
 import game.Unit;
-import game.enums.Field;
-import game.enums.PlayerColor;
-import game.enums.UnitState;
-import game.enums.UnitType;
+import game.enums.*;
+import game.util.MapUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameMap {
@@ -19,6 +15,8 @@ public class GameMap {
 	private int width, height;
 	private List<Unit> units;
 	private List<Location> spawnPoints;
+
+	private Game game;
 
 	// Server sided use
 	public GameMap(MapGenerator gm) {
@@ -59,8 +57,13 @@ public class GameMap {
 
 	}
 
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
 	public void spawnUnit(Unit unit) {
 		units.add(unit);
+		updateVisibility();
 	}
 
 	public Field getFieldAt(Location l) {
@@ -102,6 +105,7 @@ public class GameMap {
 
 	public void killUnit(Unit unit) {
 		units = units.stream().filter(u -> !(u.getX() == unit.getX() && u.getY() == unit.getY() && u.getType() == unit.getType() && u.getPlayer() == unit.getPlayer())).collect(Collectors.toList());
+		updateVisibility();
 	}
 
 	/**
@@ -112,6 +116,11 @@ public class GameMap {
 		return units.stream()
 				.filter(u -> u.getPlayer() == player)
 				.collect(Collectors.toList());
+	}
+
+	public void moveUnit(Unit unit, int targetX, int targetY) {
+		unit.moveTo(targetX, targetY);
+		updateVisibility();
 	}
 
 	/**
@@ -147,8 +156,68 @@ public class GameMap {
 		return spawnPoints;
 	}
 
+	public Location getSpawnPoint(int player) {
+		return spawnPoints.get(player);
+	}
+
 	public int getMaxPlayers() {
 		return spawnPoints.size();
+	}
+
+	public boolean hasVisibilityUpdate(PlayerColor playerColor) {
+		return !(lastVisibility.containsKey(playerColor) && visibilityChange.containsKey(playerColor) && !visibilityChange.get(playerColor));
+	}
+
+	private Map<PlayerColor, Visibility[][]> lastVisibility = new HashMap<>();
+	private Map<PlayerColor, Boolean> visibilityChange = new HashMap<>();
+
+	public Visibility[][] getVisibilityMap(PlayerColor playerColor) {
+		Visibility[][] visibilities;
+		if (lastVisibility.containsKey(playerColor)) {
+			visibilities = lastVisibility.get(playerColor);
+
+			if (visibilityChange.containsKey(playerColor) && !visibilityChange.get(playerColor)) return visibilities;
+
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					if (visibilities[x][y] == Visibility.VISIBLE) visibilities[x][y] = Visibility.PARTIALLY_VISIBLE;
+				}
+			}
+		} else {
+			visibilities = new Visibility[width][height];
+
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					visibilities[x][y] = Visibility.HIDDEN;
+				}
+			}
+		}
+
+		int playerID = game.getPlayerID(playerColor) - 1;
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				for (int i = 0; i < units.size(); i++) {
+					Unit u = units.get(i);
+
+					if (u.getPlayer() == playerColor) {
+						if (MapUtil.getDistance(x, y, u.getX(), u.getY()) < u.getType().getViewDistance() || getSpawnPoint(playerID).distanceTo(new Location(x, y)) < 5) {
+							visibilities[x][y] = Visibility.VISIBLE;
+						}
+					}
+				}
+			}
+		}
+
+		visibilityChange.put(playerColor, false);
+		lastVisibility.put(playerColor, visibilities);
+		return visibilities;
+	}
+
+	private void updateVisibility() {
+		for (PlayerColor pc : game.getPlayers().values()) {
+			visibilityChange.put(pc, true);
+		}
 	}
 
 	public void attack(Unit unit, Unit target) {

@@ -20,6 +20,7 @@ import game.Unit;
 import game.enums.Direction;
 import game.enums.Field;
 import game.enums.UnitType;
+import game.enums.Visibility;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -301,6 +302,56 @@ public class GameView extends GLJPanel implements GLEventListener {
 		gl.glBindVertexArray(vao2.get(0));
 	}
 
+	private void updateMap(GL2 gl, GameMap map, Visibility[][] visibilities) {
+		float[] texLocations = new float[length * 2 * vertexPos.length];
+		byte[] fieldData = new byte[length * vertexPos.length];
+
+
+		BufferedImage img = TextureHandler.getImagePng("field");
+		float tw = img.getWidth();
+		float th = img.getHeight();
+
+		int a = 0;
+		for (int x = 0; x < map.getWidth(); x++) {
+			for (int y = 0; y < map.getHeight(); y++) {
+				if (map.getFieldAt(x, y).isAccessible()) {
+					Field f = map.getFieldAt(x, y);
+					Rectangle rec = TextureHandler.getSpriteSheetBounds("field_" + f.toString().toLowerCase() + "_" + map.getDiversityAt(x, y));
+
+					for (int i = 0; i < vertexPos.length; i++) {
+						texLocations[a * vertexPos.length * 2 + 2 * i] = (rec.x + vertexPos[i][0] * rec.width) / tw;
+						texLocations[a * vertexPos.length * 2 + 2 * i + 1] = 1 - (rec.y + (1 - vertexPos[i][1]) * rec.height) / th;
+
+						fieldData[a * vertexPos.length + i] = (byte) ((visibilities[x][y] == Visibility.PARTIALLY_VISIBLE ? 1 : 0) | (visibilities[x][y] == Visibility.HIDDEN ? 2 : 0) | (0 << 2));
+					}
+					a++;
+				}
+			}
+		}
+
+		FloatBuffer texLocationBuffer = FloatBuffer.wrap(texLocations);
+		ByteBuffer fieldDataBuffer = ByteBuffer.wrap(fieldData);
+
+
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 4 * length * 7 * 2, texLocationBuffer, GL2.GL_STATIC_DRAW);
+
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(2));
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, 1 * length * 7, fieldDataBuffer, GL2.GL_STATIC_DRAW);
+
+		gl.glBindVertexArray(vao.get(0));
+
+		gl.glEnableVertexAttribArray(fieldShader.getTexLocationLocation());
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(1));
+		gl.glVertexAttribPointer(fieldShader.getTexLocationLocation(), 2, GL.GL_FLOAT, false, 0, 0);
+
+		gl.glEnableVertexAttribArray(fieldShader.getFieldDataLocation());
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, buffers.get(2));
+		gl.glVertexAttribPointer(fieldShader.getFieldDataLocation(), 1, GL.GL_BYTE, false, 0, 0);
+
+		gl.glBindVertexArray(vao2.get(0));
+	}
+
 	private void textureInit(GL2 gl) {
 		gl.glActiveTexture(GL2.GL_TEXTURE0);
 
@@ -345,6 +396,11 @@ public class GameView extends GLJPanel implements GLEventListener {
 		AnimationAction currentAnimation = controller.getAnimationAction();
 		updateCamera(gl, cam);
 
+		GameMap map = controller.game.getMap();
+		if (map.hasVisibilityUpdate(controller.getPlayerColor())) {
+			updateMap(gl, map, map.getVisibilityMap(controller.getPlayerColor()));
+		}
+
 		fieldTexture.bind(gl);
 		fieldShader.start(gl);
 		fieldShader.setTime(gl, (float) time);
@@ -355,7 +411,6 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldShader.stop(gl);
 
 
-		GameMap map = controller.game.getMap();
 
 		fieldmarkerTexture.bind(gl);
 		fieldmarkerShader.start(gl);

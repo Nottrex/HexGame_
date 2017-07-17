@@ -87,7 +87,7 @@ public class AnimationActionUnitMove extends AnimationAction {
 
 	@Override
 	public void finish() {
-		unit.moveTo(targetX, targetY);
+		game.getMap().moveUnit(unit, targetX, targetY);
 		finish = true;
 	}
 }

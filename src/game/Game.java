@@ -28,6 +28,7 @@ public class Game {
 
 	public Game(GameMap map, Map<String, PlayerColor> players) {
 		this.map = map;
+		map.setGame(this);
 		playerAmount = players.keySet().size();
 		this.players = players;
 		this.round = 1;
@@ -39,6 +40,7 @@ public class Game {
 
 	public Game(MapGenerator generator, Map<String, PlayerColor> players) {
 		this.map = new GameMap(generator);
+		map.setGame(this);
 		this.players = players;
 		playerAmount = players.keySet().size();
 		this.round = 1;
@@ -97,6 +99,23 @@ public class Game {
 
 	public int getPlayerTurnID() {
 		return playerTurn + 1;
+	}
+
+	public int getPlayerID(PlayerColor pc) {
+		for (String player : players.keySet()) {
+			if (players.get(player) == pc) return getPlayerID(player);
+		}
+		return -1;
+	}
+
+	public int getPlayerID(String player) {
+		Object[] pl = players.keySet().toArray();
+		for (int i = 0; i < pl.length; i++) {
+			if (pl[i].equals(player)) {
+				return i + 1;
+			}
+		}
+		return -1;
 	}
 
 	public int getPlayerMoney(PlayerColor color) {
