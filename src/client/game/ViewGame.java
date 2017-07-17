@@ -25,6 +25,7 @@ import game.Location;
 import game.Unit;
 import game.enums.Field;
 import game.enums.PlayerColor;
+import game.enums.Visibility;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -374,17 +375,17 @@ public class ViewGame extends View implements ClientListener {
 		if (mouseLocation != null) {
 			Field f = m.getFieldAt(mouseLocation);
 
-			if (f != Field.VOID) {
+			if (f != Field.VOID && m.getVisibilityMap(controller.getPlayerColor())[mouseLocation.x][mouseLocation.y] != Visibility.HIDDEN) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(mouseLocation)), lx + 5, 10, (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 90, null);
 				g.drawString(LanguageHandler.get("Costs") + ": " + f.getMovementCost(), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 60);
-			}
 
-			g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 20);
-			g.drawString(LanguageHandler.get(f.getDisplayName()), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 40);
+				g.drawString(String.format("x: %d    y: %d", mouseLocation.x, mouseLocation.y), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 20);
+				g.drawString(LanguageHandler.get(f.getDisplayName()), lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 40);
+			}
 
 			Optional<Unit> unit = m.getUnitAt(mouseLocation);
 
-			if (unit.isPresent()) {
+			if (unit.isPresent() && m.getVisibilityMap(controller.getPlayerColor())[mouseLocation.x][mouseLocation.y] == Visibility.VISIBLE) {
 				Unit u = unit.get();
 
 				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), lx + 800 / 4 + 5, 20, (int) (u.getType().getSize() * 90), (int) (u.getType().getSize() * 90 * GUIConstants.UNIT_XY_RATIO), null);
@@ -399,17 +400,17 @@ public class ViewGame extends View implements ClientListener {
 		if (controller.selectedField != null) {
 			Field f = m.getFieldAt(controller.selectedField);
 
-			if (f != Field.VOID) {
+			if (f != Field.VOID && m.getVisibilityMap(controller.getPlayerColor())[controller.selectedField.x][controller.selectedField.y] != Visibility.HIDDEN) {
 				g.drawImage(TextureHandler.getImagePng("field_" + f.toString().toLowerCase() + "_" + m.getDiversityAt(controller.selectedField)), 400 + lx + 5, 10, (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 90, null);
 				g.drawString(LanguageHandler.get("Costs") + ": " + +f.getMovementCost(), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 60);
-			}
 
-			g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 20);
-			g.drawString(LanguageHandler.get(f.getDisplayName()), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 40);
+				g.drawString(String.format("x: %d    y: %d", controller.selectedField.x, controller.selectedField.y), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 20);
+				g.drawString(LanguageHandler.get(f.getDisplayName()), 400 + lx + 10 + (int) (90 / GUIConstants.HEX_TILE_XY_RATIO), 40);
+			}
 
 			Optional<Unit> unit = m.getUnitAt(controller.selectedField);
 
-			if (unit.isPresent()) {
+			if (unit.isPresent() && m.getVisibilityMap(controller.getPlayerColor())[controller.selectedField.x][controller.selectedField.y] == Visibility.VISIBLE) {
 				Unit u = unit.get();
 
 				g.drawImage(TextureHandler.getImagePng("unit_" + u.getPlayer().toString().toLowerCase() + "_" + u.getType().toString().toLowerCase()), 400 + lx + 800 / 4 + 5, 20, (int) (u.getType().getSize() * 90), (int) (u.getType().getSize() * 90 * GUIConstants.UNIT_XY_RATIO), null);

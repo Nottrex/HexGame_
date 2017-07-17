@@ -411,13 +411,12 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldShader.stop(gl);
 
 
-
 		fieldmarkerTexture.bind(gl);
 		fieldmarkerShader.start(gl);
 		fieldmarkerShader.setTime(gl, (float) time);
 
 		Location selectedField = controller.selectedField;
-		if (selectedField != null) {
+		if (selectedField != null && (map.getVisibilityMap(controller.getPlayerColor())[selectedField.x][selectedField.y]) == Visibility.VISIBLE) {
 			fieldmarkerShader.setLocation(gl, selectedField.x, selectedField.y);
 			Rectangle rec = TextureHandler.getSpriteSheetBounds("fieldmarker_normalYellow");
 			fieldmarkerShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
@@ -456,7 +455,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 
 		fieldmarkerShader.stop(gl);
 
-		if (selectedField != null && mouseLocation != null) {
+		if (selectedField != null && mouseLocation != null && (map.getVisibilityMap(controller.getPlayerColor())[selectedField.x][selectedField.y]) == Visibility.VISIBLE) {
 			Optional<Unit> u = map.getUnitAt(selectedField);
 
 			if (u.isPresent()) {
@@ -498,14 +497,16 @@ public class GameView extends GLJPanel implements GLEventListener {
 		unitShader.start(gl);
 		unitShader.setTime(gl, (float) time);
 		for (Unit unit : map.getUnits()) {
-			UnitType ut = unit.getType();
+			if (map.getVisibilityMap(controller.getPlayerColor())[unit.getX()][unit.getY()] == Visibility.VISIBLE) {
+				UnitType ut = unit.getType();
 
-			double[] pos = getUnitPosition(unit, currentAnimation);
-			unitShader.setBounds(gl, (float) pos[0], (float) pos[1], (float) pos[2], (float) pos[3]);
-			Rectangle rec = TextureHandler.getSpriteSheetBounds("unit_" + unit.getPlayer().toString().toLowerCase() + "_" + ut.toString().toLowerCase());
-			unitShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+				double[] pos = getUnitPosition(unit, currentAnimation);
+				unitShader.setBounds(gl, (float) pos[0], (float) pos[1], (float) pos[2], (float) pos[3]);
+				Rectangle rec = TextureHandler.getSpriteSheetBounds("unit_" + unit.getPlayer().toString().toLowerCase() + "_" + ut.toString().toLowerCase());
+				unitShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
 
-			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+				gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+			}
 		}
 
 		unitShader.stop(gl);
@@ -513,11 +514,13 @@ public class GameView extends GLJPanel implements GLEventListener {
 		healthBarShader.start(gl);
 		healthBarShader.setTime(gl, (float) time);
 		for (Unit unit : map.getUnits()) {
-			double[] pos = getUnitPosition(unit, currentAnimation);
+			if (map.getVisibilityMap(controller.getPlayerColor())[unit.getX()][unit.getY()] == Visibility.VISIBLE) {
+				double[] pos = getUnitPosition(unit, currentAnimation);
 
-			healthBarShader.setBounds(gl, (float) pos[0] + (float) pos[2] / 6f, (float) pos[1] + (float) pos[3] / 5, (float) pos[2] / 1.5f, (float) pos[3] / 6);
-			healthBarShader.setHealth(gl, unit.getHealth() / unit.getType().getHealth());
-			gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+				healthBarShader.setBounds(gl, (float) pos[0] + (float) pos[2] / 6f, (float) pos[1] + (float) pos[3] / 5, (float) pos[2] / 1.5f, (float) pos[3] / 6);
+				healthBarShader.setHealth(gl, unit.getHealth() / unit.getType().getHealth());
+				gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+			}
 		}
 		healthBarShader.stop(gl);
 
