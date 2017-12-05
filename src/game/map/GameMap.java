@@ -41,9 +41,14 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 15, 15));
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 20, 15));
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 5, 15));
+
+		buildings = new ArrayList<>();
+		buildings.add(new Building(1, 2, BuildingType.BASE, PlayerColor.BLUE));
+		buildings.add(new Building(2, 3, BuildingType.BASE, PlayerColor.RED));
 	}
 
-	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap, List<Location> spawnPoints) {
+	//Client sided use
+	public GameMap(Field[][] map, List<Unit> units, List<Building> buildings, int[][] diversityMap, List<Location> spawnPoints) {
 		this.map = map;
 		this.width = map.length;
 		this.height = (width > 0) ? map[0].length : 0;
@@ -51,11 +56,9 @@ public class GameMap {
 		this.diversityMap = diversityMap;
 
 		this.units = units;
+		this.buildings = buildings;
 
 		this.spawnPoints = spawnPoints;
-
-		buildings = new ArrayList<>();
-		buildings.add(new Building(2, 2, BuildingType.BASE, PlayerColor.BLUE));
 	}
 
 	public GameMap(String data) {}

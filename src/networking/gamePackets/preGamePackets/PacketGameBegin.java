@@ -1,5 +1,6 @@
 package networking.gamePackets.preGamePackets;
 
+import game.Building;
 import game.Game;
 import game.Location;
 import game.Unit;
@@ -61,7 +62,13 @@ public class PacketGameBegin implements Packet {
 			units.add(PacketDecrypterUtil.getUnit(pd));
 		}
 
-		GameMap map = new GameMap(fieldArray, units, divMap, spawnPoints);
+		int buildingAmount = pd.readInt();
+		List<Building> buildings = new ArrayList<>();
+		for (int i = 0; i < buildingAmount; i++) {
+			buildings.add(PacketDecrypterUtil.getBuilding(pd));
+		}
+
+		GameMap map = new GameMap(fieldArray, units, buildings, divMap, spawnPoints);
 
 		game = new Game(map, players, round, playerTurnID);
 	}
@@ -102,6 +109,11 @@ public class PacketGameBegin implements Packet {
 		pb.addInt(map.getUnits().size());
 		for (Unit u : map.getUnits()) {
 			PacketBuilderUtil.addUnit(pb, u);
+		}
+
+		pb.addInt(map.getBuildings().size());
+		for (Building b: map.getBuildings()) {
+			PacketBuilderUtil.addBuilding(pb, b);
 		}
 
 		return pb.build();

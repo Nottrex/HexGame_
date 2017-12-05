@@ -1,6 +1,8 @@
 package networking.gamePackets.util;
 
+import game.Building;
 import game.Unit;
+import game.enums.BuildingType;
 import game.enums.PlayerColor;
 import game.enums.UnitState;
 import game.enums.UnitType;
@@ -17,5 +19,14 @@ public class PacketDecrypterUtil {
 		int stackSize = pd.readInt();
 		float health = pd.readFloat();
 		return new Unit(player, type, health, stackSize, state, x, y);
+	}
+
+	public static Building getBuilding(PacketDecrypter pd) {
+		PlayerColor player = PlayerColor.values()[pd.readByte()];
+		BuildingType type = BuildingType.values()[pd.readByte()];
+		int x = pd.readInt();
+		int y = pd.readInt();
+
+		return new Building(x, y, type, player);
 	}
 }
