@@ -17,12 +17,10 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import game.Location;
 import game.Unit;
-import game.enums.Direction;
-import game.enums.Field;
-import game.enums.UnitType;
-import game.enums.Visibility;
+import game.enums.*;
 import game.map.GameMap;
 import game.util.ActionUtil;
+import game.Building;
 import game.util.PossibleActions;
 
 import javax.imageio.ImageIO;
@@ -53,8 +51,8 @@ public class GameView extends GLJPanel implements GLEventListener {
 	private HealthBarShader healthBarShader;
 	private Texture arrowTexture;
 	private SquareShader squareShader;
-	private Texture unitTexture;
-	private UnitShader unitShader;
+	private Texture unitTexture, buildingTexture;
+	private UnitShader unitShader, buildingShader;
 	private float[] projectionMatrix;
 	private float[] viewMatrix = null;
 	private float[] cameraPosition = null;
@@ -165,16 +163,20 @@ public class GameView extends GLJPanel implements GLEventListener {
 		squareShader.stop(gl);
 
 		unitShader = new UnitShader(gl);
-
-
 		unitShader.start(gl);
 		unitShader.setTexture(gl, 0);
 		img = TextureHandler.getImagePng("unit");
 		unitShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
 		unitShader.stop(gl);
 
-		healthBarShader = new HealthBarShader(gl);
+		buildingShader = new UnitShader(gl);
+		buildingShader.start(gl);
+		buildingShader.setTexture(gl, 0);
+		img = TextureHandler.getImagePng("building");
+		buildingShader.setTextureTotalBounds(gl, img.getWidth(), img.getHeight());
+		buildingShader.stop(gl);
 
+		healthBarShader = new HealthBarShader(gl);
 		healthBarShader.start(gl);
 		healthBarShader.stop(gl);
 
@@ -374,6 +376,11 @@ public class GameView extends GLJPanel implements GLEventListener {
 		unitTexture.bind(gl);
 		unitTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
 		unitTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+
+		buildingTexture = TextureIO.newTexture(gl, toTexture(this.getGLProfile(), TextureHandler.getImagePng("building")));
+		buildingTexture.bind(gl);
+		buildingTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+		buildingTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
 	}
 
 	public void dispose(GLAutoDrawable drawable) {
@@ -384,6 +391,7 @@ public class GameView extends GLJPanel implements GLEventListener {
 		fieldmarkerShader.cleanUp(gl);
 		squareShader.cleanUp(gl);
 		unitShader.cleanUp(gl);
+		buildingShader.cleanUp(gl);
 	}
 
 	public void display(GLAutoDrawable drawable) {
@@ -508,8 +516,25 @@ public class GameView extends GLJPanel implements GLEventListener {
 				gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
 			}
 		}
-
 		unitShader.stop(gl);
+
+		buildingTexture.bind(gl);
+		buildingShader.start(gl);
+		buildingShader.setTime(gl, (float) time);
+		for (Building building : map.getBuildings()) {
+			if (map.getVisibilityMap(controller.getPlayerColor())[building.getX()][building.getY()] == Visibility.VISIBLE) {
+				BuildingType bt =  building.getType();
+
+				double[] pos = getUnitPosition(new Unit(PlayerColor.RED, UnitType.ARTILLERIE, building.getX(), building.getY()), currentAnimation);
+				buildingShader.setBounds(gl, (float) pos[0], (float) pos[1], (float) pos[2], (float) pos[3]);
+				Rectangle rec = TextureHandler.getSpriteSheetBounds("building_" + building.getPlayer().toString().toLowerCase() + "_" + bt.toString().toLowerCase());
+				buildingShader.setTextureSheetBounds(gl, rec.x, rec.y, rec.width, rec.height);
+
+				gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
+			}
+		}
+		buildingShader.stop(gl);
+
 
 		healthBarShader.start(gl);
 		healthBarShader.setTime(gl, (float) time);
@@ -571,6 +596,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 		unitShader.setProjectionMatrix(gl, projectionMatrix);
 		unitShader.stop(gl);
 
+		buildingShader.start(gl);
+		buildingShader.setProjectionMatrix(gl, projectionMatrix);
+		buildingShader.stop(gl);
+
 		healthBarShader.start(gl);
 		healthBarShader.setProjectionMatrix(gl, projectionMatrix);
 		healthBarShader.stop(gl);
@@ -613,6 +642,10 @@ public class GameView extends GLJPanel implements GLEventListener {
 			unitShader.start(gl);
 			unitShader.setCamera(gl, viewMatrix);
 			unitShader.stop(gl);
+
+			buildingShader.start(gl);
+			buildingShader.setCamera(gl, viewMatrix);
+			buildingShader.stop(gl);
 
 			healthBarShader.start(gl);
 			healthBarShader.setCamera(gl, viewMatrix);

@@ -445,6 +445,7 @@ public class ViewGame extends View implements ClientListener {
 		TextureHandler.loadImagePngSpriteSheet("fieldmarker", "fieldmarker/fieldmarker");
 		TextureHandler.loadImagePngSpriteSheet("arrow", "arrow/arrow");
 		TextureHandler.loadImagePngSpriteSheet("unit", "units/units");
+		TextureHandler.loadImagePngSpriteSheet("building", "buildings/buildings");
 
 		for (PlayerColor pc : PlayerColor.values()) {
 			TextureHandler.loadImagePng("bar_" + pc.toString().toLowerCase(), "ui/bar/bar_" + pc.toString().toLowerCase());

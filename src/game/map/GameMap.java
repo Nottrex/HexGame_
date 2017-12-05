@@ -4,6 +4,7 @@ import game.Game;
 import game.Location;
 import game.Unit;
 import game.enums.*;
+import game.Building;
 import game.util.MapUtil;
 
 import java.util.*;
@@ -14,6 +15,7 @@ public class GameMap {
 	private int[][] diversityMap;
 	private int width, height;
 	private List<Unit> units;
+	private List<Building> buildings;
 	private List<Location> spawnPoints;
 
 	private Game game;
@@ -37,8 +39,8 @@ public class GameMap {
 		units = new ArrayList<>();
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 20, 20));
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 15, 15));
-		units.add(new Unit(PlayerColor.RED, UnitType.PANZER, 20, 15));
-		units.add(new Unit(PlayerColor.RED, UnitType.PANZER, 5, 15));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 20, 15));
+		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 5, 15));
 	}
 
 	public GameMap(Field[][] map, List<Unit> units, int[][] diversityMap, List<Location> spawnPoints) {
@@ -51,11 +53,12 @@ public class GameMap {
 		this.units = units;
 
 		this.spawnPoints = spawnPoints;
+
+		buildings = new ArrayList<>();
+		buildings.add(new Building(2, 2, BuildingType.BASE, PlayerColor.BLUE));
 	}
 
-	public GameMap(String data) {
-
-	}
+	public GameMap(String data) {}
 
 	public void setGame(Game game) {
 		this.game = game;
@@ -138,6 +141,10 @@ public class GameMap {
 		return units;
 	}
 
+	public List<Building> getBuildings() {
+		return buildings;
+	}
+
 	public Unit getGameUnit(Unit unit) {
 		Optional<Unit> u = getUnitAt(unit.getX(), unit.getY());
 		if (u.isPresent()) return u.get();
@@ -197,11 +204,16 @@ public class GameMap {
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				for (int i = 0; i < units.size(); i++) {
-					Unit u = units.get(i);
-
+				for (Unit u : units) {
 					if (u.getPlayer() == playerColor) {
 						if (MapUtil.getDistance(x, y, u.getX(), u.getY()) < u.getType().getViewDistance() || getSpawnPoint(playerID).distanceTo(new Location(x, y)) < 5) {
+							visibilities[x][y] = Visibility.VISIBLE;
+						}
+					}
+				}
+				for (Building b : buildings) {
+					if (b.getPlayer() == playerColor) {
+						if (MapUtil.getDistance(x, y, b.getX(), b.getY()) < b.getType().getViewDistance()) {
 							visibilities[x][y] = Visibility.VISIBLE;
 						}
 					}
