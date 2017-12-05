@@ -2,6 +2,7 @@ package client.game;
 
 import client.window.KeyBindings;
 import client.window.animationActions.*;
+import game.Building;
 import game.Game;
 import game.Location;
 import game.Unit;
@@ -13,10 +14,7 @@ import game.util.PossibleActions;
 import networking.client.Client;
 import networking.client.ClientListener;
 import networking.gamePackets.clientPackets.PacketClientInfo;
-import networking.gamePackets.gamePackets.PacketRoundFinished;
-import networking.gamePackets.gamePackets.PacketUnitAttack;
-import networking.gamePackets.gamePackets.PacketUnitMoved;
-import networking.gamePackets.gamePackets.PacketUnitSpawn;
+import networking.gamePackets.gamePackets.*;
 import networking.gamePackets.preGamePackets.PacketGameBegin;
 import networking.packets.Packet;
 
@@ -219,6 +217,17 @@ public class Controller implements ClientListener {
 		}
 	}
 
+	public void spawnBuilding(Building building) {
+		if (!userName.equals(game.getPlayerTurn())) {
+			camera.addScreenshake(0.01f);
+		} else if (!game.getMap().getFieldAt(building.getX(), building.getY()).isAccessible()) {
+			camera.addScreenshake(0.01f);
+		} else {
+			this.sendPacket(new PacketBuildingSpawn(building));
+			waitForPacket++;
+		}
+	}
+
 	@Override
 	public void onReceivePacket(Packet p) {
 
@@ -234,6 +243,12 @@ public class Controller implements ClientListener {
 		if (p instanceof PacketUnitSpawn) {
 			PacketUnitSpawn packet = (PacketUnitSpawn) p;
 			addAnimationAction(new AnimationActionUnitSpawn(game, camera, packet.getUnit()));
+			waitForPacket--;
+		}
+
+		if (p instanceof PacketBuildingSpawn) {
+			PacketBuildingSpawn packet = (PacketBuildingSpawn) p;
+			addAnimationAction(new AnimationActionBuildingSpawn(game, camera, packet.getBuilding()));
 			waitForPacket--;
 		}
 

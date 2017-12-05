@@ -2,10 +2,7 @@ package networking.packets;
 
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
-import networking.gamePackets.gamePackets.PacketRoundFinished;
-import networking.gamePackets.gamePackets.PacketUnitAttack;
-import networking.gamePackets.gamePackets.PacketUnitMoved;
-import networking.gamePackets.gamePackets.PacketUnitSpawn;
+import networking.gamePackets.gamePackets.*;
 import networking.gamePackets.preGamePackets.*;
 
 public class PacketHandler {
@@ -31,6 +28,7 @@ public class PacketHandler {
 		addPacket(PacketRoundFinished.class);
 		addPacket(PacketUnitSpawn.class);
 		addPacket(PacketUnitAttack.class);
+		addPacket(PacketBuildingSpawn.class);
 	}
 
 	private PacketHandler() {

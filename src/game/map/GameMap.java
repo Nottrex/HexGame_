@@ -72,6 +72,11 @@ public class GameMap {
 		updateVisibility();
 	}
 
+	public void spawnBuilding(Building building) {
+		buildings.add(building);
+		updateVisibility();
+	}
+
 	public Field getFieldAt(Location l) {
 		if (l.x < 0 || l.x >= width || l.y < 0 || l.y >= height) return Field.VOID;
 
@@ -99,6 +104,14 @@ public class GameMap {
 	public void setFieldAt(int x, int y, Field field) {
 		if (x < 0 || x >= width || y < 0 || y >= height) return;
 		map[x][y] = field;
+	}
+
+	public Optional<Building> getBuildingAt(Location loc) {
+		return buildings.stream().filter(b -> b.getX() == loc.x && b.getY() == loc.y).findAny();
+	}
+
+	public Optional<Building> getBuildingAt(int x, int y) {
+		return buildings.stream().filter(b -> b.getX() == x && b.getY() == y).findAny();
 	}
 
 	public Optional<Unit> getUnitAt(Location loc) {

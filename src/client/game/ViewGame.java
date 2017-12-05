@@ -21,11 +21,10 @@ import client.window.view.ViewMainMenu;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
+import game.Building;
 import game.Location;
 import game.Unit;
-import game.enums.Field;
-import game.enums.PlayerColor;
-import game.enums.Visibility;
+import game.enums.*;
 import game.map.GameMap;
 import game.util.ActionUtil;
 import game.util.PossibleActions;
@@ -334,6 +333,8 @@ public class ViewGame extends View implements ClientListener {
 
 		if (keyCode == KeyEvent.VK_L) {
 			cam.addScreenshake(0.01f);
+		} else if (keyCode == KeyEvent.VK_B) {
+			if (controller.selectedField != null) controller.spawnBuilding(new Building(controller.selectedField.x, controller.selectedField.y, BuildingType.BASE, controller.getPlayerColor()));
 		}
 
 		controller.onKeyType(keyCode);

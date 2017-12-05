@@ -1,6 +1,7 @@
 package server;
 
 import game.Game;
+import networking.gamePackets.gamePackets.PacketBuildingSpawn;
 import networking.gamePackets.gamePackets.PacketRoundFinished;
 import networking.gamePackets.gamePackets.PacketUnitMoved;
 import networking.gamePackets.gamePackets.PacketUnitSpawn;
@@ -19,6 +20,14 @@ public class Anticheat {
 			if (!game.getMap().getFieldAt(packet.getUnit().getX(), packet.getUnit().getY()).isAccessible())
 				return false;
 			if (game.getPlayerMoney(game.getPlayers().get(player)) < packet.getUnit().getType().getCost()) return false;
+			if (!player.equals(game.getPlayerTurn())) return false;
+		}
+
+		if (p instanceof PacketBuildingSpawn) {
+			PacketBuildingSpawn packet = (PacketBuildingSpawn) p;
+			if (game.getMap().getBuildingAt(packet.getBuilding().getX(), packet.getBuilding().getY()).isPresent()) return false;
+			if (!game.getMap().getFieldAt(packet.getBuilding().getX(), packet.getBuilding().getY()).isAccessible())
+				return false;
 			if (!player.equals(game.getPlayerTurn())) return false;
 		}
 

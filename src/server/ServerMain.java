@@ -9,10 +9,7 @@ import game.map.presets.MapPreset;
 import networking.ServerState;
 import networking.gamePackets.clientPackets.PacketClientInfo;
 import networking.gamePackets.clientPackets.PacketClientKicked;
-import networking.gamePackets.gamePackets.PacketRoundFinished;
-import networking.gamePackets.gamePackets.PacketUnitAttack;
-import networking.gamePackets.gamePackets.PacketUnitMoved;
-import networking.gamePackets.gamePackets.PacketUnitSpawn;
+import networking.gamePackets.gamePackets.*;
 import networking.gamePackets.preGamePackets.*;
 import networking.packets.Packet;
 import networking.server.Server;
@@ -187,6 +184,13 @@ public class ServerMain implements ServerListener {
 			game.getMap().spawnUnit(packet.getUnit());
 			players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
 			game.editPlayerMoney(playerColor.get(players.get(s)), -packet.getUnit().getType().getCost());
+		}
+
+		if (p instanceof PacketBuildingSpawn) {
+			PacketBuildingSpawn packet = (PacketBuildingSpawn) p;
+			System.out.printf("spawned Building at %d / %d\n", packet.getBuilding().getX(), packet.getBuilding().getY());
+			game.getMap().spawnBuilding(packet.getBuilding());
+			players.keySet().stream().forEach(s2 -> server.sendPacket(s2, packet));
 		}
 
 		if (p instanceof PacketUnitMoved) {
