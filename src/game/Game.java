@@ -39,7 +39,7 @@ public class Game {
 	}
 
 	public Game(MapGenerator generator, Map<String, PlayerColor> players) {
-		this.map = new GameMap(generator);
+		this.map = new GameMap(generator, players);
 		map.setGame(this);
 		this.players = players;
 		playerAmount = players.keySet().size();
@@ -60,12 +60,16 @@ public class Game {
 		for (PlayerColor p : players.values()) {
 			money.put(p, money.get(p) + 100);
 		}
+
 	}
 
 	public void nextPlayer() {
 		playerTurn++;
 		for (Unit u : map.getUnits()) {
 			u.setState(UnitState.ACTIVE);
+		}
+		for (Building b : map.getBuildings()) {
+			money.put(b.getPlayer(), money.get(b.getPlayer()) + b.getType().getGain());
 		}
 
 		if (playerTurn >= playerAmount) {

@@ -18,7 +18,7 @@ public class KeyInputListener extends KeyAdapter {
 	 * @return whether the related button is pressed or not
 	 */
 	public boolean isPressed(int i) {
-		return pressed.containsKey(i) ? pressed.get(i) : false;
+		return pressed.getOrDefault(i, false);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class GenerateCoords {
 
 	public static void main(String[] args) throws IOException {
-		String filePath = "GenerateCoords\\src\\amCharts.pixelMap.svg";
+		String filePath = "MapGenerator\\src\\amCharts.pixelMap.svg";
 
 		//Count the amount of lines
 		FileReader fr = new FileReader(filePath);
@@ -85,10 +85,10 @@ public class GenerateCoords {
 			String end = "";
 			String front = "";
 			for (int j = 0; j < i / 2; j++) {
-				front = front + "0";
+				front = front + "V";
 			}
 			for (int j = 0; j < (int) ((amountY - i) / 2.0f + 0.5f); j++) { //TODO better term
-				end = end + "0";
+				end = end + "V";
 			}
 			output[i] = front + output[i] + end;
 		}

@@ -21,7 +21,7 @@ public class GameMap {
 	private Game game;
 
 	// Server sided use
-	public GameMap(MapGenerator gm) {
+	public GameMap(MapGenerator gm, Map<String, PlayerColor> players) {
 		this.map = gm.getMap();
 		this.width = map.length;
 		this.height = map[0].length;
@@ -42,9 +42,12 @@ public class GameMap {
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 20, 15));
 		units.add(new Unit(PlayerColor.BLUE, UnitType.PANZER, 5, 15));
 
+		int usedSpawnpoints = 0;
 		buildings = new ArrayList<>();
-		buildings.add(new Building(1, 2, BuildingType.BASE, PlayerColor.BLUE));
-		buildings.add(new Building(2, 3, BuildingType.BASE, PlayerColor.RED));
+		for (PlayerColor p : players.values()) {
+			buildings.add(new Building(spawnPoints.get(usedSpawnpoints).x, spawnPoints.get(usedSpawnpoints).y, BuildingType.BASE, p));
+			usedSpawnpoints++;
+		}
 	}
 
 	//Client sided use

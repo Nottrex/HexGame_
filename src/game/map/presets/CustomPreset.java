@@ -33,7 +33,15 @@ public class CustomPreset implements MapPreset {
 			for (int x = 0; x < width; x++) {
 				char character = line.charAt(x);
 				if (character == '0') out[x][y] = Field.WATER;
-				if (character == '1') out[x][y] = Field.GRASS;
+				else if (character == '1') out[x][y] = Field.FOREST;
+				else if (character == '2') out[x][y] = Field.GRASS;
+				else if (character == '3') out[x][y] = Field.GRASS_ROCK;
+				else if (character == '4') out[x][y] = Field.DIRT;
+				else if (character == '5') out[x][y] = Field.DIRT_ROCK;
+				else if (character == '6') out[x][y] = Field.SAND;
+				else if (character == '7') out[x][y] = Field.SNOW;
+				else if (character == '8') out[x][y] = Field.STONE;
+				else if (character == 'V') out[x][y] = Field.VOID;
 			}
 		}
 		br.close();
